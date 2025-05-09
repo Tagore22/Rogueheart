@@ -1,0 +1,33 @@
+# Unreal Engine
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vscode/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Compiled source
+*.dll
+*.exe
+*.pdb
+*.obj
+*.lib
+*.app
+*.dSYM
+*.ipa
+*.apk
+*.so
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build tools
+.vs/
+*.VC.db
+*.VC.opendb
