@@ -1,58 +1,63 @@
 #include "PlayerCharacter.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Components/InputComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Controller.h"
 
 APlayerCharacter::APlayerCharacter()
 {
-    // 회전 속도 기본값 설정
+    // 카메라 회전 속도 설정
     BaseTurnRate = 45.f;
     BaseLookUpRate = 45.f;
 
-    // 캐릭터가 컨트롤러 회전에 따라 회전하도록 설정
+    // 스프링 암 생성
+    CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+    CameraBoom->SetupAttachment(RootComponent);
+    CameraBoom->TargetArmLength = 300.f;
+    CameraBoom->bUsePawnControlRotation = true;
+
+    // 카메라 생성
+    FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+    FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+    FollowCamera->bUsePawnControlRotation = false;
+
+    // 컨트롤러 회전 사용 안 함
     bUseControllerRotationPitch = false;
     bUseControllerRotationYaw = false;
     bUseControllerRotationRoll = false;
 
-    // 캐릭터가 이동 방향에 따라 회전하도록 설정
+    // 캐릭터 이동 방향에 따라 회전
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
-    // 카메라 스프링암과 카메라 컴포넌트 추가 (선택 사항, 필요하면 나중에)
-    USpringArmComponent* SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-    SpringArm->SetupAttachment(RootComponent);
-    SpringArm->TargetArmLength = 300.f;
-    SpringArm->bUsePawnControlRotation = true;
+    // 기본 상태 설정
+    CurrentState = EPlayerState::Idle;
+}
 
-    UCameraComponent* Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-    Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
-    Camera->bUsePawnControlRotation = false;
+void APlayerCharacter::BeginPlay()
+{
+    Super::BeginPlay();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-    check(PlayerInputComponent);
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    // 이동 바인딩
     PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
-
-    // 카메라 회전 바인딩
     PlayerInputComponent->BindAxis("Turn", this, &APlayerCharacter::TurnAtRate);
     PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::LookUpAtRate);
 
-    // 점프 바인딩
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::Jump);
     PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::StopJumping);
 }
 
 void APlayerCharacter::MoveForward(float Value)
 {
-    if (Controller && Value != 0.0f)
+    if (Controller && Value != 0.f)
     {
-        // 컨트롤러 방향을 기준으로 전진 방향 계산
         const FRotator Rotation = Controller->GetControlRotation();
-        const FRotator YawRotation(0, Rotation.Yaw, 0);
+        const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
         const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
         AddMovementInput(Direction, Value);
@@ -61,11 +66,10 @@ void APlayerCharacter::MoveForward(float Value)
 
 void APlayerCharacter::MoveRight(float Value)
 {
-    if (Controller && Value != 0.0f)
+    if (Controller && Value != 0.f)
     {
-        // 컨트롤러 방향을 기준으로 오른쪽 방향 계산
         const FRotator Rotation = Controller->GetControlRotation();
-        const FRotator YawRotation(0, Rotation.Yaw, 0);
+        const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
         const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
         AddMovementInput(Direction, Value);
@@ -74,11 +78,20 @@ void APlayerCharacter::MoveRight(float Value)
 
 void APlayerCharacter::TurnAtRate(float Rate)
 {
-    // 프레임 독립적 카메라 회전
     AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void APlayerCharacter::LookUpAtRate(float Rate)
 {
     AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void APlayerCharacter::Jump()
+{
+    Super::Jump();
+}
+
+void APlayerCharacter::StopJumping()
+{
+    Super::StopJumping();
 }
