@@ -59,7 +59,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
     FVector2D MovementVector = Value.Get<FVector2D>();
-    //UE_LOG(LogTemp, Warning, TEXT("Move Input -> X: %f, Y: %f"), MovementVector.X, MovementVector.Y);
+    UE_LOG(LogTemp, Warning, TEXT("Move Input -> X: %f, Y: %f"), MovementVector.X, MovementVector.Y);
 
     if (Controller && (MovementVector.X != 0.f || MovementVector.Y != 0.f))
     {
@@ -69,8 +69,8 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
         const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
         const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-        AddMovementInput(ForwardDirection, MovementVector.Y);//X
-        AddMovementInput(RightDirection, MovementVector.X);//Y
+        AddMovementInput(ForwardDirection, MovementVector.X);
+        AddMovementInput(RightDirection, MovementVector.Y);
     }
 }
 
