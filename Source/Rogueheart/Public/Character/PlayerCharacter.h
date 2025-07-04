@@ -2,7 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
+
+class UInputMappingContext;
+class UInputAction;
 
 UENUM(BlueprintType)
 enum class EPlayerState : uint8
@@ -27,34 +31,36 @@ protected:
     virtual void BeginPlay() override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-    // 이동 입력 함수
-    void MoveForward(float Value);
-    void MoveRight(float Value);
-
-    // 카메라 입력 함수
-    void TurnAtRate(float Rate);
-    void LookUpAtRate(float Rate);
-
-    // 점프
-    virtual void Jump() override;
-    virtual void StopJumping() override;
+    void Move(const FInputActionValue& Value);
+    void Look(const FInputActionValue& Value);
+    void StartJump(const FInputActionValue& Value);
+    void StopJump(const FInputActionValue& Value);
 
 private:
-    // 카메라 회전 속도
     UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseTurnRate;
+        float BaseTurnRate;
 
     UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseLookUpRate;
-
-    // 카메라 컴포넌트
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    class USpringArmComponent* CameraBoom;
+        float BaseLookUpRate;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    class UCameraComponent* FollowCamera;
+        class USpringArmComponent* CameraBoom;
 
-    // 플레이어 상태
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+        class UCameraComponent* FollowCamera;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
-    EPlayerState CurrentState;
+        EPlayerState CurrentState;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+        UInputMappingContext* DefaultMappingContext;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+        UInputAction* IA_Move;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+        UInputAction* IA_Look;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+        UInputAction* IA_Jump;
 };
