@@ -1,7 +1,7 @@
 #include "Character/Enemy/EnemyBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "AIController.h"   
+#include "AIController.h"
 
 AEnemyBase::AEnemyBase()
 {
