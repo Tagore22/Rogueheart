@@ -8,8 +8,9 @@ UCLASS()
 class ROGUEHEART_API UPlayerAnimInstance : public UAnimInstance
 {
     GENERATED_BODY()
+};//
 
-public:
+/*public:
     UPlayerAnimInstance();
 
     // 매 프레임 호출
@@ -31,4 +32,4 @@ protected:
 
     UPROPERTY(BlueprintReadOnly, Category = "Combat")
     bool bIsAttacking;
-};
+};*/

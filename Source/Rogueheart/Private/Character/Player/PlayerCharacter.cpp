@@ -7,7 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Character/Player/PlayerAnimInstance.h"  
 
-APlayerCharacter::APlayerCharacter()
+/*APlayerCharacter::APlayerCharacter()
 {
     BaseTurnRate = 45.f;
     BaseLookUpRate = 45.f;
@@ -125,4 +125,4 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     {
         AnimInstance->Montage_Play(AMT_Dodge);
     }
-}   
+}*/

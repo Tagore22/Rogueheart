@@ -2,7 +2,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-UPlayerAnimInstance::UPlayerAnimInstance()
+/*UPlayerAnimInstance::UPlayerAnimInstance()
 {
     Speed = 0.f;
     bIsInAir = false;
@@ -30,4 +30,4 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 void UPlayerAnimInstance::AnimNotify_EndAttack()
 {
     SetIsAttacking(false);
-}
+}*/

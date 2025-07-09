@@ -23,8 +23,9 @@ UCLASS()
 class ROGUEHEART_API APlayerCharacter : public ACharacter
 {
     GENERATED_BODY()
+};//
 
-public:
+/*public:
     APlayerCharacter();
 
 protected:
@@ -83,4 +84,4 @@ private:
 
     UPROPERTY(EditDefaultsOnly, Category = "Dodge")
     UAnimMontage* AMT_Dodge;
-};
+};*/
