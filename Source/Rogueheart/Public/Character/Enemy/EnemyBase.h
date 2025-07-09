@@ -8,9 +8,8 @@ UCLASS()
 class ROGUEHEART_API AEnemyBase : public ACharacter
 {
     GENERATED_BODY()
-};//
 
-/*public:
+public:
     AEnemyBase();
 
 protected:
@@ -46,4 +45,4 @@ public:
 
 private:
     float TimeSinceLastAttack = 0.f;
-};*/
+};

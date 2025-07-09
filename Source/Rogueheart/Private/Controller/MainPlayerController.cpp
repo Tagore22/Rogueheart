@@ -3,7 +3,7 @@
 #include "EnhancedInputComponent.h"
 #include "Engine/LocalPlayer.h"
 
-/*void AMainPlayerController::BeginPlay()
+void AMainPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
@@ -18,4 +18,4 @@
             }
         }
     }
-}*/
+}

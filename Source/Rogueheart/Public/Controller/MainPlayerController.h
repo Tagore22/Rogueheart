@@ -9,11 +9,11 @@ UCLASS()
 class ROGUEHEART_API AMainPlayerController : public APlayerController
 {
     GENERATED_BODY()
-};//
-/*protected:
+
+protected:
     virtual void BeginPlay() override;
 
 public:
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     UInputMappingContext* DefaultMappingContext;
-};*/
+};

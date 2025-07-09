@@ -3,7 +3,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AIController.h"
 
-/*AEnemyBase::AEnemyBase()
+AEnemyBase::AEnemyBase()
 {
     PrimaryActorTick.bCanEverTick = true;
 }
@@ -53,4 +53,4 @@ void AEnemyBase::TryAttack()
         PlayAnimMontage(AttackMontage);
         TimeSinceLastAttack = 0.f;
     }
-}*/
+}
