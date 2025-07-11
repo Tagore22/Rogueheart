@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Skill/SkillComponent.h"
 #include "PlayerCharacter.generated.h"
 
 class UInputMappingContext;
@@ -37,6 +38,10 @@ protected:
     void StopJump(const FInputActionValue& Value);
     void Attack(const FInputActionValue& Value);
     void Dodge(const FInputActionValue& Value);
+    UFUNCTION()
+    void UseFireball();   // Slot1
+    UFUNCTION()
+    void UseIceBlast();   // Slot2
 
 private:
     UPROPERTY(EditAnywhere, Category = "Camera")
@@ -72,6 +77,12 @@ private:
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     UInputAction* IA_Dodge;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    UInputAction* IA_Skill1;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    UInputAction* IA_Skill2;
+
     UPROPERTY(EditDefaultsOnly, Category = "Attack") 
     UAnimMontage* AMT_Attack;
 
@@ -83,4 +94,7 @@ private:
 
     UPROPERTY(EditDefaultsOnly, Category = "Dodge")
     UAnimMontage* AMT_Dodge;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = true))
+    USkillComponent* SkillComponent;
 };

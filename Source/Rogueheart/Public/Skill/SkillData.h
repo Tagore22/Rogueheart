@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CoreMinimal.h"
+/*#include "CoreMinimal.h"
 #include "SkillData.generated.h"
 
 UENUM(BlueprintType)
@@ -50,4 +50,4 @@ struct FSkillData
     // (옵션) 최대 레벨 & 레벨별 파라미터
     // 예: 레벨에 따라 데미지, 범위 등이 달라질 때 사용
     // TMap<int32, FSkillLevelData> LevelData;
-};
+};*/

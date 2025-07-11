@@ -56,6 +56,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         EnhancedInput->BindAction(IA_Jump, ETriggerEvent::Completed, this, &APlayerCharacter::StopJump);
         EnhancedInput->BindAction(IA_Attack, ETriggerEvent::Started, this, &APlayerCharacter::Attack);
         EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &APlayerCharacter::Dodge);
+        EnhancedInput->BindAction(IA_Skill1, ETriggerEvent::Started, this, &APlayerCharacter::UseFireball);
+        EnhancedInput->BindAction(IA_Skill2, ETriggerEvent::Started, this, &APlayerCharacter::UseIceBlast);
     }
 }
 
@@ -125,4 +127,17 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     {
         AnimInstance->Montage_Play(AMT_Dodge);
     }
-}   
+}
+
+void APlayerCharacter::UseFireball()
+{
+    UE_LOG(LogTemp, Warning, TEXT("UseFireBall"));
+    if (SkillComponent)
+        SkillComponent->UseSkill("Fireball");
+}
+
+void APlayerCharacter::UseIceBlast()
+{
+    if (SkillComponent)
+        SkillComponent->UseSkill("IceBlast");
+}
