@@ -97,4 +97,10 @@ private:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = true))
     USkillComponent* SkillComponent;
+
+    // 위젯 테스트용
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+        TSubclassOf<UUserWidget> WB_SkillCooldownClass;
+
+    UUserWidget* CooldownWidget;
 };

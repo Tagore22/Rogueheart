@@ -6,6 +6,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Character/Player/PlayerAnimInstance.h"  
+// 위젯 테스트용
+#include "Blueprint/UserWidget.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -28,6 +30,10 @@ APlayerCharacter::APlayerCharacter()
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
+    UE_LOG(LogTemp, Warning, TEXT("Ctor SkillComponent ptr: %s"), *GetNameSafe(SkillComponent));
+    SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
+    UE_LOG(LogTemp, Warning, TEXT("After Create SkillComponent ptr: %s"), *GetNameSafe(SkillComponent));
+
     CurrentState = EPlayerState::Idle;
 }
 
@@ -35,11 +41,23 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
+    UE_LOG(LogTemp, Warning, TEXT("BeginPlay SkillComponent ptr: %s"), *GetNameSafe(SkillComponent));
     if (APlayerController* PC = Cast<APlayerController>(GetController()))
     {
         if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
         {
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
+        }
+    }
+    // 위젯 테스트용
+    if (WB_SkillCooldownClass)
+    {
+        // GetWorld() 컨텍스트와, UUserWidget 타입 템플릿 인자를 반드시 지정!
+        UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), WB_SkillCooldownClass);
+        if (Widget)
+        {
+            Widget->AddToViewport();
+            CooldownWidget = Widget;
         }
     }
 }
@@ -131,7 +149,7 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
 
 void APlayerCharacter::UseFireball()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UseFireBall"));
+    UE_LOG(LogTemp, Warning, TEXT("UseFireball"));
     if (SkillComponent)
         SkillComponent->UseSkill("Fireball");
 }
