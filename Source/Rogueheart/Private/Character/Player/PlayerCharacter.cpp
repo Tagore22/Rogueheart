@@ -5,9 +5,11 @@
 #include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Character/Player/PlayerAnimInstance.h"  
+#include "Character/Player/PlayerAnimInstance.h"
+#include "SkillCooldownWidget.h"
+#include "RogueheartGameInstance.h"
 // 위젯 테스트용
-#include "Blueprint/UserWidget.h"
+// #include "Blueprint/UserWidget.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -41,6 +43,20 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
+    //
+    UE_LOG(LogTemp, Warning, TEXT(">>> PlayerCharacter BeginPlay"));
+
+    // GetWorld()->GetGameInstance() 호출 후 캐스트
+    if (URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetWorld()->GetGameInstance()))
+    {
+        UE_LOG(LogTemp, Warning, TEXT(">>> Custom GameInstance detected"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT(">>> GameInstance is NOT URogueheartGameInstance"));
+    }
+    //
+
     UE_LOG(LogTemp, Warning, TEXT("BeginPlay SkillComponent ptr: %s"), *GetNameSafe(SkillComponent));
     if (APlayerController* PC = Cast<APlayerController>(GetController()))
     {
@@ -49,15 +65,18 @@ void APlayerCharacter::BeginPlay()
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
         }
     }
-    // 위젯 테스트용
     if (WB_SkillCooldownClass)
     {
-        // GetWorld() 컨텍스트와, UUserWidget 타입 템플릿 인자를 반드시 지정!
-        UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), WB_SkillCooldownClass);
+        USkillCooldownWidget* Widget = CreateWidget<USkillCooldownWidget>(GetWorld(), WB_SkillCooldownClass);
         if (Widget)
         {
             Widget->AddToViewport();
             CooldownWidget = Widget;
+
+            if (SkillComponent)
+            {
+                SkillComponent->OnSkillCooldownUpdated.AddDynamic(Widget, &USkillCooldownWidget::OnSkillCooldownUpdated);
+            }
         }
     }
 }
