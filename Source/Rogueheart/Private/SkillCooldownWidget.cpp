@@ -8,7 +8,7 @@ void USkillCooldownWidget::NativeConstruct()
     // 필요한 초기화 가능
     if (PB_Cooldown)
     {
-        PB_Cooldown->SetPercent(0.f);
+        PB_Cooldown->SetPercent(0.0f);
     }
 }
 

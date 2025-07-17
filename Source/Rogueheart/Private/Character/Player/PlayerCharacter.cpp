@@ -8,6 +8,7 @@
 #include "Character/Player/PlayerAnimInstance.h"
 #include "SkillCooldownWidget.h"
 #include "RogueheartGameInstance.h"
+#include "UIManager.h"
 // 위젯 테스트용
 // #include "Blueprint/UserWidget.h"
 
@@ -32,9 +33,7 @@ APlayerCharacter::APlayerCharacter()
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
-    UE_LOG(LogTemp, Warning, TEXT("Ctor SkillComponent ptr: %s"), *GetNameSafe(SkillComponent));
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
-    UE_LOG(LogTemp, Warning, TEXT("After Create SkillComponent ptr: %s"), *GetNameSafe(SkillComponent));
 
     CurrentState = EPlayerState::Idle;
 }
@@ -43,40 +42,11 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-    //
-    UE_LOG(LogTemp, Warning, TEXT(">>> PlayerCharacter BeginPlay"));
-
-    // GetWorld()->GetGameInstance() 호출 후 캐스트
-    if (URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetWorld()->GetGameInstance()))
-    {
-        UE_LOG(LogTemp, Warning, TEXT(">>> Custom GameInstance detected"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT(">>> GameInstance is NOT URogueheartGameInstance"));
-    }
-    //
-
-    UE_LOG(LogTemp, Warning, TEXT("BeginPlay SkillComponent ptr: %s"), *GetNameSafe(SkillComponent));
     if (APlayerController* PC = Cast<APlayerController>(GetController()))
     {
         if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
         {
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
-        }
-    }
-    if (WB_SkillCooldownClass)
-    {
-        USkillCooldownWidget* Widget = CreateWidget<USkillCooldownWidget>(GetWorld(), WB_SkillCooldownClass);
-        if (Widget)
-        {
-            Widget->AddToViewport();
-            CooldownWidget = Widget;
-
-            if (SkillComponent)
-            {
-                SkillComponent->OnSkillCooldownUpdated.AddDynamic(Widget, &USkillCooldownWidget::OnSkillCooldownUpdated);
-            }
         }
     }
 }
@@ -101,7 +71,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
     FVector2D MovementVector = Value.Get<FVector2D>();
-    UE_LOG(LogTemp, Warning, TEXT("Move Input -> X: %f, Y: %f"), MovementVector.X, MovementVector.Y);
 
     if (Controller && (MovementVector.X != 0.f || MovementVector.Y != 0.f))
     {
@@ -168,7 +137,6 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
 
 void APlayerCharacter::UseFireball()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UseFireball"));
     if (SkillComponent)
         SkillComponent->UseSkill("Fireball");
 }
