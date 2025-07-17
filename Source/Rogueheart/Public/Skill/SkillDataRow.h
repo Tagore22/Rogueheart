@@ -12,27 +12,41 @@ struct FSkillDataRow : public FTableRowBase
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
-    TSoftClassPtr<ASkillActor> SkillClass;  // 소프트 클래스
+        // SoftClassPtr 방식으로 변경
+        UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
+        TSoftClassPtr<ASkillActor> SkillClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    float Cooldown;
+        float Cooldown;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    float Speed;
+        FName SkillName;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    float Damage;
+        float Speed;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    float LifeTime;
+        float Damage;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    UNiagaraSystem* Effect;
+        float LifeTime;
+
+    // 이펙트 필드
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+        UNiagaraSystem* Effect;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TSubclassOf<UDamageType> DamageType;
+        TSubclassOf<UDamageType> DamageType;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    float Radius;
+        float Radius;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+        UTexture2D* SkillIcon;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+        FText Description;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+        float Range;
 };

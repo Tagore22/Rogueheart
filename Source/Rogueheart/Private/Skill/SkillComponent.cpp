@@ -13,7 +13,6 @@ void USkillComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // 초기 쿨다운 세팅
     if (SkillDataTable)
     {
         TArray<FName> RowNames = SkillDataTable->GetRowNames();
@@ -55,8 +54,8 @@ void USkillComponent::UseSkill(const FName& SkillRowName)
     if (!SkillData)
         return;
 
-    TSubclassOf<ASkillActor> SkillClass = SkillData->SkillClass.LoadSynchronous(); // 동기 로딩
-    if (!SkillClass)
+    UClass* LoadedClass = SkillData->SkillClass.LoadSynchronous();
+    if (!LoadedClass)
         return;
 
     UWorld* World = GetWorld();
@@ -65,9 +64,9 @@ void USkillComponent::UseSkill(const FName& SkillRowName)
 
     FVector Location = GetOwner()->GetActorLocation();
     FRotator Rotation = GetOwner()->GetActorRotation();
-    
+
     ASkillActor* Skill = World->SpawnActorDeferred<ASkillActor>(
-        SkillClass,
+        LoadedClass,
         FTransform(Rotation, Location),
         GetOwner(),
         nullptr,
@@ -77,10 +76,7 @@ void USkillComponent::UseSkill(const FName& SkillRowName)
     if (Skill)
     {
         Skill->InitializeSkill(*SkillData, GetOwner());
-        UGameplayStatics::FinishSpawningActor(
-            Skill,
-            FTransform(Rotation, Location)
-        );
+        UGameplayStatics::FinishSpawningActor(Skill, FTransform(Rotation, Location));
     }
 
     Timer = SkillData->Cooldown;

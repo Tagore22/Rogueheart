@@ -4,7 +4,6 @@
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "Skill/SkillDataRow.h"
-#include "Skill/SkillActor.h"
 #include "SkillComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillCooldownUpdated, FName, SkillName, float, RemainingTime);
