@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "SkillType.h"   
 #include "SkillDataRow.generated.h"
 
 class ASkillActor;
@@ -12,41 +13,44 @@ struct FSkillDataRow : public FTableRowBase
 {
     GENERATED_BODY()
 
-        // SoftClassPtr 방식으로 변경
-        UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
-        TSoftClassPtr<ASkillActor> SkillClass;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    ESkillType SkillType;
+
+    // SoftClassPtr 방식으로 변경
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
+    TSoftClassPtr<ASkillActor> SkillClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        float Cooldown;
+    float Cooldown;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        FName SkillName;
+    FName SkillName;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        float Speed;
+    float Speed;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        float Damage;
+    float Damage;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        float LifeTime;
+    float LifeTime;
 
     // 이펙트 필드
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        UNiagaraSystem* Effect;
+    UNiagaraSystem* Effect;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        TSubclassOf<UDamageType> DamageType;
+    TSubclassOf<UDamageType> DamageType;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        float Radius;
+    float Radius;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        UTexture2D* SkillIcon;
+    UTexture2D* SkillIcon;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        FText Description;
+    FText Description;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        float Range;
+    float Range;
 };

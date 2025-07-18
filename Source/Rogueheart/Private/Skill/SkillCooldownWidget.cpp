@@ -1,4 +1,4 @@
-#include "SkillCooldownWidget.h"
+#include "Skill/SkillCooldownWidget.h"
 #include "Components/ProgressBar.h"
 
 void USkillCooldownWidget::NativeConstruct()
@@ -12,7 +12,7 @@ void USkillCooldownWidget::NativeConstruct()
     }
 }
 
-void USkillCooldownWidget::OnSkillCooldownUpdated(FName SkillName, float RemainingTime)
+void USkillCooldownWidget::OnSkillCooldownUpdated(ESkillType SkillType, float RemainingTime)
 {
     if (!PB_Cooldown || MaxCooldown <= 0.f)
         return;

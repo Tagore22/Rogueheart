@@ -3,10 +3,11 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
+#include "Skill/SkillType.h"        
 #include "Skill/SkillDataRow.h"
 #include "SkillComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillCooldownUpdated, FName, SkillName, float, RemainingTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillCooldownUpdated, ESkillType, SkillType, float, RemainingTime);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ROGUEHEART_API USkillComponent : public UActorComponent
@@ -27,15 +28,20 @@ public:
 
     /** 스킬 발동 함수 */
     UFUNCTION(BlueprintCallable, Category = "Skills")
-        void UseSkill(const FName& SkillRowName);
+        void UseSkill(ESkillType SkillType);
 
-    /** SkillName, RemainingCooldownSeconds 브로드캐스트 */
+    /** SkillType, RemainingCooldownSeconds 브로드캐스트 */
     UPROPERTY(BlueprintAssignable, Category = "Skills")
         FOnSkillCooldownUpdated OnSkillCooldownUpdated;
 
 private:
-    /** 쿨다운 타이머 관리 */
-    TMap<FName, float> CooldownTimers;
+    /** SkillType → 남은 쿨다운 초 */
+    TMap<ESkillType, float> CooldownTimers;
+
+    /** SkillType → DataTable RowName 매핑 */
+    TMap<ESkillType, FName> SkillRowNames;
 
     void UpdateCooldowns(float DeltaTime);
+    const FSkillDataRow* GetSkillData(ESkillType SkillType) const;
+    void SpawnSkillActor(const FSkillDataRow& SkillData);
 };

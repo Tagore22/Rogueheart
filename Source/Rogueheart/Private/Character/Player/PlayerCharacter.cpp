@@ -6,9 +6,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Character/Player/PlayerAnimInstance.h"
-#include "SkillCooldownWidget.h"
+#include "Skill/SkillCooldownWidget.h"
 #include "RogueheartGameInstance.h"
-#include "UIManager.h"
+#include "UI/UIManager.h"
 // 위젯 테스트용
 // #include "Blueprint/UserWidget.h"
 
@@ -138,11 +138,11 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
 void APlayerCharacter::UseFireball()
 {
     if (SkillComponent)
-        SkillComponent->UseSkill("Fireball");
+        SkillComponent->UseSkill(ESkillType::Fireball);
 }
 
 void APlayerCharacter::UseIceBlast()
 {
     if (SkillComponent)
-        SkillComponent->UseSkill("IceBlast");
+        SkillComponent->UseSkill((ESkillType::IceNova));
 }

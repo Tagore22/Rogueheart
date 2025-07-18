@@ -12,16 +12,19 @@ ASkillActor::ASkillActor()
 
     Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
     Collision->InitSphereRadius(50.f);
-    Collision->SetCollisionProfileName(TEXT("OverlapAll"));
+    Collision->SetCollisionProfileName(TEXT("SkillOverlap")); // 필요시 Project Settings > Collision 설정
+    Collision->SetGenerateOverlapEvents(true);
     RootComponent = Collision;
+
     Collision->OnComponentBeginOverlap.AddDynamic(this, &ASkillActor::OnSkillOverlap);
 
     SkillEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SkillEffect"));
     SkillEffect->SetupAttachment(RootComponent);
+    SkillEffect->SetAutoDestroy(true);
     SkillEffect->bAutoActivate = false;
 
     ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
-    ProjectileMovement->bAutoActivate = false;
+    ProjectileMovement->UpdatedComponent = Collision;
 }
 
 void ASkillActor::BeginPlay()
@@ -86,8 +89,10 @@ void ASkillActor::OnSkillOverlap(
     if (!OtherActor || OtherActor == Caster)
         return;
 
-    // Fireball, IceNova, DashSlash 등은 폭발 처리에서 데미지 적용
-    // HealingLight는 범위 내 아군 회복 처리 끝난 뒤 바로 Destroy
+    // 데미지 적용 예시 (필요 시 수정 가능)
+    UGameplayStatics::ApplyDamage(OtherActor, CurrentSkillData.Damage, nullptr, this, CurrentSkillData.DamageType);
+    UE_LOG(LogTemp, Warning, TEXT("FireAttack"));
+
     Explode();
 }
 
@@ -106,15 +111,17 @@ void ASkillActor::Explode()
     Destroy();
 }
 
-// 스킬별 구현 
+// ========================== 스킬별 구현 ==========================
 
 // 1) Fireball: ProjectileMovement 활성화 → 직선 투사체
 void ASkillActor::Activate_Fireball()
 {
     if (ProjectileMovement)
     {
-        ProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector * CurrentSkillData.Speed);
-        ProjectileMovement->Activate();
+        FVector Velocity = GetActorForwardVector() * CurrentSkillData.Speed;
+        ProjectileMovement->Velocity = Velocity;
+        ProjectileMovement->ProjectileGravityScale = 0.f; // 이후 지울수도
+        ProjectileMovement->Activate(true);
     }
 }
 
@@ -212,7 +219,7 @@ void ASkillActor::Activate_HealingLight()
         if (AActor* Other = R.GetActor())
         {
             float HealAmount = -CurrentSkillData.Damage;  // Damage < 0 → Heal
-            // 예: 캐스팅 타입체크 후 Heal 인터페이스 호출
+            // 예: 캐스팅 타입체크 후 Heal 인터페이스 호출 후에 인터페이스 제작후 추가할 것
             //IHealthInterface* HI = Cast<IHealthInterface>(Other);
             //if (HI) HI->Execute_Heal(Other, HealAmount);
         }

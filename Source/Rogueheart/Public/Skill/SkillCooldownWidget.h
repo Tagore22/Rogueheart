@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Skill/SkillType.h"
 #include "SkillCooldownWidget.generated.h"
 
 class UProgressBar;
@@ -14,11 +15,11 @@ class ROGUEHEART_API USkillCooldownWidget : public UUserWidget
 public:
     /** 바인딩된 델리게이트로부터 호출될 함수 */
     UFUNCTION()
-        void OnSkillCooldownUpdated(FName SkillName, float RemainingTime);
+        void OnSkillCooldownUpdated(ESkillType SkillType, float RemainingTime);
 
     /** 초기화 시 최대 쿨타임 설정 */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true))
-        float MaxCooldown = 5.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooldown")
+        float MaxCooldown = 1.0f;
 
 protected:
     virtual void NativeConstruct() override;

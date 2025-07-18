@@ -1,5 +1,4 @@
 #include "Skill/SkillComponent.h"
-#include "Skill/SkillDataRow.h"
 #include "Skill/SkillActor.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
@@ -13,12 +12,17 @@ void USkillComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (SkillDataTable)
+    if (!SkillDataTable)
+        return;
+
+    // DataTable의 모든 로우를 순회하며 SkillType → RowName, 초기 쿨다운 세팅
+    for (const FName& RowName : SkillDataTable->GetRowNames())
     {
-        TArray<FName> RowNames = SkillDataTable->GetRowNames();
-        for (const FName& Name : RowNames)
+        const FSkillDataRow* Row = SkillDataTable->FindRow<FSkillDataRow>(RowName, TEXT("BeginPlay"));
+        if (Row)
         {
-            CooldownTimers.Add(Name, 0.f);
+            SkillRowNames.Add(Row->SkillType, RowName);
+            CooldownTimers.Add(Row->SkillType, 0.f);
         }
     }
 }
@@ -41,28 +45,44 @@ void USkillComponent::UpdateCooldowns(float DeltaTime)
     }
 }
 
-void USkillComponent::UseSkill(const FName& SkillRowName)
+const FSkillDataRow* USkillComponent::GetSkillData(ESkillType SkillType) const
 {
-    if (!SkillDataTable)
-        return;
+    if (const FName* RowName = SkillRowNames.Find(SkillType))
+    {
+        return SkillDataTable->FindRow<FSkillDataRow>(*RowName, TEXT("GetSkillData"));
+    }
+    return nullptr;
+}
 
-    float& Timer = CooldownTimers.FindOrAdd(SkillRowName);
-    if (Timer > 0.f)
-        return;
-
-    FSkillDataRow* SkillData = SkillDataTable->FindRow<FSkillDataRow>(SkillRowName, TEXT("UseSkill"));
+void USkillComponent::UseSkill(ESkillType SkillType)
+{
+    // DataTable 세팅 및 쿨다운 체크
+    const FSkillDataRow* SkillData = GetSkillData(SkillType);
     if (!SkillData)
         return;
 
-    UClass* LoadedClass = SkillData->SkillClass.LoadSynchronous();
+    float& Timer = CooldownTimers.FindOrAdd(SkillType);
+    if (Timer > 0.f)
+        return;
+
+    // 스킬 액터 스폰
+    SpawnSkillActor(*SkillData);
+
+    // 쿨다운 시작
+    Timer = SkillData->Cooldown;
+}
+
+void USkillComponent::SpawnSkillActor(const FSkillDataRow& SkillData)
+{
+    UClass* LoadedClass = SkillData.SkillClass.LoadSynchronous();
     if (!LoadedClass)
         return;
 
     UWorld* World = GetWorld();
-    if (!World)
+    if (!World || !GetOwner())
         return;
 
-    FVector Location = GetOwner()->GetActorLocation();
+    FVector Location = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 150.f; // 플레이어의 위치에서 일정 거리 앞에서 스폰
     FRotator Rotation = GetOwner()->GetActorRotation();
 
     ASkillActor* Skill = World->SpawnActorDeferred<ASkillActor>(
@@ -75,9 +95,7 @@ void USkillComponent::UseSkill(const FName& SkillRowName)
 
     if (Skill)
     {
-        Skill->InitializeSkill(*SkillData, GetOwner());
+        Skill->InitializeSkill(SkillData, GetOwner());
         UGameplayStatics::FinishSpawningActor(Skill, FTransform(Rotation, Location));
     }
-
-    Timer = SkillData->Cooldown;
 }
