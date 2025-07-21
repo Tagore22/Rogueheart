@@ -12,7 +12,7 @@ ASkillActor::ASkillActor()
 
     Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
     Collision->InitSphereRadius(50.f);
-    Collision->SetCollisionProfileName(TEXT("SkillOverlap")); // 필요시 Project Settings > Collision 설정
+    Collision->SetCollisionProfileName(TEXT("SkillOverlap"));
     Collision->SetGenerateOverlapEvents(true);
     RootComponent = Collision;
 
@@ -25,6 +25,8 @@ ASkillActor::ASkillActor()
 
     ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
     ProjectileMovement->UpdatedComponent = Collision;
+
+    SkillDamage = 0.f;
 }
 
 void ASkillActor::BeginPlay()
@@ -48,7 +50,7 @@ void ASkillActor::BeginPlay()
     ActivateSkill();
 }
 
-void ASkillActor::InitializeSkill(const FSkillDataRow& SkillData, AActor* SkillOwner)
+void ASkillActor::InitializeSkill(const FSkillDataRow& SkillData, AActor* SkillOwner, float Damage)
 {
     CurrentSkillData = SkillData;
     Caster = SkillOwner;
@@ -58,6 +60,9 @@ void ASkillActor::InitializeSkill(const FSkillDataRow& SkillData, AActor* SkillO
     {
         Collision->SetSphereRadius(SkillData.Radius);
     }
+
+    // 전달받은 데미지 저장
+    SkillDamage = Damage;
 }
 
 void ASkillActor::ActivateSkill()
@@ -75,7 +80,7 @@ void ASkillActor::ActivateSkill()
     else if (Name == "Healing Light")
         Activate_HealingLight();
     else
-        Explode();  // 기본 동작
+        Explode();
 }
 
 void ASkillActor::OnSkillOverlap(
@@ -89,16 +94,15 @@ void ASkillActor::OnSkillOverlap(
     if (!OtherActor || OtherActor == Caster)
         return;
 
-    // 데미지 적용 예시 (필요 시 수정 가능)
-    UGameplayStatics::ApplyDamage(OtherActor, CurrentSkillData.Damage, nullptr, this, CurrentSkillData.DamageType);
-    UE_LOG(LogTemp, Warning, TEXT("FireAttack"));
+    // 이제 SkillDamage 사용
+    UGameplayStatics::ApplyDamage(OtherActor, SkillDamage, nullptr, this, CurrentSkillData.DamageType);
+    UE_LOG(LogTemp, Warning, TEXT("Applied Damage : %f"), SkillDamage);
 
     Explode();
 }
 
 void ASkillActor::Explode()
 {
-    // 임팩트 이펙트 재생
     if (CurrentSkillData.Effect)
     {
         UNiagaraFunctionLibrary::SpawnSystemAtLocation(
@@ -111,21 +115,19 @@ void ASkillActor::Explode()
     Destroy();
 }
 
-// ========================== 스킬별 구현 ==========================
-
-// 1) Fireball: ProjectileMovement 활성화 → 직선 투사체
+// Fireball: ProjectileMovement 활성화 → 직선 투사체
 void ASkillActor::Activate_Fireball()
 {
     if (ProjectileMovement)
     {
         FVector Velocity = GetActorForwardVector() * CurrentSkillData.Speed;
         ProjectileMovement->Velocity = Velocity;
-        ProjectileMovement->ProjectileGravityScale = 0.f; // 이후 지울수도
+        ProjectileMovement->ProjectileGravityScale = 0.f;
         ProjectileMovement->Activate(true);
     }
 }
 
-// 2) Ice Nova: BeginPlay 직후 반경 내 적 모두 데미지
+// Ice Nova: 반경 내 적 모두 데미지
 void ASkillActor::Activate_IceNova()
 {
     TArray<FOverlapResult> overlaps;
@@ -143,14 +145,14 @@ void ASkillActor::Activate_IceNova()
     {
         if (AActor* Other = R.GetActor())
         {
-            UGameplayStatics::ApplyDamage(Other, CurrentSkillData.Damage, nullptr, this, CurrentSkillData.DamageType);
+            UGameplayStatics::ApplyDamage(Other, SkillDamage, nullptr, this, CurrentSkillData.DamageType);
         }
     }
 
     Explode();
 }
 
-// 3) Thunder Strike: 전방 직선 Trace 후 맞은 대상만 데미지
+// Thunder Strike: 전방 직선 Trace 후 대상 데미지
 void ASkillActor::Activate_ThunderStrike()
 {
     FVector Start = GetActorLocation();
@@ -162,17 +164,15 @@ void ASkillActor::Activate_ThunderStrike()
     {
         if (AActor* HitActor = Hit.GetActor())
         {
-            UGameplayStatics::ApplyDamage(HitActor, CurrentSkillData.Damage, nullptr, this, CurrentSkillData.DamageType);
+            UGameplayStatics::ApplyDamage(HitActor, SkillDamage, nullptr, this, CurrentSkillData.DamageType);
         }
-
-        // 디버그용 선 그리기
         DrawDebugLine(GetWorld(), Start, Hit.ImpactPoint, FColor::Blue, false, 1.0f, 0, 2.0f);
     }
 
     Explode();
 }
 
-// 4) Dash Slash: 캐스터를 앞으로 순간이동시키며 충돌시 데미지
+// Dash Slash: 캐스터 순간이동 후 충돌 시 데미지
 void ASkillActor::Activate_DashSlash()
 {
     if (Caster)
@@ -180,7 +180,6 @@ void ASkillActor::Activate_DashSlash()
         FVector DashTo = Caster->GetActorLocation() + Caster->GetActorForwardVector() * CurrentSkillData.Range;
         Caster->SetActorLocation(DashTo, true);
 
-        // 이동 후 근거리 적에게 데미지
         TArray<FOverlapResult> overlaps;
         GetWorld()->OverlapMultiByChannel(
             overlaps,
@@ -194,14 +193,14 @@ void ASkillActor::Activate_DashSlash()
         for (auto& R : overlaps)
         {
             if (AActor* Other = R.GetActor())
-                UGameplayStatics::ApplyDamage(Other, CurrentSkillData.Damage, nullptr, this, CurrentSkillData.DamageType);
+                UGameplayStatics::ApplyDamage(Other, SkillDamage, nullptr, this, CurrentSkillData.DamageType);
         }
     }
 
     Explode();
 }
 
-// 5) Healing Light: 반경 내 아군 회복
+// Healing Light: 반경 내 아군 회복 (Damage < 0 이면 Heal)
 void ASkillActor::Activate_HealingLight()
 {
     TArray<FOverlapResult> overlaps;
@@ -218,10 +217,9 @@ void ASkillActor::Activate_HealingLight()
     {
         if (AActor* Other = R.GetActor())
         {
-            float HealAmount = -CurrentSkillData.Damage;  // Damage < 0 → Heal
-            // 예: 캐스팅 타입체크 후 Heal 인터페이스 호출 후에 인터페이스 제작후 추가할 것
-            //IHealthInterface* HI = Cast<IHealthInterface>(Other);
-            //if (HI) HI->Execute_Heal(Other, HealAmount);
+            float HealAmount = -SkillDamage;
+            // IHealthInterface* HI = Cast<IHealthInterface>(Other);
+            // if (HI) HI->Execute_Heal(Other, HealAmount);
         }
     }
 

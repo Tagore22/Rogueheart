@@ -1,4 +1,4 @@
-#include "Skill/SkillComponent.h"
+ï»¿#include "Skill/SkillComponent.h"
 #include "Skill/SkillActor.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
@@ -15,7 +15,6 @@ void USkillComponent::BeginPlay()
     if (!SkillDataTable)
         return;
 
-    // DataTableÀÇ ¸ðµç ·Î¿ì¸¦ ¼øÈ¸ÇÏ¸ç SkillType ¡æ RowName, ÃÊ±â Äð´Ù¿î ¼¼ÆÃ
     for (const FName& RowName : SkillDataTable->GetRowNames())
     {
         const FSkillDataRow* Row = SkillDataTable->FindRow<FSkillDataRow>(RowName, TEXT("BeginPlay"));
@@ -23,6 +22,9 @@ void USkillComponent::BeginPlay()
         {
             SkillRowNames.Add(Row->SkillType, RowName);
             CooldownTimers.Add(Row->SkillType, 0.f);
+
+            // ë ˆë²¨ ì´ˆê¸°í™” (ë ˆë²¨ 0ë¶€í„° ì‹œìž‘)
+            SkillLevels.Add(RowName, 0);
         }
     }
 }
@@ -56,7 +58,6 @@ const FSkillDataRow* USkillComponent::GetSkillData(ESkillType SkillType) const
 
 void USkillComponent::UseSkill(ESkillType SkillType)
 {
-    // DataTable ¼¼ÆÃ ¹× Äð´Ù¿î Ã¼Å©
     const FSkillDataRow* SkillData = GetSkillData(SkillType);
     if (!SkillData)
         return;
@@ -64,15 +65,18 @@ void USkillComponent::UseSkill(ESkillType SkillType)
     float& Timer = CooldownTimers.FindOrAdd(SkillType);
     if (Timer > 0.f)
         return;
+    UpgradeSkill(SkillType);
+    // ì—¬ê¸°ì„œ ë°ë¯¸ì§€ ê³„ì‚°
+    float Damage = GetSkillDamage(SkillType);
 
-    // ½ºÅ³ ¾×ÅÍ ½ºÆù
-    SpawnSkillActor(*SkillData);
+    // ëŒ€ë¯¸ì§€ ë„˜ê²¨ì£¼ë©´ì„œ ì•¡í„° ìŠ¤í°
+    SpawnSkillActor(*SkillData, Damage);
 
-    // Äð´Ù¿î ½ÃÀÛ
+    // ì¿¨ë‹¤ìš´ ì‹œìž‘
     Timer = SkillData->Cooldown;
 }
 
-void USkillComponent::SpawnSkillActor(const FSkillDataRow& SkillData)
+void USkillComponent::SpawnSkillActor(const FSkillDataRow& SkillData, float Damage)
 {
     UClass* LoadedClass = SkillData.SkillClass.LoadSynchronous();
     if (!LoadedClass)
@@ -82,7 +86,7 @@ void USkillComponent::SpawnSkillActor(const FSkillDataRow& SkillData)
     if (!World || !GetOwner())
         return;
 
-    FVector Location = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 150.f; // ÇÃ·¹ÀÌ¾îÀÇ À§Ä¡¿¡¼­ ÀÏÁ¤ °Å¸® ¾Õ¿¡¼­ ½ºÆù
+    FVector Location = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 150.f;
     FRotator Rotation = GetOwner()->GetActorRotation();
 
     ASkillActor* Skill = World->SpawnActorDeferred<ASkillActor>(
@@ -95,7 +99,49 @@ void USkillComponent::SpawnSkillActor(const FSkillDataRow& SkillData)
 
     if (Skill)
     {
-        Skill->InitializeSkill(SkillData, GetOwner());
+        Skill->InitializeSkill(SkillData, GetOwner(), Damage);
         UGameplayStatics::FinishSpawningActor(Skill, FTransform(Rotation, Location));
     }
+}
+
+// ìŠ¤í‚¬ ì—…ê·¸ë ˆì´ë“œ í•¨ìˆ˜
+bool USkillComponent::UpgradeSkill(ESkillType SkillType)
+{
+    const FSkillDataRow* SkillData = GetSkillData(SkillType);
+    if (!SkillData) return false;
+
+    const FName* RowName = SkillRowNames.Find(SkillType);
+    if (!RowName) return false;
+
+    int32& CurrentLevel = SkillLevels.FindOrAdd(*RowName);
+    int32 MaxLevel = SkillData->DamagePerLevel.Num() - 1;
+
+    if (CurrentLevel >= MaxLevel)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Skill %s is already at max level."), *RowName->ToString());
+        return false;
+    }
+
+    CurrentLevel++;
+    UE_LOG(LogTemp, Log, TEXT("Skill %s upgraded to Level %d"), *RowName->ToString(), CurrentLevel);
+    return true;
+}
+
+// í˜„ìž¬ ë°ë¯¸ì§€ ë°˜í™˜ í•¨ìˆ˜
+float USkillComponent::GetSkillDamage(ESkillType SkillType) const
+{
+    const FSkillDataRow* SkillData = GetSkillData(SkillType);
+    if (!SkillData) return 0.f;
+
+    const FName* RowName = SkillRowNames.Find(SkillType);
+    if (!RowName) return 0.f;
+
+    const int32* LevelPtr = SkillLevels.Find(*RowName);
+    int32 Level = (LevelPtr) ? *LevelPtr : 0;
+    UE_LOG(LogTemp, Log, TEXT("SkillLevel ê°’: %d"), Level);
+
+    if (SkillData->DamagePerLevel.IsValidIndex(Level))
+        return SkillData->DamagePerLevel[Level];
+
+    return SkillData->DamagePerLevel.Last();
 }

@@ -20,17 +20,17 @@ struct FSkillDataRow : public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
     TSoftClassPtr<ASkillActor> SkillClass;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<float> DamagePerLevel;
+
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     float Cooldown;
-
+        
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     FName SkillName;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     float Speed;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    float Damage;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     float LifeTime;

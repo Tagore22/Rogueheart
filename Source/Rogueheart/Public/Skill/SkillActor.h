@@ -17,8 +17,8 @@ class ROGUEHEART_API ASkillActor : public AActor
 public:
     ASkillActor();
 
-    // 스킬 속성 및 소유자를 초기화 → 이후 자동으로 ActivateSkill() 호출 
-    void InitializeSkill(const FSkillDataRow& SkillData, AActor* SkillOwner);
+    // 스킬 속성, 소유자, 데미지 초기화 → 이후 자동으로 ActivateSkill() 호출 
+    void InitializeSkill(const FSkillDataRow& SkillData, AActor* SkillOwner, float Damage);
 
 protected:
     virtual void BeginPlay() override;
@@ -49,18 +49,22 @@ protected:
 protected:
     // 충돌 컴포넌트 
     UPROPERTY(VisibleAnywhere, Category = "Skill")
-        USphereComponent* Collision;
+    USphereComponent* Collision;
 
     // 이펙트 컴포넌트 
     UPROPERTY(VisibleAnywhere, Category = "Skill")
-        UNiagaraComponent* SkillEffect;
+    UNiagaraComponent* SkillEffect;
 
     // 투사체 이동 컴포넌트 (Fireball, DashSlash) 
     UPROPERTY(VisibleAnywhere, Category = "Skill")
-        UProjectileMovementComponent* ProjectileMovement;
+    UProjectileMovementComponent* ProjectileMovement;
 
     // DataTable에서 전송된 현재 스킬 정보 
     FSkillDataRow CurrentSkillData;
+
+    // 실제로 적용할 스킬 데미지 
+    UPROPERTY(VisibleAnywhere, Category = "Skill")
+    float SkillDamage;
 
     // 스킬 시전자 
     AActor* Caster;
