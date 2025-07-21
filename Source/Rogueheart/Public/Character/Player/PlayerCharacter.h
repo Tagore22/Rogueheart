@@ -16,6 +16,7 @@ enum class EPlayerState : uint8
     Moving,
     Attacking,
     Dodging,
+    Jumping,
     Parrying,
     Stunned
 };
@@ -28,9 +29,12 @@ class ROGUEHEART_API APlayerCharacter : public ACharacter
 public:
     APlayerCharacter();
 
+    // 상태 관리
+    void SetPlayerState(EPlayerState NewState);
 protected:
     virtual void BeginPlay() override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    virtual void Landed(const FHitResult& Hit) override;
 
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
@@ -39,66 +43,68 @@ protected:
     void Attack(const FInputActionValue& Value);
     void Dodge(const FInputActionValue& Value);
     UFUNCTION()
-    void UseFireball();   // Slot1
+        void UseFireball();
     UFUNCTION()
-    void UseIceBlast();   // Slot2
+        void UseIceBlast();
+
+    // 상태 관리
+    bool CanAct() const;
 
 private:
     UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseTurnRate;
+        float BaseTurnRate;
 
     UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseLookUpRate;
+        float BaseLookUpRate;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    class USpringArmComponent* CameraBoom;
+        class USpringArmComponent* CameraBoom;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    class UCameraComponent* FollowCamera;
+        class UCameraComponent* FollowCamera;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
-    EPlayerState CurrentState;
+        EPlayerState CurrentState;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputMappingContext* DefaultMappingContext;
+        UInputMappingContext* DefaultMappingContext;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Move;
+        UInputAction* IA_Move;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Look;
+        UInputAction* IA_Look;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Jump;
-
-    UPROPERTY(EditDefaultsOnly, Category = "Input") 
-    UInputAction* IA_Attack;
+        UInputAction* IA_Jump;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Dodge;
+        UInputAction* IA_Attack;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Skill1;
+        UInputAction* IA_Dodge;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Skill2;
+        UInputAction* IA_Skill1;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Attack") 
-    UAnimMontage* AMT_Attack;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+        UInputAction* IA_Skill2;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Attack")
+        UAnimMontage* AMT_Attack;
 
     UPROPERTY(EditDefaultsOnly, Category = "Dodge")
-    float DodgeDistance = 600.f;
+        float DodgeDistance = 600.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Dodge")
-    float DodgeSpeed = 2400.f;
+        float DodgeSpeed = 2400.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Dodge")
-    UAnimMontage* AMT_Dodge;
+        UAnimMontage* AMT_Dodge;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = true))
-    USkillComponent* SkillComponent;
+        USkillComponent* SkillComponent;
 
-    // 위젯 테스트용
     UPROPERTY(EditDefaultsOnly, Category = "UI")
         TSubclassOf<UUserWidget> WB_SkillCooldownClass;
 

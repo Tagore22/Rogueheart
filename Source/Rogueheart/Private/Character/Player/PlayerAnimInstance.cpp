@@ -1,6 +1,7 @@
 #include "Character/Player/PlayerAnimInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Character/Player/PlayerCharacter.h"
 
 UPlayerAnimInstance::UPlayerAnimInstance()
 {
@@ -30,4 +31,18 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 void UPlayerAnimInstance::AnimNotify_EndAttack()
 {
     SetIsAttacking(false);
+    ResetPlayerToIdle();
+}
+
+void UPlayerAnimInstance::AnimNotify_EndDodge()
+{
+    ResetPlayerToIdle();
+}
+
+void UPlayerAnimInstance::ResetPlayerToIdle()
+{
+    if (APlayerCharacter* PC = Cast<APlayerCharacter>(TryGetPawnOwner()))
+    {
+        PC->SetPlayerState(EPlayerState::Idle);
+    }
 }

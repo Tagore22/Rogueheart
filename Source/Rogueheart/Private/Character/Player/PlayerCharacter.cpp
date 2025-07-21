@@ -7,10 +7,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "Character/Player/PlayerAnimInstance.h"
 #include "Skill/SkillCooldownWidget.h"
-#include "RogueheartGameInstance.h"
-#include "UI/UIManager.h"
-// 위젯 테스트용
-// #include "Blueprint/UserWidget.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -34,7 +30,6 @@ APlayerCharacter::APlayerCharacter()
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
-
     CurrentState = EPlayerState::Idle;
 }
 
@@ -54,7 +49,6 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
-
     if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
     {
         EnhancedInput->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
@@ -71,30 +65,32 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
     FVector2D MovementVector = Value.Get<FVector2D>();
+    UE_LOG(LogTemp, Log, TEXT("Move called: State=%s, Vec=(%f,%f)"),
+        *UEnum::GetValueAsString(CurrentState),
+        MovementVector.X, MovementVector.Y);
+    if (!CanAct() || CurrentState == EPlayerState::Attacking || CurrentState == EPlayerState::Dodging)
+        return;
 
     if (Controller && (MovementVector.X != 0.f || MovementVector.Y != 0.f))
     {
-        const FRotator Rotation = Controller->GetControlRotation();
-        const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
-
-        const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-        const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-        AddMovementInput(ForwardDirection, MovementVector.X);
-        AddMovementInput(RightDirection, MovementVector.Y);
+        const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
+        AddMovementInput(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X), MovementVector.X);
+        AddMovementInput(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y), MovementVector.Y);
     }
 }
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
-    FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-    AddControllerYawInput(LookAxisVector.X * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-    AddControllerPitchInput(LookAxisVector.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+    if (!CanAct()) return;
+    FVector2D LookAxis = Value.Get<FVector2D>();
+    AddControllerYawInput(LookAxis.X * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+    AddControllerPitchInput(LookAxis.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void APlayerCharacter::StartJump(const FInputActionValue& Value)
 {
+    if (!CanAct()) return;
+    SetPlayerState(EPlayerState::Jumping);
     Jump();
 }
 
@@ -103,46 +99,55 @@ void APlayerCharacter::StopJump(const FInputActionValue& Value)
     StopJumping();
 }
 
+void APlayerCharacter::Landed(const FHitResult& Hit)
+{
+    Super::Landed(Hit);
+    SetPlayerState(EPlayerState::Idle);
+}
+
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Attack"));
-    if (AMT_Attack == nullptr) 
+    if (!CanAct() || CurrentState != EPlayerState::Idle || AMT_Attack == nullptr)
         return;
-
-    UPlayerAnimInstance* AnimInst = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-    if (AnimInst && AMT_Attack)
+    SetPlayerState(EPlayerState::Attacking);
+    if (UPlayerAnimInstance* Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance()))
     {
-        // 공격 상태 true 세팅
-        AnimInst->SetIsAttacking(true);
-        // 몽타주 재생
-        AnimInst->Montage_Play(AMT_Attack);
+        Anim->SetIsAttacking(true);
+        Anim->Montage_Play(AMT_Attack);
+        // 상태 복귀: 몽타주 끝나면 Notify에서 Idle로 전환 예정
     }
 }
 
 void APlayerCharacter::Dodge(const FInputActionValue& Value)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Dodge"));
-    if (Controller == nullptr || AMT_Dodge == nullptr)
+    if (!CanAct() || CurrentState != EPlayerState::Idle || AMT_Dodge == nullptr)
         return;
-
-    FVector DodgeDirection = GetActorForwardVector();
-    LaunchCharacter(DodgeDirection * DodgeSpeed, true, true);
-
-    UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-    if (AnimInstance)
+    SetPlayerState(EPlayerState::Dodging);
+    LaunchCharacter(GetActorForwardVector() * DodgeSpeed, true, true);
+    if (UAnimInstance* Anim = GetMesh()->GetAnimInstance())
     {
-        AnimInstance->Montage_Play(AMT_Dodge);
+        Anim->Montage_Play(AMT_Dodge);
     }
 }
 
 void APlayerCharacter::UseFireball()
 {
-    if (SkillComponent)
-        SkillComponent->UseSkill(ESkillType::Fireball);
+    if (!CanAct()) return;
+    SkillComponent->UseSkill(ESkillType::Fireball);
 }
 
 void APlayerCharacter::UseIceBlast()
 {
-    if (SkillComponent)
-        SkillComponent->UseSkill((ESkillType::IceNova));
+    if (!CanAct()) return;
+    SkillComponent->UseSkill(ESkillType::IceNova);
+}
+
+void APlayerCharacter::SetPlayerState(EPlayerState NewState)
+{
+    CurrentState = NewState;
+}
+
+bool APlayerCharacter::CanAct() const
+{
+    return CurrentState != EPlayerState::Attacking && CurrentState != EPlayerState::Dodging && CurrentState != EPlayerState::Stunned;
 }

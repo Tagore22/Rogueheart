@@ -18,6 +18,8 @@ public:
 
     UFUNCTION()
     void AnimNotify_EndAttack();
+    UFUNCTION()
+    void AnimNotify_EndDodge();
 
 protected:
     UPROPERTY(BlueprintReadOnly, Category = "Movement")
@@ -31,4 +33,8 @@ protected:
 
     UPROPERTY(BlueprintReadOnly, Category = "Combat")
     bool bIsAttacking;
+
+private:
+    // °øÅë helper
+    void ResetPlayerToIdle();
 };
