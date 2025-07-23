@@ -18,7 +18,14 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     APawn* OwningPawn = TryGetPawnOwner();
     if (!OwningPawn) return;
 
-    Speed = OwningPawn->GetVelocity().Size();
+    APlayerCharacter* PC = Cast<APlayerCharacter>(OwningPawn);
+    if (!PC) return;
+
+    if (PC->IsDodging())
+        Speed = 0.f;
+    else
+        Speed = OwningPawn->GetVelocity().Size();
+    UE_LOG(LogTemp, Log, TEXT("Speed : %f"), Speed);
 
     ACharacter* Character = Cast<ACharacter>(OwningPawn);
     if (Character)
@@ -30,6 +37,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UPlayerAnimInstance::AnimNotify_EndAttack()
 {
+    UE_LOG(LogTemp, Warning, TEXT("AnimNotify_EndAttack"));
     SetIsAttacking(false);
     ResetPlayerToIdle();
 }
