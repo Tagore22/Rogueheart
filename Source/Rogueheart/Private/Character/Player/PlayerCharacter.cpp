@@ -10,21 +10,15 @@
 
 APlayerCharacter::APlayerCharacter()
 {
-    BaseTurnRate = 45.f;
-    BaseLookUpRate = 45.f;
-
-    // 카메라 붐 설정 (캐릭터 뒤에서 따라오는 카메라용)
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
     CameraBoom->TargetArmLength = 300.f;
     CameraBoom->bUsePawnControlRotation = true;
 
-    // 카메라 설정
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
     FollowCamera->bUsePawnControlRotation = false;
 
-    // 캐릭터 회전 설정
     bUseControllerRotationPitch = false;
     bUseControllerRotationYaw = false;
     bUseControllerRotationRoll = false;
@@ -32,10 +26,8 @@ APlayerCharacter::APlayerCharacter()
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
-    // 스킬 컴포넌트 생성
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
 
-    // 초기 상태
     CurrentState = EPlayerState::Idle;
 }
 
@@ -43,7 +35,6 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-    // 입력 매핑 적용
     if (APlayerController* PC = Cast<APlayerController>(GetController()))
     {
         if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
@@ -71,9 +62,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
     FVector2D MovementVector = Value.Get<FVector2D>();
-    UE_LOG(LogTemp, Log, TEXT("Move called: State=%s, Vec=(%f,%f)"),
-        *UEnum::GetValueAsString(CurrentState),
-        MovementVector.X, MovementVector.Y);
 
     if (!CanAct() || CurrentState == EPlayerState::Attacking || CurrentState == EPlayerState::Dodging)
         return;
@@ -106,7 +94,6 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
     {
         Anim->SetIsAttacking(true);
         Anim->Montage_Play(AMT_Attack);
-        // 상태 복귀: 애니메이션 노티파이에서 Idle로 전환
     }
 }
 
@@ -115,7 +102,6 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     if (!CanAct() || CurrentState != EPlayerState::Idle || AMT_Dodge == nullptr)
         return;
 
-    UE_LOG(LogTemp, Log, TEXT("Dodge"));
     SetPlayerState(EPlayerState::Dodging);
 
     if (UAnimInstance* Anim = GetMesh()->GetAnimInstance())

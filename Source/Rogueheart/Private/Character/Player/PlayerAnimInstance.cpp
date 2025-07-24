@@ -1,7 +1,6 @@
 #include "Character/Player/PlayerAnimInstance.h"
-#include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Character/Player/PlayerCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UPlayerAnimInstance::UPlayerAnimInstance()
 {
@@ -18,26 +17,28 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     APawn* OwningPawn = TryGetPawnOwner();
     if (!OwningPawn) return;
 
-    APlayerCharacter* PC = Cast<APlayerCharacter>(OwningPawn);
-    if (!PC) return;
+    APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(OwningPawn);
+    if (!PlayerCharacter) return;
 
-    if (PC->IsDodging())
-        Speed = 0.f;
-    else
-        Speed = OwningPawn->GetVelocity().Size();
-    UE_LOG(LogTemp, Log, TEXT("Speed : %f"), Speed);
-
-    ACharacter* Character = Cast<ACharacter>(OwningPawn);
-    if (Character)
+    // 회피 중엔 Speed 강제 0 처리
+    if (PlayerCharacter->IsDodging())
     {
-        bIsInAir = Character->GetCharacterMovement()->IsFalling();
-        bIsAccelerating = Character->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? true : false;
+        Speed = 0.f;
+    }
+    else
+    {
+        Speed = OwningPawn->GetVelocity().Size();
+    }
+
+    if (const UCharacterMovementComponent* Movement = PlayerCharacter->GetCharacterMovement())
+    {
+        bIsInAir = Movement->IsFalling();
+        bIsAccelerating = Movement->GetCurrentAcceleration().Size() > 0.f;
     }
 }
 
 void UPlayerAnimInstance::AnimNotify_EndAttack()
 {
-    UE_LOG(LogTemp, Warning, TEXT("AnimNotify_EndAttack"));
     SetIsAttacking(false);
     ResetPlayerToIdle();
 }
@@ -49,8 +50,8 @@ void UPlayerAnimInstance::AnimNotify_EndDodge()
 
 void UPlayerAnimInstance::ResetPlayerToIdle()
 {
-    if (APlayerCharacter* PC = Cast<APlayerCharacter>(TryGetPawnOwner()))
+    if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(TryGetPawnOwner()))
     {
-        PC->SetPlayerState(EPlayerState::Idle);
+        PlayerCharacter->SetPlayerState(EPlayerState::Idle);
     }
 }

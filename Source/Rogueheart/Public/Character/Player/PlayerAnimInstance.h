@@ -12,16 +12,18 @@ class ROGUEHEART_API UPlayerAnimInstance : public UAnimInstance
 public:
     UPlayerAnimInstance();
 
-    // 매 프레임 호출
     virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
     void SetIsAttacking(bool bNewState) { bIsAttacking = bNewState; }
 
     UFUNCTION()
     void AnimNotify_EndAttack();
+
     UFUNCTION()
     void AnimNotify_EndDodge();
 
 protected:
+    // 이동 관련 상태
     UPROPERTY(BlueprintReadOnly, Category = "Movement")
     float Speed;
 
@@ -31,10 +33,11 @@ protected:
     UPROPERTY(BlueprintReadOnly, Category = "Movement")
     bool bIsAccelerating;
 
+    // 전투 상태
     UPROPERTY(BlueprintReadOnly, Category = "Combat")
     bool bIsAttacking;
 
 private:
-    // 공통 helper
+    // 상태 복귀
     void ResetPlayerToIdle();
 };
