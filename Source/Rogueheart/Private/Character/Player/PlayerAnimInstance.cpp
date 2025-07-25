@@ -39,8 +39,35 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UPlayerAnimInstance::AnimNotify_EndAttack()
 {
+    if (APlayerCharacter* Player = Cast<APlayerCharacter>(TryGetPawnOwner()))
+    {
+        ResetPlayerToIdle();
+        Player->bCanNextCombo = false;
+        Player->bInputCombo = false;
+    }
     SetIsAttacking(false);
-    ResetPlayerToIdle();
+}
+
+void UPlayerAnimInstance::AnimNotify_NextCombo()
+{
+    if (APlayerCharacter* Player = Cast<APlayerCharacter>(TryGetPawnOwner()))
+    {
+        if (Player->bInputCombo && Player->CurrentCombo < Player->MaxCombo)
+        {
+            Player->CurrentCombo++;
+            if (Montage_IsPlaying(Player->AMT_Attack))
+            {
+                Montage_JumpToSection(FName(FString::Printf(TEXT("Attack_%d"), Player->CurrentCombo)), Player->AMT_Attack);
+            }
+
+            Player->bCanNextCombo = false;
+            Player->bInputCombo = false;
+        }
+        else
+        {
+            Player->bCanNextCombo = true; // 다음 콤보를 받을 수 있음
+        }
+    }
 }
 
 void UPlayerAnimInstance::AnimNotify_EndDodge()
