@@ -40,73 +40,78 @@ protected:
     virtual void BeginPlay() override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-    // 입력 처리
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
     void Attack(const FInputActionValue& Value);
     void Dodge(const FInputActionValue& Value);
 
-    // 스킬 처리
     UFUNCTION()
         void UseFireball();
 
     UFUNCTION()
         void UseIceBlast();
 
+public:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
+        UAnimMontage* AMT_Attack;
+
+    // 콤보 관련
+    int32 CurrentCombo = 0;
+    int32 MaxCombo = 3;
+    bool bCanNextCombo = false;
+    bool bInputCombo = false;
+
 private:
-    // ===== 상태 =====
+    // 상태
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
-    EPlayerState CurrentState = EPlayerState::Idle;
+        EPlayerState CurrentState = EPlayerState::Idle;
 
-    // ===== 카메라 =====
+    // 카메라
     UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseTurnRate = 45.f;
+        float BaseTurnRate = 45.f;
 
     UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseLookUpRate = 45.f;
+        float BaseLookUpRate = 45.f;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    USpringArmComponent* CameraBoom;
+        USpringArmComponent* CameraBoom;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    UCameraComponent* FollowCamera;
+        UCameraComponent* FollowCamera;
 
-    // ===== 입력 매핑 =====
+    // 입력
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputMappingContext* DefaultMappingContext;
-
-    UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Move;
+        UInputMappingContext* DefaultMappingContext;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Look;
+        UInputAction* IA_Move;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Attack;
+        UInputAction* IA_Look;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Dodge;
+        UInputAction* IA_Attack;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Skill1;
+        UInputAction* IA_Dodge;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Skill2;
+        UInputAction* IA_Skill1;
 
-    // ===== 애니메이션 =====
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+        UInputAction* IA_Skill2;
+
+    // 애니메이션
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
-    UAnimMontage* AMT_Attack;
+        UAnimMontage* AMT_Dodge;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Animation")
-    UAnimMontage* AMT_Dodge;
-
-    // ===== 스킬 시스템 =====
+    // 스킬
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-    USkillComponent* SkillComponent;
+        USkillComponent* SkillComponent;
 
-    // ===== UI =====
+    // UI
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UUserWidget> WB_SkillCooldownClass;
+        TSubclassOf<UUserWidget> WB_SkillCooldownClass;
 
     UUserWidget* CooldownWidget = nullptr;
 };

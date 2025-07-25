@@ -29,6 +29,9 @@ APlayerCharacter::APlayerCharacter()
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
 
     CurrentState = EPlayerState::Idle;
+    CurrentCombo = 0;
+    MaxCombo = 3;
+    bComboInput = false;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -85,15 +88,49 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
-    if (!CanAct() || CurrentState != EPlayerState::Idle || AMT_Attack == nullptr)
-        return;
+    if (!CanAct()) return;
 
-    SetPlayerState(EPlayerState::Attacking);
+    if (CurrentState != EPlayerState::Attacking)
+    {
+        CurrentCombo = 1;
+        PlayComboMontage();
+        SetPlayerState(EPlayerState::Attacking);
+    }
+    else
+    {
+        bComboInput = true;
+    }
+}
 
+void APlayerCharacter::PlayComboMontage()
+{
     if (UPlayerAnimInstance* Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance()))
     {
-        Anim->SetIsAttacking(true);
         Anim->Montage_Play(AMT_Attack);
+        Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Combo%d"), CurrentCombo)), AMT_Attack);
+    }
+}
+
+void APlayerCharacter::HandleComboInput()
+{
+    if (!bComboInput || CurrentCombo >= MaxCombo) return;
+
+    ++CurrentCombo;
+    bComboInput = false;
+    PlayComboMontage();
+}
+
+void APlayerCharacter::OnAttackEnd()
+{
+    if (bComboInput && CurrentCombo < MaxCombo)
+    {
+        HandleComboInput();
+    }
+    else
+    {
+        SetPlayerState(EPlayerState::Idle);
+        CurrentCombo = 0;
+        bComboInput = false;
     }
 }
 

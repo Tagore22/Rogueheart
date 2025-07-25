@@ -16,28 +16,31 @@ public:
 
     void SetIsAttacking(bool bNewState) { bIsAttacking = bNewState; }
 
+    // 애님 노티파이 함수들
     UFUNCTION()
-    void AnimNotify_EndAttack();
+        void AnimNotify_EndAttack();
 
     UFUNCTION()
-    void AnimNotify_EndDodge();
+        void AnimNotify_NextCombo();
+
+    UFUNCTION()
+        void AnimNotify_EndDodge();
 
 protected:
-    // 이동 관련 상태
+    // 이동 관련
     UPROPERTY(BlueprintReadOnly, Category = "Movement")
-    float Speed;
+        float Speed;
 
     UPROPERTY(BlueprintReadOnly, Category = "Movement")
-    bool bIsInAir;
+        bool bIsInAir;
 
     UPROPERTY(BlueprintReadOnly, Category = "Movement")
-    bool bIsAccelerating;
+        bool bIsAccelerating;
 
     // 전투 상태
     UPROPERTY(BlueprintReadOnly, Category = "Combat")
-    bool bIsAttacking;
+        bool bIsAttacking;
 
 private:
-    // 상태 복귀
     void ResetPlayerToIdle();
 };
