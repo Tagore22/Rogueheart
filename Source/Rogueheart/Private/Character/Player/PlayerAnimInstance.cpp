@@ -20,7 +20,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(OwningPawn);
     if (!PlayerCharacter) return;
 
-    // 회피 중엔 Speed 강제 0 처리
+    // 회피 중일 땐 Speed = 0
     if (PlayerCharacter->IsDodging())
     {
         Speed = 0.f;
@@ -41,9 +41,7 @@ void UPlayerAnimInstance::AnimNotify_EndAttack()
 {
     if (APlayerCharacter* Player = Cast<APlayerCharacter>(TryGetPawnOwner()))
     {
-        ResetPlayerToIdle();
-        Player->bCanNextCombo = false;
-        Player->bInputCombo = false;
+        Player->OnAttackEnd();
     }
     SetIsAttacking(false);
 }
@@ -52,21 +50,7 @@ void UPlayerAnimInstance::AnimNotify_NextCombo()
 {
     if (APlayerCharacter* Player = Cast<APlayerCharacter>(TryGetPawnOwner()))
     {
-        if (Player->bInputCombo && Player->CurrentCombo < Player->MaxCombo)
-        {
-            Player->CurrentCombo++;
-            if (Montage_IsPlaying(Player->AMT_Attack))
-            {
-                Montage_JumpToSection(FName(FString::Printf(TEXT("Attack_%d"), Player->CurrentCombo)), Player->AMT_Attack);
-            }
-
-            Player->bCanNextCombo = false;
-            Player->bInputCombo = false;
-        }
-        else
-        {
-            Player->bCanNextCombo = true; // 다음 콤보를 받을 수 있음
-        }
+        Player->bCanNextCombo = true;
     }
 }
 

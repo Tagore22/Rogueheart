@@ -14,9 +14,11 @@ public:
 
     virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+    // 공격 중 상태 제어
     void SetIsAttacking(bool bNewState) { bIsAttacking = bNewState; }
 
-    // 애님 노티파이 함수들
+protected:
+    // 애니메이션 알림
     UFUNCTION()
         void AnimNotify_EndAttack();
 
@@ -26,21 +28,20 @@ public:
     UFUNCTION()
         void AnimNotify_EndDodge();
 
-protected:
+private:
+    void ResetPlayerToIdle();
+
     // 이동 관련
-    UPROPERTY(BlueprintReadOnly, Category = "Movement")
+    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float Speed;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Movement")
+    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         bool bIsInAir;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Movement")
+    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         bool bIsAccelerating;
 
     // 전투 상태
-    UPROPERTY(BlueprintReadOnly, Category = "Combat")
+    UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
         bool bIsAttacking;
-
-private:
-    void ResetPlayerToIdle();
 };
