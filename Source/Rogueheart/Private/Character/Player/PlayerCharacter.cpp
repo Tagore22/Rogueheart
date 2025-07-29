@@ -8,10 +8,13 @@
 #include "Character/Player/PlayerAnimInstance.h"
 #include "Skill/SkillCooldownWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Character/Enemy/EnemyBase.h"
+#include "EngineUtils.h"
 
 APlayerCharacter::APlayerCharacter()
 {
-    // 카메라 세팅
+    PrimaryActorTick.bCanEverTick = true;
+
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
     CameraBoom->TargetArmLength = 300.f;
@@ -28,10 +31,8 @@ APlayerCharacter::APlayerCharacter()
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
-    // 스킬 컴포넌트
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
 
-    // 초기 상태
     CurrentState = EPlayerState::Idle;
     CurrentCombo = 0;
     MaxCombo = 3;
@@ -64,6 +65,18 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &APlayerCharacter::Dodge);
         EnhancedInput->BindAction(IA_Skill1, ETriggerEvent::Started, this, &APlayerCharacter::UseFireball);
         EnhancedInput->BindAction(IA_Skill2, ETriggerEvent::Started, this, &APlayerCharacter::UseIceBlast);
+        EnhancedInput->BindAction(IA_LockOn, ETriggerEvent::Started, this, &APlayerCharacter::ToggleLockOn);
+    }
+}
+
+// 락온 대상 바라보기
+void APlayerCharacter::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    if (bIsLockedOn && LockOnTarget)
+    {
+        UpdateLockOnRotation(DeltaTime);
     }
 }
 
@@ -87,6 +100,9 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     if (!CanAct())
         return;
 
+    if (bIsLockedOn)
+        return;
+
     FVector2D LookAxis = Value.Get<FVector2D>();
     AddControllerYawInput(LookAxis.X * BaseTurnRate * GetWorld()->GetDeltaSeconds());
     AddControllerPitchInput(LookAxis.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
@@ -94,8 +110,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
-    //if (!CanAct()) return;
-    if (CurrentState == EPlayerState::Dodging || CurrentState == EPlayerState::Stunned) // 후에 리팩토링할 것
+    if (CurrentState == EPlayerState::Dodging || CurrentState == EPlayerState::Stunned)
         return;
 
     if (CurrentState != EPlayerState::Attacking)
@@ -129,6 +144,7 @@ void APlayerCharacter::HandleComboInput()
 {
     if (CurrentCombo >= MaxCombo)
         return;
+
     ++CurrentCombo;
     bInputCombo = false;
     bCanNextCombo = false;
@@ -186,4 +202,66 @@ bool APlayerCharacter::CanAct() const
     return CurrentState != EPlayerState::Attacking &&
         CurrentState != EPlayerState::Dodging &&
         CurrentState != EPlayerState::Stunned;
+}
+
+// 락온 토글
+void APlayerCharacter::ToggleLockOn()
+{
+    UE_LOG(LogTemp, Warning, TEXT("LockOn"));
+    if (bIsLockedOn)
+    {
+        bIsLockedOn = false;
+        LockOnTarget = nullptr;
+        GetCharacterMovement()->bOrientRotationToMovement = true;
+        bUseControllerRotationYaw = false;
+    }
+    else
+    {
+        FindNearestTarget();
+        if (LockOnTarget)
+        {
+            bIsLockedOn = true;
+            GetCharacterMovement()->bOrientRotationToMovement = false;
+            bUseControllerRotationYaw = true;
+        }
+    }
+}
+
+// 가장 가까운 타겟 찾기
+void APlayerCharacter::FindNearestTarget()
+{
+    float NearestDist = LockOnRange;
+    AActor* NearestEnemy = nullptr;
+
+    for (TActorIterator<AEnemyBase> It(GetWorld()); It; ++It)
+    {
+        AEnemyBase* Enemy = *It;
+        if (!Enemy || Enemy->IsPendingKill()) continue;
+
+        float Dist = FVector::Dist(GetActorLocation(), Enemy->GetActorLocation());
+        if (Dist <= NearestDist)
+        {
+            NearestDist = Dist;
+            NearestEnemy = Enemy;
+        }
+    }
+
+    LockOnTarget = NearestEnemy;
+}
+
+void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
+{
+    if (!LockOnTarget) return;
+
+    FVector TargetDir = LockOnTarget->GetActorLocation() - GetActorLocation();
+    TargetDir.Z = 0.f;
+    FRotator TargetRot = TargetDir.Rotation();
+
+    FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
+    SetActorRotation(NewRot);
+
+    if (Controller)
+    {
+        Controller->SetControlRotation(NewRot);
+    }
 }
