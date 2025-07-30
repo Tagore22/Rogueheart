@@ -14,11 +14,9 @@ public:
 
     virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-    // 공격 중 상태 제어
     void SetIsAttacking(bool bNewState) { bIsAttacking = bNewState; }
 
 protected:
-    // 애니메이션 알림
     UFUNCTION()
         void AnimNotify_EndAttack();
 
@@ -44,4 +42,14 @@ private:
     // 전투 상태
     UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
         bool bIsAttacking;
+
+    // 락온 이동용 BlendSpace 파라미터
+    UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
+        float WalkSpeed;
+
+    UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
+        float Direct;
+
+    UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
+        bool bIsLockedOn;
 };

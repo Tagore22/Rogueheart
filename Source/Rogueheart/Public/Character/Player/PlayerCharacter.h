@@ -33,12 +33,13 @@ public:
     APlayerCharacter();
 
     virtual void BeginPlay() override;
-    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     virtual void Tick(float DeltaTime) override;
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     void SetPlayerState(EPlayerState NewState);
     bool CanAct() const;
     bool IsDodging() const { return CurrentState == EPlayerState::Dodging; }
+    bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; }
 
     void PlayComboMontage();
     void HandleComboInput();
@@ -51,10 +52,10 @@ protected:
     void Dodge(const FInputActionValue& Value);
 
     UFUNCTION()
-    void UseFireball();
+        void UseFireball();
 
     UFUNCTION()
-    void UseIceBlast();
+        void UseIceBlast();
 
     void ToggleLockOn();
     void FindNearestTarget();
@@ -62,78 +63,82 @@ protected:
 
 public:
     UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseTurnRate = 45.f;
+        float BaseTurnRate = 45.f;
 
     UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseLookUpRate = 45.f;
+        float BaseLookUpRate = 45.f;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    USpringArmComponent* CameraBoom;
+        USpringArmComponent* CameraBoom;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    UCameraComponent* FollowCamera;
+        UCameraComponent* FollowCamera;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputMappingContext* DefaultMappingContext;
+        UInputMappingContext* DefaultMappingContext;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Move;
+        UInputAction* IA_Move;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Look;
+        UInputAction* IA_Look;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Attack;
+        UInputAction* IA_Attack;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Dodge;
+        UInputAction* IA_Dodge;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Skill1;
+        UInputAction* IA_Skill1;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Skill2;
+        UInputAction* IA_Skill2;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_LockOn;
+        UInputAction* IA_LockOn;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-    UAnimMontage* AMT_Attack;
+        UAnimMontage* AMT_Attack;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-    UAnimMontage* AMT_Dodge;
+        UAnimMontage* AMT_Dodge;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-    USkillComponent* SkillComponent;
+        USkillComponent* SkillComponent;
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
-    int32 CurrentCombo = 0;
+        int32 CurrentCombo = 0;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
-    int32 MaxCombo = 3;
+        int32 MaxCombo = 3;
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
-    bool bInputCombo = false;
+        bool bInputCombo = false;
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
-    bool bCanNextCombo = false;
+        bool bCanNextCombo = false;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UUserWidget> WB_SkillCooldownClass;
+        TSubclassOf<UUserWidget> WB_SkillCooldownClass;
 
     UPROPERTY()
-    UUserWidget* CooldownWidget = nullptr;
+        UUserWidget* CooldownWidget = nullptr;
 
     UPROPERTY(BlueprintReadOnly, Category = "Targeting")
-    AActor* LockOnTarget = nullptr;
+        AActor* LockOnTarget = nullptr;
 
     UPROPERTY(BlueprintReadOnly, Category = "Targeting")
-    bool bIsLockedOn = false;
+        bool bIsLockedOn = false;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-    float LockOnRange = 1200.f;
+        float LockOnRange = 1200.f;
+
+    // 회피 시 타겟 고정 여부 저장
+    bool bWasLockedOnWhenDodged = false;
 
 private:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
-    EPlayerState CurrentState = EPlayerState::Idle;
+        EPlayerState CurrentState = EPlayerState::Idle;
+    FVector LastMoveInput;
 };

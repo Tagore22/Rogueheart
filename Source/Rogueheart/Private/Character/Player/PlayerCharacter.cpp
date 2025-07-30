@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Character/Enemy/EnemyBase.h"
 #include "EngineUtils.h"
+#include "Kismet/KismetMathLibrary.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -69,7 +70,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     }
 }
 
-// 락온 대상 바라보기
 void APlayerCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
@@ -82,7 +82,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-    FVector2D MovementVector = Value.Get<FVector2D>();
+    FVector MovementVector = Value.Get<FVector>();
+    LastMoveInput = MovementVector;  // 입력 저장
 
     if (!CanAct())
         return;
@@ -97,7 +98,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
-    if (!CanAct())
+    if (CurrentState == EPlayerState::Dodging || CurrentState == EPlayerState::Stunned)
         return;
 
     if (bIsLockedOn)
@@ -204,7 +205,6 @@ bool APlayerCharacter::CanAct() const
         CurrentState != EPlayerState::Stunned;
 }
 
-// 락온 토글
 void APlayerCharacter::ToggleLockOn()
 {
     UE_LOG(LogTemp, Warning, TEXT("LockOn"));
@@ -227,7 +227,6 @@ void APlayerCharacter::ToggleLockOn()
     }
 }
 
-// 가장 가까운 타겟 찾기
 void APlayerCharacter::FindNearestTarget()
 {
     float NearestDist = LockOnRange;
