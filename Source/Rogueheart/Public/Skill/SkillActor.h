@@ -59,12 +59,12 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Skill")
     UProjectileMovementComponent* ProjectileMovement;
 
-    // DataTable에서 전송된 현재 스킬 정보 
-    FSkillDataRow CurrentSkillData;
-
     // 실제로 적용할 스킬 데미지 
     UPROPERTY(VisibleAnywhere, Category = "Skill")
     float SkillDamage;
+
+    // DataTable에서 전송된 현재 스킬 정보 
+    FSkillDataRow CurrentSkillData;
 
     // 스킬 시전자 
     AActor* Caster;

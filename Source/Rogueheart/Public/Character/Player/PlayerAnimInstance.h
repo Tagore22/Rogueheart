@@ -18,38 +18,40 @@ public:
 
 protected:
     UFUNCTION()
-        void AnimNotify_EndAttack();
+    void AnimNotify_EndAttack();
 
     UFUNCTION()
-        void AnimNotify_NextCombo();
+    void AnimNotify_NextCombo();
 
     UFUNCTION()
-        void AnimNotify_EndDodge();
+    void AnimNotify_EndDodge();
 
 private:
     void ResetPlayerToIdle();
 
     // 이동 관련
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-        float Speed;
+    float Speed;
 
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-        bool bIsInAir;
+    bool bIsInAir;
 
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-        bool bIsAccelerating;
+    bool bIsAccelerating;
+
 
     // 전투 상태
     UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-        bool bIsAttacking;
+    bool bIsAttacking;
+
 
     // 락온 이동용 BlendSpace 파라미터
     UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
-        float WalkSpeed;
+    float WalkSpeed;
 
     UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
-        float Direct;
+    float Direct;
 
     UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
-        bool bIsLockedOn;
+    bool bIsLockedOn;
 };

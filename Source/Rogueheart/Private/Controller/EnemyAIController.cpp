@@ -50,14 +50,14 @@ void AEnemyAIController::Tick(float DeltaSeconds)
 
         if (Distance <= AttackDistance)
         {
-            UE_LOG(LogTemp, Warning, TEXT("EnemyAttack"));
             ACharacter* EnemyCharacter = Cast<ACharacter>(ControlledPawn);
             if (EnemyCharacter)
             {
                 UAnimInstance* AnimInstance = EnemyCharacter->GetMesh()->GetAnimInstance();
                 if (AnimInstance && AttackMontage && !AnimInstance->Montage_IsPlaying(AttackMontage))
                 {
-                    //AnimInstance->Montage_Play(AttackMontage);
+                    // Enemy 공격모션 구현이후 수정.
+                    // AnimInstance->Montage_Play(AttackMontage);
                 }
             }
         }
@@ -70,11 +70,9 @@ void AEnemyAIController::Tick(float DeltaSeconds)
 
 void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-    UE_LOG(LogTemp, Warning, TEXT("AIPerception"));
     if (Stimulus.WasSuccessfullySensed())
     {
         TargetActor = Actor;
-        UE_LOG(LogTemp, Warning, TEXT("Player Sense : %s"), *Actor->GetName());
     }
     else
     {
@@ -82,7 +80,6 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
         {
             TargetActor = nullptr;
             StopMovement();
-            UE_LOG(LogTemp, Warning, TEXT("Player Lost : %s"), *Actor->GetName());
         }
     }
 }

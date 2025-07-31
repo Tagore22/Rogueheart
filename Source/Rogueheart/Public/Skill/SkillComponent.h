@@ -24,27 +24,27 @@ protected:
 public:
     /** DataTable에서 스킬 속성 불러올 에셋 */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skills")
-        UDataTable* SkillDataTable;
+    UDataTable* SkillDataTable;
 
     /** 각 스킬별 현재 레벨 저장 */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill")
-        TMap<FName, int32> SkillLevels;
+    TMap<FName, int32> SkillLevels;
 
     /** 스킬 발동 함수 */
     UFUNCTION(BlueprintCallable, Category = "Skills")
-        void UseSkill(ESkillType SkillType);
+    void UseSkill(ESkillType SkillType);
 
     /** 스킬 강화 함수 */
     UFUNCTION(BlueprintCallable, Category = "Skills")
-        bool UpgradeSkill(ESkillType SkillType);
+    bool UpgradeSkill(ESkillType SkillType);
 
     /** 현재 스킬 데미지를 가져오기 */
     UFUNCTION(BlueprintCallable, Category = "Skills")
-        float GetSkillDamage(ESkillType SkillType) const;
+    float GetSkillDamage(ESkillType SkillType) const;
 
     /** SkillType, RemainingCooldownSeconds 브로드캐스트 */
     UPROPERTY(BlueprintAssignable, Category = "Skills")
-        FOnSkillCooldownUpdated OnSkillCooldownUpdated;
+    FOnSkillCooldownUpdated OnSkillCooldownUpdated;
 
 private:
     /** SkillType → 남은 쿨다운 초 */

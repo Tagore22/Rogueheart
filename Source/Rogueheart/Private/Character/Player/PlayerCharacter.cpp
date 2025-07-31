@@ -34,12 +34,6 @@ APlayerCharacter::APlayerCharacter()
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
-
-    CurrentState = EPlayerState::Idle;
-    CurrentCombo = 0;
-    MaxCombo = 3;
-    bInputCombo = false;
-    bCanNextCombo = false;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -87,7 +81,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
     FVector MovementVector = Value.Get<FVector>();
-    LastMoveInput = MovementVector;  // 입력 저장
+    LastMoveInput = MovementVector;
 
     if (!CanAct())
         return;
@@ -171,7 +165,6 @@ void APlayerCharacter::OnAttackEnd()
 
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {
-    // 회피 전 타겟팅 상태였던 경우 다시 타겟팅
     if (bWasLockedOnWhenDodged)
     {
         FindNearestTarget();
@@ -193,11 +186,8 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
         return;
 
     SetPlayerState(EPlayerState::Dodging);
-
-    // 회피 시작 시 현재 타겟팅 상태 저장
     bWasLockedOnWhenDodged = bIsLockedOn;
 
-    // 입력 방향으로 캐릭터 회전
     if (!LastMoveInput.IsNearlyZero())
     {
         FRotator ControlRot = FRotator(0.f, GetControlRotation().Yaw, 0.f);
@@ -206,17 +196,22 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
         SetActorRotation(FRotator(0.f, LookAtRot.Yaw, 0.f));
     }
 
-    // 회피 애니메이션 재생
     if (UAnimInstance* Anim = GetMesh()->GetAnimInstance())
     {
         Anim->Montage_Play(AMT_Dodge);
     }
 
-    // 회피 중에는 타겟팅 해제
     if (bIsLockedOn)
     {
+        if (CurrentTargetEnemy)
+        {
+            CurrentTargetEnemy->ShowTargetMarker(false);
+        }
+
         bIsLockedOn = false;
         LockOnTarget = nullptr;
+        CurrentTargetEnemy = nullptr;
+
         GetCharacterMovement()->bOrientRotationToMovement = true;
         bUseControllerRotationYaw = false;
     }
@@ -241,33 +236,34 @@ void APlayerCharacter::SetPlayerState(EPlayerState NewState)
 
 bool APlayerCharacter::CanAct() const
 {
-    return CurrentState != EPlayerState::Attacking &&
-        CurrentState != EPlayerState::Dodging &&
-        CurrentState != EPlayerState::Stunned;
+    return CurrentState != EPlayerState::Attacking && CurrentState != EPlayerState::Dodging && CurrentState != EPlayerState::Stunned;
 }
 
 void APlayerCharacter::ToggleLockOn()
 {
-    UE_LOG(LogTemp, Warning, TEXT("LockOn"));
     if (bIsLockedOn)
     {
-        bIsLockedOn = false;
-        if (AEnemyBase* Enemy = Cast<AEnemyBase>(LockOnTarget))
+        if (CurrentTargetEnemy)
         {
-            Enemy->TargetMarker->SetVisibility(false);
+            CurrentTargetEnemy->ShowTargetMarker(false);
         }
 
+        bIsLockedOn = false;
         LockOnTarget = nullptr;
+        CurrentTargetEnemy = nullptr;
+
         GetCharacterMovement()->bOrientRotationToMovement = true;
         bUseControllerRotationYaw = false;
     }
     else
     {
         FindNearestTarget();
-        if (AEnemyBase* Enemy = Cast<AEnemyBase>(LockOnTarget))
+        CurrentTargetEnemy = Cast<AEnemyBase>(LockOnTarget);
+
+        if (CurrentTargetEnemy)
         {
             bIsLockedOn = true;
-            Enemy->TargetMarker->SetVisibility(true);
+            CurrentTargetEnemy->ShowTargetMarker(true);
 
             GetCharacterMovement()->bOrientRotationToMovement = false;
             bUseControllerRotationYaw = true;
@@ -323,7 +319,7 @@ void APlayerCharacter::SwitchTarget(bool bLeft)
     FVector MyRight = GetActorRightVector();
 
     float MinAngle = 180.f;
-    AActor* NewTarget = nullptr;
+    AEnemyBase* NewTarget = nullptr;
 
     for (TActorIterator<AEnemyBase> It(GetWorld()); It; ++It)
     {
@@ -338,8 +334,7 @@ void APlayerCharacter::SwitchTarget(bool bLeft)
         float DotRight = FVector::DotProduct(ToEnemy, MyRight);
         float DotForward = FVector::DotProduct(ToEnemy, MyForward);
 
-        // 일정 각도 내 전방에서만 전환 허용
-        if (DotForward < 0.3f) // 너무 뒤쪽은 제외
+        if (DotForward < 0.3f)
             continue;
 
         if ((bLeft && DotRight < 0.f) || (!bLeft && DotRight > 0.f))
@@ -355,8 +350,25 @@ void APlayerCharacter::SwitchTarget(bool bLeft)
 
     if (NewTarget)
     {
+        if (CurrentTargetEnemy)
+        {
+            CurrentTargetEnemy->ShowTargetMarker(false);
+        }
+
         LockOnTarget = NewTarget;
+        CurrentTargetEnemy = NewTarget;
+        CurrentTargetEnemy->ShowTargetMarker(true);
     }
+}
+
+void APlayerCharacter::SwitchTargetLeft()
+{
+    SwitchTarget(true);
+}
+
+void APlayerCharacter::SwitchTargetRight()
+{
+    SwitchTarget(false);
 }
 
 void APlayerCharacter::CheckLockOnDistance()
@@ -364,10 +376,17 @@ void APlayerCharacter::CheckLockOnDistance()
     if (!bIsLockedOn || !LockOnTarget) return;
 
     float Dist = FVector::Dist(GetActorLocation(), LockOnTarget->GetActorLocation());
-    if (Dist > LockOnRange)
+    if (Dist > LockOnBreakDistance)
     {
+        if (CurrentTargetEnemy)
+        {
+            CurrentTargetEnemy->ShowTargetMarker(false);
+        }
+
         bIsLockedOn = false;
         LockOnTarget = nullptr;
+        CurrentTargetEnemy = nullptr;
+
         GetCharacterMovement()->bOrientRotationToMovement = true;
         bUseControllerRotationYaw = false;
     }

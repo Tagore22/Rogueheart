@@ -12,6 +12,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UUserWidget;
 class UAnimMontage;
+class AEnemyBase;
 
 UENUM(BlueprintType)
 enum class EPlayerState : uint8
@@ -45,7 +46,6 @@ public:
     void HandleComboInput();
     void OnAttackEnd();
 
-    // 회피 후 타겟 복원 함수
     void RestoreLockOnIfNeeded();
 
 protected:
@@ -55,109 +55,123 @@ protected:
     void Dodge(const FInputActionValue& Value);
 
     UFUNCTION()
-        void UseFireball();
+    void UseFireball();
 
     UFUNCTION()
-        void UseIceBlast();
+    void UseIceBlast();
 
     void ToggleLockOn();
     void FindNearestTarget();
     void UpdateLockOnRotation(float DeltaTime);
 
 public:
+    // 카메라
     UPROPERTY(EditAnywhere, Category = "Camera")
-        float BaseTurnRate = 45.f;
+    float BaseTurnRate = 45.f;
 
     UPROPERTY(EditAnywhere, Category = "Camera")
-        float BaseLookUpRate = 45.f;
+    float BaseLookUpRate = 45.f;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-        USpringArmComponent* CameraBoom;
+    USpringArmComponent* CameraBoom;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-        UCameraComponent* FollowCamera;
+    UCameraComponent* FollowCamera;
+
+
+    // 입력
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    UInputMappingContext* DefaultMappingContext;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputMappingContext* DefaultMappingContext;
+    UInputAction* IA_Move;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputAction* IA_Move;
+    UInputAction* IA_Look;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputAction* IA_Look;
+    UInputAction* IA_Attack;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputAction* IA_Attack;
+    UInputAction* IA_Dodge;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputAction* IA_Dodge;
+    UInputAction* IA_Skill1;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputAction* IA_Skill1;
+    UInputAction* IA_Skill2;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputAction* IA_Skill2;
+    UInputAction* IA_LockOn;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputAction* IA_LockOn;
+    UInputAction* IA_SwitchTargetLeft;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputAction* IA_SwitchTargetLeft;
+    UInputAction* IA_SwitchTargetRight;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Input")
-        UInputAction* IA_SwitchTargetRight;
+
+    // 애니메이션
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    UAnimMontage* AMT_Attack;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-        UAnimMontage* AMT_Attack;
+    UAnimMontage* AMT_Dodge;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-        UAnimMontage* AMT_Dodge;
 
+    // 스킬 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-        USkillComponent* SkillComponent;
+    USkillComponent* SkillComponent;
 
+
+    // 전투 관련 변수
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
-        int32 CurrentCombo = 0;
+    int32 CurrentCombo = 0;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
-        int32 MaxCombo = 3;
+    int32 MaxCombo = 3;
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
-        bool bInputCombo = false;
+    bool bInputCombo = false;
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
-        bool bCanNextCombo = false;
+    bool bCanNextCombo = false;
 
+
+    // UI
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-        TSubclassOf<UUserWidget> WB_SkillCooldownClass;
+    TSubclassOf<UUserWidget> WB_SkillCooldownClass;
 
     UPROPERTY()
-        UUserWidget* CooldownWidget = nullptr;
+    UUserWidget* CooldownWidget = nullptr;
+
+
+    // 타겟팅
+    UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+    AActor* LockOnTarget = nullptr;
 
     UPROPERTY(BlueprintReadOnly, Category = "Targeting")
-        AActor* LockOnTarget = nullptr;
-
-    UPROPERTY(BlueprintReadOnly, Category = "Targeting")
-        bool bIsLockedOn = false;
+    bool bIsLockedOn = false;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-        float LockOnRange = 1200.f;
+    float LockOnRange = 1200.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-        float LockOnBreakDistance = 1500.f;
+    float LockOnBreakDistance = 1500.f;
 
-    // 회피 시 타겟 고정 여부 저장
     bool bWasLockedOnWhenDodged = false;
 
 private:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
-        EPlayerState CurrentState = EPlayerState::Idle;
+    EPlayerState CurrentState = EPlayerState::Idle;
 
-    // 입력 방향 저장용 (Vector로 수정)
     FVector LastMoveInput = FVector::ZeroVector;
 
     void SwitchTarget(bool bLeft);
-    void SwitchTargetLeft() { SwitchTarget(true); }
-    void SwitchTargetRight() { SwitchTarget(false); }
+    void SwitchTargetLeft();
+    void SwitchTargetRight();
     void CheckLockOnDistance();
+
+    // 이전 타겟 기억용 (UI 마커 제어에 필요)
+    AEnemyBase* CurrentTargetEnemy = nullptr;
 };
