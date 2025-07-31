@@ -11,6 +11,7 @@
 #include "Character/Enemy/EnemyBase.h"
 #include "EngineUtils.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/WidgetComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -79,6 +80,7 @@ void APlayerCharacter::Tick(float DeltaTime)
     if (bIsLockedOn && LockOnTarget)
     {
         UpdateLockOnRotation(DeltaTime);
+        CheckLockOnDistance();
     }
 }
 
@@ -100,9 +102,6 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
-    if (CurrentState == EPlayerState::Dodging || CurrentState == EPlayerState::Stunned)
-        return;
-
     if (bIsLockedOn)
         return;
 
@@ -253,6 +252,11 @@ void APlayerCharacter::ToggleLockOn()
     if (bIsLockedOn)
     {
         bIsLockedOn = false;
+        if (AEnemyBase* Enemy = Cast<AEnemyBase>(LockOnTarget))
+        {
+            Enemy->TargetMarker->SetVisibility(false);
+        }
+
         LockOnTarget = nullptr;
         GetCharacterMovement()->bOrientRotationToMovement = true;
         bUseControllerRotationYaw = false;
@@ -260,9 +264,11 @@ void APlayerCharacter::ToggleLockOn()
     else
     {
         FindNearestTarget();
-        if (LockOnTarget)
+        if (AEnemyBase* Enemy = Cast<AEnemyBase>(LockOnTarget))
         {
             bIsLockedOn = true;
+            Enemy->TargetMarker->SetVisibility(true);
+
             GetCharacterMovement()->bOrientRotationToMovement = false;
             bUseControllerRotationYaw = true;
         }
@@ -322,7 +328,7 @@ void APlayerCharacter::SwitchTarget(bool bLeft)
     for (TActorIterator<AEnemyBase> It(GetWorld()); It; ++It)
     {
         AEnemyBase* Enemy = *It;
-        if (!Enemy || Enemy == LockOnTarget || Enemy->IsPendingKill())
+        if (!IsValid(Enemy) || Enemy == LockOnTarget)
             continue;
 
         FVector ToEnemy = Enemy->GetActorLocation() - MyLocation;
@@ -350,5 +356,19 @@ void APlayerCharacter::SwitchTarget(bool bLeft)
     if (NewTarget)
     {
         LockOnTarget = NewTarget;
+    }
+}
+
+void APlayerCharacter::CheckLockOnDistance()
+{
+    if (!bIsLockedOn || !LockOnTarget) return;
+
+    float Dist = FVector::Dist(GetActorLocation(), LockOnTarget->GetActorLocation());
+    if (Dist > LockOnRange)
+    {
+        bIsLockedOn = false;
+        LockOnTarget = nullptr;
+        GetCharacterMovement()->bOrientRotationToMovement = true;
+        bUseControllerRotationYaw = false;
     }
 }

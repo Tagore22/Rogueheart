@@ -63,9 +63,6 @@ protected:
     void ToggleLockOn();
     void FindNearestTarget();
     void UpdateLockOnRotation(float DeltaTime);
-    void SwitchTarget(bool bLeft);
-    void SwitchTargetLeft() { SwitchTarget(true); }
-    void SwitchTargetRight() { SwitchTarget(false); }
 
 public:
     UPROPERTY(EditAnywhere, Category = "Camera")
@@ -146,6 +143,9 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
         float LockOnRange = 1200.f;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+        float LockOnBreakDistance = 1500.f;
+
     // 회피 시 타겟 고정 여부 저장
     bool bWasLockedOnWhenDodged = false;
 
@@ -155,4 +155,9 @@ private:
 
     // 입력 방향 저장용 (Vector로 수정)
     FVector LastMoveInput = FVector::ZeroVector;
+
+    void SwitchTarget(bool bLeft);
+    void SwitchTargetLeft() { SwitchTarget(true); }
+    void SwitchTargetRight() { SwitchTarget(false); }
+    void CheckLockOnDistance();
 };
