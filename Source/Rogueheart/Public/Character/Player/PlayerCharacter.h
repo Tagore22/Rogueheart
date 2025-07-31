@@ -45,6 +45,9 @@ public:
     void HandleComboInput();
     void OnAttackEnd();
 
+    // 회피 후 타겟 복원 함수
+    void RestoreLockOnIfNeeded();
+
 protected:
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
@@ -60,6 +63,9 @@ protected:
     void ToggleLockOn();
     void FindNearestTarget();
     void UpdateLockOnRotation(float DeltaTime);
+    void SwitchTarget(bool bLeft);
+    void SwitchTargetLeft() { SwitchTarget(true); }
+    void SwitchTargetRight() { SwitchTarget(false); }
 
 public:
     UPROPERTY(EditAnywhere, Category = "Camera")
@@ -97,6 +103,12 @@ public:
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
         UInputAction* IA_LockOn;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+        UInputAction* IA_SwitchTargetLeft;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+        UInputAction* IA_SwitchTargetRight;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
         UAnimMontage* AMT_Attack;
@@ -140,5 +152,7 @@ public:
 private:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
         EPlayerState CurrentState = EPlayerState::Idle;
-    FVector LastMoveInput;
+
+    // 입력 방향 저장용 (Vector로 수정)
+    FVector LastMoveInput = FVector::ZeroVector;
 };

@@ -86,5 +86,6 @@ void UPlayerAnimInstance::ResetPlayerToIdle()
     if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(TryGetPawnOwner()))
     {
         PlayerCharacter->SetPlayerState(EPlayerState::Idle);
+        PlayerCharacter->RestoreLockOnIfNeeded();
     }
 }
