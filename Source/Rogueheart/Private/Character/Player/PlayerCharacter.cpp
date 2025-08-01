@@ -203,15 +203,7 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
 
     if (bIsLockedOn)
     {
-        if (CurrentTargetEnemy)
-        {
-            CurrentTargetEnemy->ShowTargetMarker(false);
-        }
-
         bIsLockedOn = false;
-        LockOnTarget = nullptr;
-        CurrentTargetEnemy = nullptr;
-
         GetCharacterMovement()->bOrientRotationToMovement = true;
         bUseControllerRotationYaw = false;
     }
@@ -241,6 +233,9 @@ bool APlayerCharacter::CanAct() const
 
 void APlayerCharacter::ToggleLockOn()
 {
+    if (!CanAct())
+        return;
+
     if (bIsLockedOn)
     {
         if (CurrentTargetEnemy)
