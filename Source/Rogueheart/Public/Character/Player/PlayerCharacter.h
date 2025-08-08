@@ -1,9 +1,8 @@
-#pragma once
-
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Skill/SkillComponent.h"
+#include "GenericTeamAgentInterface.h"
 #include "PlayerCharacter.generated.h"
 
 class UInputMappingContext;
@@ -26,13 +25,14 @@ enum class EPlayerState : uint8
 };
 
 UCLASS()
-class ROGUEHEART_API APlayerCharacter : public ACharacter
+class ROGUEHEART_API APlayerCharacter : public ACharacter, public IGenericTeamAgentInterface
 {
     GENERATED_BODY()
 
 public:
     APlayerCharacter();
 
+    virtual FGenericTeamId GetGenericTeamId() const override;
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -63,9 +63,12 @@ protected:
     void ToggleLockOn();
     void FindNearestTarget();
     void UpdateLockOnRotation(float DeltaTime);
+    void SwitchTarget(bool bLeft);
+    void SwitchTargetLeft();
+    void SwitchTargetRight();
+    void CheckLockOnDistance();
 
 public:
-    // 카메라
     UPROPERTY(EditAnywhere, Category = "Camera")
     float BaseTurnRate = 45.f;
 
@@ -78,8 +81,6 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
     UCameraComponent* FollowCamera;
 
-
-    // 입력
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     UInputMappingContext* DefaultMappingContext;
 
@@ -110,21 +111,15 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     UInputAction* IA_SwitchTargetRight;
 
-
-    // 애니메이션
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
     UAnimMontage* AMT_Attack;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
     UAnimMontage* AMT_Dodge;
 
-
-    // 스킬 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
     USkillComponent* SkillComponent;
 
-
-    // 전투 관련 변수
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
     int32 CurrentCombo = 0;
 
@@ -137,16 +132,12 @@ public:
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
     bool bCanNextCombo = false;
 
-
-    // UI
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<UUserWidget> WB_SkillCooldownClass;
 
     UPROPERTY()
     UUserWidget* CooldownWidget = nullptr;
 
-
-    // 타겟팅
     UPROPERTY(BlueprintReadOnly, Category = "Targeting")
     AActor* LockOnTarget = nullptr;
 
@@ -167,11 +158,8 @@ private:
 
     FVector LastMoveInput = FVector::ZeroVector;
 
-    void SwitchTarget(bool bLeft);
-    void SwitchTargetLeft();
-    void SwitchTargetRight();
-    void CheckLockOnDistance();
-
-    // 이전 타겟 기억용 (UI 마커 제어에 필요)
     AEnemyBase* CurrentTargetEnemy = nullptr;
+
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    uint8 TeamID = 1;
 };

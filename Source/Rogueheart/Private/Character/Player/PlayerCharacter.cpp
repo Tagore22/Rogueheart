@@ -2,16 +2,14 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Character/Player/PlayerAnimInstance.h"
 #include "Skill/SkillCooldownWidget.h"
-#include "Kismet/GameplayStatics.h"
 #include "Character/Enemy/EnemyBase.h"
 #include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Components/WidgetComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -47,6 +45,8 @@ void APlayerCharacter::BeginPlay()
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
         }
     }
+
+    SetGenericTeamId(FGenericTeamId(TeamID));
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -192,8 +192,7 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     {
         FRotator ControlRot = FRotator(0.f, GetControlRotation().Yaw, 0.f);
         FVector DodgeDir = ControlRot.RotateVector(LastMoveInput);
-        FRotator LookAtRot = (DodgeDir + GetActorLocation() - GetActorLocation()).Rotation();
-        SetActorRotation(FRotator(0.f, LookAtRot.Yaw, 0.f));
+        SetActorRotation(DodgeDir.Rotation());
     }
 
     if (UAnimInstance* Anim = GetMesh()->GetAnimInstance())
@@ -358,11 +357,17 @@ void APlayerCharacter::SwitchTarget(bool bLeft)
 
 void APlayerCharacter::SwitchTargetLeft()
 {
+    if (IsAttacking() || IsDodging())
+        return;
+
     SwitchTarget(true);
 }
 
 void APlayerCharacter::SwitchTargetRight()
 {
+    if (IsAttacking() || IsDodging())
+        return;
+
     SwitchTarget(false);
 }
 
@@ -385,4 +390,9 @@ void APlayerCharacter::CheckLockOnDistance()
         GetCharacterMovement()->bOrientRotationToMovement = true;
         bUseControllerRotationYaw = false;
     }
+}
+
+FGenericTeamId APlayerCharacter::GetGenericTeamId() const
+{
+    return FGenericTeamId(TeamID);
 }

@@ -27,6 +27,7 @@ EBTNodeResult::Type UBTTask_MoveToNextPatrolPoint::ExecuteTask(UBehaviorTreeComp
 
     // 이동 명령
     AICon->MoveToActor(NextPatrolTarget, 5.f, true);
+    UE_LOG(LogTemp, Warning, TEXT("Patrol"));
 
     return EBTNodeResult::Succeeded;
 }

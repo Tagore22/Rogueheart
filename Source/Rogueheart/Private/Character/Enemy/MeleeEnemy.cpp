@@ -110,7 +110,6 @@ void AMeleeEnemy::MoveAroundPlayer()
     if (!TargetPlayer)
         return;
 
-    UE_LOG(LogTemp, Warning, TEXT("MoveAround"));
     FVector PlayerLocation = TargetPlayer->GetActorLocation();
     FVector ToEnemy = GetActorLocation() - PlayerLocation;
     ToEnemy.Z = 0.f;

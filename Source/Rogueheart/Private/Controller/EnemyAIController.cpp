@@ -1,8 +1,10 @@
 #include "Controller/EnemyAIController.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Perception/AISense_Sight.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Character/Player/PlayerCharacter.h" // 너의 플레이어 캐릭터 헤더로 수정 필요
 #include "GameFramework/Character.h"
-#include "Animation/AnimInstance.h"
 
 AEnemyAIController::AEnemyAIController()
 {
@@ -14,17 +16,25 @@ AEnemyAIController::AEnemyAIController()
     SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
     if (SightConfig)
     {
-        SightConfig->SightRadius = 1000.f;
-        SightConfig->LoseSightRadius = 1200.f;
-        SightConfig->PeripheralVisionAngleDegrees = 90.f;
-        SightConfig->SetMaxAge(5.f);
+        SightConfig->SightRadius = 800.f;
+        SightConfig->LoseSightRadius = 900.f;
+        SightConfig->PeripheralVisionAngleDegrees = 60.f;
+        SightConfig->SetMaxAge(0.5f); // 오래된 감지 무시
+
+        // 감지 대상: 적만 (플레이어가 적이면 감지함)
         SightConfig->DetectionByAffiliation.bDetectEnemies = true;
-        SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-        SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+        SightConfig->DetectionByAffiliation.bDetectFriendlies = false;
+        SightConfig->DetectionByAffiliation.bDetectNeutrals = false;
+
+        // 마지막 본 위치 자동 추적 제거
+        SightConfig->AutoSuccessRangeFromLastSeenLocation = 0.f;
 
         AIPerception->ConfigureSense(*SightConfig);
         AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
     }
+
+    // 팀 설정
+    SetGenericTeamId(FGenericTeamId(EnemyTeamId));
 }
 
 void AEnemyAIController::BeginPlay()
@@ -43,43 +53,36 @@ void AEnemyAIController::Tick(float DeltaSeconds)
 
     if (TargetActor)
     {
-        APawn* ControlledPawn = GetPawn();
-        if (!ControlledPawn) return;
+        const float Distance = FVector::Dist(GetPawn()->GetActorLocation(), TargetActor->GetActorLocation());
 
-        float Distance = FVector::Dist(TargetActor->GetActorLocation(), ControlledPawn->GetActorLocation());
-
-        if (Distance <= AttackDistance)
+        if (Distance > AttackDistance)
         {
-            ACharacter* EnemyCharacter = Cast<ACharacter>(ControlledPawn);
-            if (EnemyCharacter)
-            {
-                UAnimInstance* AnimInstance = EnemyCharacter->GetMesh()->GetAnimInstance();
-                if (AnimInstance && AttackMontage && !AnimInstance->Montage_IsPlaying(AttackMontage))
-                {
-                    // Enemy 공격모션 구현이후 수정.
-                    // AnimInstance->Montage_Play(AttackMontage);
-                }
-            }
+            MoveToActor(TargetActor, 100.f);
         }
         else
         {
-            MoveToActor(TargetActor, 100.f, true, true, true, 0, true);
+            StopMovement(); // 혹시 모를 중복 호출 방지
         }
     }
 }
 
 void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+    // 플레이어만 감지하도록 필터링
+    if (!Actor->IsA<APlayerCharacter>()) return;
+
     if (Stimulus.WasSuccessfullySensed())
     {
         TargetActor = Actor;
     }
-    else
+    else if (TargetActor == Actor)
     {
-        if (TargetActor == Actor)
-        {
-            TargetActor = nullptr;
-            StopMovement();
-        }
+        TargetActor = nullptr;
+        StopMovement();
     }
+}
+
+FGenericTeamId AEnemyAIController::GetGenericTeamId() const
+{
+    return FGenericTeamId(EnemyTeamId);
 }

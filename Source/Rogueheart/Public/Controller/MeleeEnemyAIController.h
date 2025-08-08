@@ -4,6 +4,9 @@
 #include "Controller/EnemyAIController.h"
 #include "MeleeEnemyAIController.generated.h"
 
+class UBehaviorTree;
+class UBlackboardData;
+
 UCLASS()
 class ROGUEHEART_API AMeleeEnemyAIController : public AEnemyAIController
 {
@@ -12,10 +15,11 @@ class ROGUEHEART_API AMeleeEnemyAIController : public AEnemyAIController
 public:
     AMeleeEnemyAIController();
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-    TArray<AActor*> PatrolPoints;
 protected:
     virtual void BeginPlay() override;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+    TArray<AActor*> PatrolPoints;
 
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     UBehaviorTree* BehaviorTreeAsset;
