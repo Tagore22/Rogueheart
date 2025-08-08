@@ -21,4 +21,9 @@ protected:
 
     UPROPERTY(EditAnywhere, Category = "AI")
     float AttackRangeDistance = 200.f;
+    
+    //
+    UPROPERTY(EditAnywhere, Category = "AI")
+    float MaxChaseDistance = 1000.f;  // ★ 이 줄 추가
+    //
 };

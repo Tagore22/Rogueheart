@@ -40,4 +40,9 @@ void UBTService_UpdatePlayerState::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
     BlackboardComp->SetValueAsBool(TEXT("bInTargetRange"), Distance <= TargetRangeDistance);
     BlackboardComp->SetValueAsBool(TEXT("bInAttackRange"), Distance <= AttackRangeDistance);
+
+    //
+    FVector DiscoveredLocation = BlackboardComp->GetValueAsVector(TEXT("DiscoveredLocation"));
+    float DistanceFromChaseStart = FVector::Dist(ControlledPawn->GetActorLocation(), DiscoveredLocation);
+    BlackboardComp->SetValueAsBool(TEXT("bShouldReturn"), DistanceFromChaseStart <= MaxChaseDistance);
 }

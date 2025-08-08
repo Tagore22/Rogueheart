@@ -17,6 +17,15 @@ EBTNodeResult::Type UBTTask_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& Own
     AActor* TargetPlayer = Cast<AActor>(BB->GetValueAsObject(TEXT("TargetPlayer")));
     if (!TargetPlayer) return EBTNodeResult::Failed;
 
+    //
+    APawn* ControlledPawn = AICon->GetPawn();
+    if (ControlledPawn)
+    {
+        FVector ChaseStartLocation = ControlledPawn->GetActorLocation();
+        BB->SetValueAsVector(TEXT("ChaseStartLocation"), ChaseStartLocation);
+    }
+    //
+
     AICon->MoveToActor(TargetPlayer, AcceptanceRadius, true, true, false, 0, true);
-    return EBTNodeResult::Succeeded;
+    return EBTNodeResult::InProgress;
 }
