@@ -1,15 +1,17 @@
 #include "Controller/EnemyAIController.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
-#include "Perception/AISense_Sight.h"
-#include "Perception/AIPerceptionStimuliSourceComponent.h"
-#include "Character/Player/PlayerCharacter.h" // 너의 플레이어 캐릭터 헤더로 수정 필요
-#include "GameFramework/Character.h"
+#include "Character/Player/PlayerCharacter.h"
+#include "Character/Enemy/EnemyBase.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "GenericTeamAgentInterface.h"
 
 AEnemyAIController::AEnemyAIController()
 {
-    PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = false;
 
+    // AI Perception 설정
     AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
     SetPerceptionComponent(*AIPerception);
 
@@ -19,14 +21,10 @@ AEnemyAIController::AEnemyAIController()
         SightConfig->SightRadius = 800.f;
         SightConfig->LoseSightRadius = 900.f;
         SightConfig->PeripheralVisionAngleDegrees = 60.f;
-        SightConfig->SetMaxAge(0.5f); // 오래된 감지 무시
-
-        // 감지 대상: 적만 (플레이어가 적이면 감지함)
+        SightConfig->SetMaxAge(4.0f);  // 0.5f에서 4.0f로 증가
         SightConfig->DetectionByAffiliation.bDetectEnemies = true;
         SightConfig->DetectionByAffiliation.bDetectFriendlies = false;
         SightConfig->DetectionByAffiliation.bDetectNeutrals = false;
-
-        // 마지막 본 위치 자동 추적 제거
         SightConfig->AutoSuccessRangeFromLastSeenLocation = 0.f;
 
         AIPerception->ConfigureSense(*SightConfig);
@@ -41,44 +39,53 @@ void AEnemyAIController::BeginPlay()
 {
     Super::BeginPlay();
 
+    // Perception 이벤트 바인딩
     if (AIPerception)
     {
         AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnTargetPerceptionUpdated);
     }
-}
 
-void AEnemyAIController::Tick(float DeltaSeconds)
-{
-    Super::Tick(DeltaSeconds);
-
-    if (TargetActor)
+    // 비헤이비어 트리 시작
+    if (BehaviorTreeAsset)
     {
-        const float Distance = FVector::Dist(GetPawn()->GetActorLocation(), TargetActor->GetActorLocation());
-
-        if (Distance > AttackDistance)
-        {
-            MoveToActor(TargetActor, 100.f);
-        }
-        else
-        {
-            StopMovement(); // 혹시 모를 중복 호출 방지
-        }
+        RunBehaviorTree(BehaviorTreeAsset);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Behavior Tree Asset not found!"));
     }
 }
 
 void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-    // 플레이어만 감지하도록 필터링
-    if (!Actor->IsA<APlayerCharacter>()) return;
+    // TeamId를 통한 플레이어 확인
+    FGenericTeamId ActorTeamId = FGenericTeamId::GetTeamIdentifier(Actor);
+    if (ActorTeamId != FGenericTeamId(1)) // 플레이어 TeamId가 1이 아니면 무시
+        return;
+
+    UBlackboardComponent* BB = GetBlackboardComponent();
+    if (!BB)
+        return;
 
     if (Stimulus.WasSuccessfullySensed())
     {
-        TargetActor = Actor;
+        // 플레이어 발견
+        BB->SetValueAsObject(TEXT("TargetPlayer"), Actor);
+
+        // 발견한 위치 저장
+        if (APawn* ControlledPawn = GetPawn())
+        {
+            BB->SetValueAsVector(TEXT("DiscoveredLocation"), ControlledPawn->GetActorLocation());
+        }
+
+        UE_LOG(LogTemp, Warning, TEXT("Player Detected! TeamId: %d"), ActorTeamId.GetId());
     }
-    else if (TargetActor == Actor)
+    else if (Actor == BB->GetValueAsObject(TEXT("TargetPlayer")))
     {
-        TargetActor = nullptr;
-        StopMovement();
+        // 플레이어 놓침
+        BB->ClearValue(TEXT("TargetPlayer"));
+
+        UE_LOG(LogTemp, Warning, TEXT("Player Lost! TeamId: %d"), ActorTeamId.GetId());
     }
 }
 

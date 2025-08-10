@@ -13,8 +13,6 @@ class ROGUEHEART_API AEnemyAIController : public AAIController
 public:
     AEnemyAIController();
 
-    virtual void Tick(float DeltaSeconds) override;
-
     /** 팀 ID 반환 */
     virtual FGenericTeamId GetGenericTeamId() const override;
 
@@ -25,23 +23,23 @@ protected:
     UFUNCTION()
     void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
-private:
     /** AI Perception 컴포넌트 */
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
     class UAIPerceptionComponent* AIPerception;
 
     /** 시야 설정 */
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
     class UAISenseConfig_Sight* SightConfig;
 
-    /** 공격 거리 */
-    UPROPERTY(EditAnywhere, Category = "AI")
-    float AttackDistance = 200.f;
+    /** 비헤이비어 트리 에셋 */
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    class UBehaviorTree* BehaviorTreeAsset;
 
-    /** 현재 타겟 */
-    UPROPERTY()
-    AActor* TargetActor;
+    /** 블랙보드 에셋 */
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    class UBlackboardData* BlackboardAsset;
 
+private:
     /** 이 AI의 팀 ID */
     static constexpr uint8 EnemyTeamId = 2;
 };

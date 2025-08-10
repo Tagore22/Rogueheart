@@ -4,16 +4,6 @@
 #include "Character/Enemy/EnemyBase.h"
 #include "MeleeEnemy.generated.h"
 
-UENUM(BlueprintType)
-enum class EMeleeEnemyState : uint8
-{
-    Idle,
-    Approaching,
-    Circling,
-    Attacking,
-    Cooldown
-};
-
 UCLASS()
 class ROGUEHEART_API AMeleeEnemy : public AEnemyBase
 {
@@ -22,31 +12,16 @@ class ROGUEHEART_API AMeleeEnemy : public AEnemyBase
 public:
     AMeleeEnemy();
 
-    virtual void Tick(float DeltaTime) override;
-
-protected:
-    virtual void BeginPlay() override;
-
-    void UpdateState(float DeltaTime);
-    void TryCirclePlayer();
-    void PerformMeleeAttack();
-    void MoveAroundPlayer();
-    void SetEnemyState(EMeleeEnemyState NewState);
-
-    bool ShouldAttack() const;
-
 public:
-    UPROPERTY(EditAnywhere, Category = "AI")
+    /** 원형 이동 반지름 */
+    UPROPERTY(EditAnywhere, Category = "Combat")
     float CircleRadius = 250.f;
 
-    UPROPERTY(EditAnywhere, Category = "AI")
+    /** 원형 이동 시 이동 거리 */
+    UPROPERTY(EditAnywhere, Category = "Combat")
     float CircleSpeed = 200.f;
 
-    UPROPERTY(EditAnywhere, Category = "AI")
+    /** 공격 간격 */
+    UPROPERTY(EditAnywhere, Category = "Combat")
     float AttackInterval = 3.f;
-
-private:
-    EMeleeEnemyState CurrentState = EMeleeEnemyState::Idle;
-
-    float TimeSinceLastAction = 0.f;
 };

@@ -37,6 +37,7 @@ EBTNodeResult::Type UBTTask_CirclePlayer::ExecuteTask(UBehaviorTreeComponent& Ow
         if (NavSys->ProjectPointToNavigation(CircleLocation, NavLoc))
         {
             AICon->MoveToLocation(NavLoc.Location);
+            UE_LOG(LogTemp, Warning, TEXT("CirCle"));
             return EBTNodeResult::Succeeded;
         }
     }

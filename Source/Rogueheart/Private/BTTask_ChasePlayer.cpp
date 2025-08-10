@@ -22,10 +22,10 @@ EBTNodeResult::Type UBTTask_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& Own
     if (ControlledPawn)
     {
         FVector ChaseStartLocation = ControlledPawn->GetActorLocation();
-        BB->SetValueAsVector(TEXT("ChaseStartLocation"), ChaseStartLocation);
+        BB->SetValueAsVector(TEXT("DiscoveredLocation"), ChaseStartLocation);
     }
     //
-
+    UE_LOG(LogTemp, Warning, TEXT("Chase"));
     AICon->MoveToActor(TargetPlayer, AcceptanceRadius, true, true, false, 0, true);
     return EBTNodeResult::InProgress;
 }

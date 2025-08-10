@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Perception/AIPerceptionTypes.h"
 #include "EnemyBase.generated.h"
 
 class UWidgetComponent;
@@ -17,49 +16,44 @@ class ROGUEHEART_API AEnemyBase : public ACharacter
 public:
     AEnemyBase();
 
-    /** 공격 시도 */
+    /** 공격 시도 (비헤이비어 트리에서 호출) */
+    UFUNCTION(BlueprintCallable, Category = "Combat")
     void TryAttack();
 
     /** 타겟 마커 표시/숨기기 */
     void ShowTargetMarker(bool bShow);
+
+    /** 공격 쿨다운 체크 */
+    UFUNCTION(BlueprintCallable, Category = "Combat")
+    bool CanAttack() const;
+
+    /** 마지막 공격 시간 리셋 */
+    void ResetAttackCooldown();
+
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
 
-    /** AI Perception이 감지 상태를 업데이트할 때 호출 */
-    UFUNCTION()
-    void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
-
-    /** 플레이어를 향해 이동 */
-    void MoveToPlayer();
-
 private:
-    /** 현재 플레이어를 감지 중인지 여부 */
-    bool bHasPerceivedPlayer = false;
-
     /** 마지막 공격 이후 경과 시간 */
     float TimeSinceLastAttack = 0.f;
 
 public:
     /** 공격 범위 */
-    UPROPERTY(EditAnywhere, Category = "AI")
+    UPROPERTY(EditAnywhere, Category = "Combat")
     float AttackRange = 150.f;
 
     /** 공격 쿨타임 */
-    UPROPERTY(EditAnywhere, Category = "AI")
+    UPROPERTY(EditAnywhere, Category = "Combat")
     float AttackCooldown = 2.f;
 
     /** 공격 모션 */
-    UPROPERTY(EditAnywhere, Category = "AI")
+    UPROPERTY(EditAnywhere, Category = "Combat")
     UAnimMontage* AttackMontage;
 
     /** 타겟 마커 UI */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
     UWidgetComponent* TargetMarker;
-
-    /** 현재 추적 중인 플레이어 */
-    UPROPERTY()
-    APawn* TargetPlayer;
 
     /** 순찰 포인트들 */
     UPROPERTY(EditInstanceOnly, Category = "AI|Patrol")

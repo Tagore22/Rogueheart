@@ -25,5 +25,6 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& Own
         }
     }
 
+    UE_LOG(LogTemp, Warning, TEXT("Attack"));
     return EBTNodeResult::Succeeded;
 }
