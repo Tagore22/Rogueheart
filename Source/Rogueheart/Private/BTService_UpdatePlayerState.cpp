@@ -44,5 +44,10 @@ void UBTService_UpdatePlayerState::TickNode(UBehaviorTreeComponent& OwnerComp, u
     //
     FVector DiscoveredLocation = BlackboardComp->GetValueAsVector(TEXT("DiscoveredLocation"));
     float DistanceFromChaseStart = FVector::Dist(ControlledPawn->GetActorLocation(), DiscoveredLocation);
-    BlackboardComp->SetValueAsBool(TEXT("bShouldReturn"), DistanceFromChaseStart > MaxChaseDistance); // 원래는 <= 였음.
+    
+    if (DistanceFromChaseStart > MaxChaseDistance)
+    {
+        BlackboardComp->ClearValue(TEXT("TargetPlayer"));
+        UE_LOG(LogTemp, Warning, TEXT("Chase distance exceeded! Returning to patrol."));
+    }
 }
