@@ -13,14 +13,8 @@ UBTDecorator_IsInvestigating::UBTDecorator_IsInvestigating()
     bNotifyCeaseRelevant = true;
     bNotifyTick = false;
 
-    // UE 5.1에서 Blackboard Observer 자동 활성화
-    bShowInverseConditionDesc = false;
-    bAllowAbortNone = false;
-    bAllowAbortLowerPri = true;
-    bAllowAbortChildNodes = true;
-
     // FlowAbortMode 설정 - 키 변경 시 재평가를 위해
-    FlowAbortMode = EBTFlowAbortMode::LowerPriority;
+    FlowAbortMode = EBTFlowAbortMode::Self;
 }
 
 bool UBTDecorator_IsInvestigating::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const

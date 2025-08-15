@@ -39,7 +39,17 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     class UBlackboardData* BlackboardAsset;
 
+    // ADDED: 조사(Investigate) 관련 설정(에디터에서 조절 가능)
+    UPROPERTY(EditDefaultsOnly, Category = "AI")
+    float InvestigateTimeout = 3.0f;
+
 private:
     /** 이 AI의 팀 ID */
     static constexpr uint8 EnemyTeamId = 2;
+
+    // ADDED: 조사 타이머 핸들
+    FTimerHandle InvestigateTimerHandle;
+
+    // ADDED: 조사 종료 처리 함수
+    void StopInvestigating();
 };

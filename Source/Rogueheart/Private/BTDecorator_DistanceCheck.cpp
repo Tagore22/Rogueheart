@@ -17,7 +17,7 @@ UBTDecorator_DistanceCheck::UBTDecorator_DistanceCheck()
 
     // 실무 추천: Blackboard Observer + Observer Aborts
     bNotifyBecomeRelevant = true;   // Decorator 시작 시 알림
-    bNotifyCeaseRelevant = false;   // 종료 시 알림은 불필요
+    bNotifyCeaseRelevant = true;
     bNotifyTick = false;            // 매 틱 호출 불필요
 
     // Observer 설정
