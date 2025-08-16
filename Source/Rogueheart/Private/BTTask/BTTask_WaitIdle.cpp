@@ -1,4 +1,4 @@
-#include "BTTask_WaitIdle.h"
+#include "BTTask/BTTask_WaitIdle.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 

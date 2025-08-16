@@ -1,4 +1,4 @@
-#include "BTDecorator_DistanceCheck.h"
+#include "BTDecorator/BTDecorator_DistanceCheck.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"

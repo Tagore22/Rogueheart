@@ -1,4 +1,4 @@
-#include "BTTask_EndInvestigation.h"
+#include "BTTask/BTTask_EndInvestigation.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTTask_EndInvestigation::UBTTask_EndInvestigation()

@@ -16,6 +16,9 @@ public:
     /** 팀 ID 반환 */
     virtual FGenericTeamId GetGenericTeamId() const override;
 
+    // ADDED: 매 Tick마다 디버깅용 시야각 그려줌
+    virtual void Tick(float DeltaSeconds) override;
+
 protected:
     virtual void BeginPlay() override;
 
@@ -52,4 +55,7 @@ private:
 
     // ADDED: 조사 종료 처리 함수
     void StopInvestigating();
+
+    // ADDED: 시야각 디버그 함수
+    void Debug_DrawFOV();
 };

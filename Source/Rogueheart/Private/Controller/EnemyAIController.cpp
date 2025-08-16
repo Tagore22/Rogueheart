@@ -6,12 +6,16 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GenericTeamAgentInterface.h"
-#include "TimerManager.h" // ADDED
+#include "TimerManager.h"
 #include "GameFramework/Pawn.h"
+//
+#include "DrawDebugHelpers.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/Character.h"
 
 AEnemyAIController::AEnemyAIController()
 {
-    PrimaryActorTick.bCanEverTick = false;
+    PrimaryActorTick.bCanEverTick = true; 
 
     // AI Perception 설정
     AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
@@ -24,7 +28,7 @@ AEnemyAIController::AEnemyAIController()
         SightConfig->LoseSightRadius = 900.f;
 
         // FIX: 시야각을 넓혀 어느 방향으로 이동해도 인식될 가능성 증가
-        SightConfig->PeripheralVisionAngleDegrees = 180.f;
+        SightConfig->PeripheralVisionAngleDegrees = 60.f;
 
         // FIX: 캐시(MaxAge)를 짧게 해서 실시간성 개선
         SightConfig->SetMaxAge(0.5f);
@@ -40,6 +44,14 @@ AEnemyAIController::AEnemyAIController()
 
     // 팀 설정
     SetGenericTeamId(FGenericTeamId(EnemyTeamId));
+}
+
+void AEnemyAIController::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
+
+    // 매 Tick마다 시야 디버그 그려줌
+    //Debug_DrawFOV();
 }
 
 void AEnemyAIController::BeginPlay()
@@ -152,4 +164,33 @@ void AEnemyAIController::StopInvestigating()
 FGenericTeamId AEnemyAIController::GetGenericTeamId() const
 {
     return FGenericTeamId(EnemyTeamId);
+}
+
+void AEnemyAIController::Debug_DrawFOV()
+{
+    APawn* MyPawn = GetPawn();
+    if (!MyPawn || !SightConfig) return;
+
+    FVector PawnLoc = MyPawn->GetActorLocation();
+    FVector Forward = MyPawn->GetActorForwardVector();
+    float HalfAngle = SightConfig->PeripheralVisionAngleDegrees; // 시야 반각 (예: 90도면 총 180도)
+    float Radius = SightConfig->SightRadius;
+
+    // 중심선
+    DrawDebugLine(GetWorld(), PawnLoc, PawnLoc + Forward * Radius, FColor::Green, false, -1.f, 0, 1.f);
+
+    // 왼쪽 경계
+    FVector LeftDir = Forward.RotateAngleAxis(-HalfAngle, FVector::UpVector);
+    DrawDebugLine(GetWorld(), PawnLoc, PawnLoc + LeftDir * Radius, FColor::Green, false, -1.f, 0, 1.f);
+
+    // 오른쪽 경계
+    FVector RightDir = Forward.RotateAngleAxis(HalfAngle, FVector::UpVector);
+    DrawDebugLine(GetWorld(), PawnLoc, PawnLoc + RightDir * Radius, FColor::Green, false, -1.f, 0, 1.f);
+
+    // 부채꼴 내부(샘플 라인)
+    for (int i = -HalfAngle; i <= HalfAngle; i += 10) // 10도 간격으로 라인 그림
+    {
+        FVector Dir = Forward.RotateAngleAxis(i, FVector::UpVector);
+        DrawDebugLine(GetWorld(), PawnLoc, PawnLoc + Dir * Radius, FColor(0, 255, 0, 50), false, -1.f, 0, 0.5f);
+    }
 }

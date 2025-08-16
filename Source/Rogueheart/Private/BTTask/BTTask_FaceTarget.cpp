@@ -1,4 +1,4 @@
-#include "BTTask_FaceTarget.h"
+#include "BTTask/BTTask_FaceTarget.h"
 #include "AIController.h"
 #include "Character/Enemy/EnemyBase.h"
 #include "BehaviorTree/BlackboardComponent.h"

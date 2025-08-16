@@ -1,4 +1,4 @@
-#include "BTDecorator_IsInvestigating.h"
+#include "BTDecorator/BTDecorator_IsInvestigating.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTDecorator_IsInvestigating::UBTDecorator_IsInvestigating()

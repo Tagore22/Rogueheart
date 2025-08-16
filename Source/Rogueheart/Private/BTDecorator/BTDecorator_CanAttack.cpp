@@ -1,4 +1,4 @@
-#include "BTDecorator_CanAttack.h"
+#include "BTDecorator/BTDecorator_CanAttack.h"
 #include "AIController.h"
 #include "Character/Enemy/EnemyBase.h"
 

@@ -1,4 +1,4 @@
-#include "BTTask_MoveToNextPatrolPoint.h"
+#include "BTTask/BTTask_MoveToNextPatrolPoint.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 #include "Character/Enemy/EnemyBase.h"

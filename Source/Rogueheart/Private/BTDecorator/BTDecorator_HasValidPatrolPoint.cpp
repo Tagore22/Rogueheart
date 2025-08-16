@@ -1,4 +1,4 @@
-#include "BTDecorator_HasValidPatrolPoint.h"
+#include "BTDecorator/BTDecorator_HasValidPatrolPoint.h"
 #include "AIController.h"
 #include "Character/Enemy/EnemyBase.h"
 

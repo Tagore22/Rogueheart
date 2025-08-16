@@ -1,4 +1,4 @@
-#include "BTTask_GetRandomLocationAround.h"
+#include "BTTask/BTTask_GetRandomLocationAround.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "NavigationSystem.h"
