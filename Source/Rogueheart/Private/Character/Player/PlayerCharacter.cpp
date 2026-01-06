@@ -80,17 +80,22 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-    FVector MovementVector = Value.Get<FVector>();
-    LastMoveInput = MovementVector;
+    const FVector2D MovementVector2D = Value.Get<FVector2D>();
+    LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
 
-    if (!CanAct())
+    if (!CanAct() || MovementVector2D.IsNearlyZero())
         return;
 
-    if (Controller && (MovementVector.X != 0.f || MovementVector.Y != 0.f))
+    if (Controller)
     {
-        const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
-        AddMovementInput(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X), MovementVector.X);
-        AddMovementInput(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y), MovementVector.Y);
+        const FRotator Rotation = Controller->GetControlRotation();
+        const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
+
+        const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+        const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+        AddMovementInput(ForwardDirection, MovementVector2D.X);
+        AddMovementInput(RightDirection, MovementVector2D.Y);
     }
 }
 
@@ -99,11 +104,16 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     if (bIsLockedOn)
         return;
 
-    FVector2D LookAxis = Value.Get<FVector2D>();
-    AddControllerYawInput(LookAxis.X * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-    AddControllerPitchInput(LookAxis.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+    const FVector2D LookAxis = Value.Get<FVector2D>();
+
+    if (LookAxis.IsNearlyZero())
+        return;
+
+    AddControllerYawInput(LookAxis.X);
+    AddControllerPitchInput(LookAxis.Y);
 }
 
+//
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
     if (CurrentState == EPlayerState::Dodging || CurrentState == EPlayerState::Stunned)
@@ -122,17 +132,15 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
     {
         bInputCombo = true;
     }
-}
+} 
 
 void APlayerCharacter::PlayComboMontage()
 {
-    if (UPlayerAnimInstance* Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance()))
+    UPlayerAnimInstance* Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+    if (Anim && AMT_Attack)
     {
-        if (AMT_Attack)
-        {
-            Anim->Montage_Play(AMT_Attack);
-            Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Combo%d"), CurrentCombo)), AMT_Attack);
-        }
+        Anim->Montage_Play(AMT_Attack);
+        Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Combo%d"), CurrentCombo)), AMT_Attack);
     }
 }
 
@@ -161,7 +169,7 @@ void APlayerCharacter::OnAttackEnd()
         bCanNextCombo = false;
         SetPlayerState(EPlayerState::Idle);
     }
-}
+}//
 
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {

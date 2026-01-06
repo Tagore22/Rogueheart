@@ -69,12 +69,6 @@ protected:
     void CheckLockOnDistance();
 
 public:
-    UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseTurnRate = 45.f;
-
-    UPROPERTY(EditAnywhere, Category = "Camera")
-    float BaseLookUpRate = 45.f;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
     USpringArmComponent* CameraBoom;
 
