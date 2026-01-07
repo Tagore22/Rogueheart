@@ -7,7 +7,7 @@ UPlayerAnimInstance::UPlayerAnimInstance()
     Speed = 0.f;
     bIsInAir = false;
     bIsAccelerating = false;
-    bIsAttacking = false;
+    //bIsAttacking = false;
 
     WalkSpeed = 0.f;
     Direct = 0.f;
@@ -58,6 +58,10 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         Direct = 0.f;
     }
 }
+/*void UPlayerAnimInstance::SetIsAttacking(bool bNewState)
+{
+    bIsAttacking = bNewState;
+}*/
 
 void UPlayerAnimInstance::AnimNotify_EndAttack()
 {
@@ -65,7 +69,7 @@ void UPlayerAnimInstance::AnimNotify_EndAttack()
     {
         Player->OnAttackEnd();
     }
-    SetIsAttacking(false);
+    //SetIsAttacking(false);
 }
 
 void UPlayerAnimInstance::AnimNotify_NextCombo()

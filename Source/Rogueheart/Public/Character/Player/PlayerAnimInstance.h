@@ -14,7 +14,7 @@ public:
 
     virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-    void SetIsAttacking(bool bNewState) { bIsAttacking = bNewState; }
+    //void SetIsAttacking(bool bNewState);
 
 protected:
     UFUNCTION()
@@ -41,8 +41,8 @@ private:
 
 
     // 전투 상태
-    UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-    bool bIsAttacking;
+    //UPROPERTY(BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+    //bool bIsAttacking;
 
 
     // 락온 이동용 BlendSpace 파라미터

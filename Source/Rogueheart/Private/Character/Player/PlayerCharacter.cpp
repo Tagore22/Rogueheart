@@ -113,7 +113,6 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(LookAxis.Y);
 }
 
-//
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
     if (CurrentState == EPlayerState::Dodging || CurrentState == EPlayerState::Stunned)
@@ -123,12 +122,13 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
     {
         CurrentCombo = 1;
         bInputCombo = false;
-        bCanNextCombo = false;
+        // 공격 애니메이션 도중 NextCombo 노티파이에 의해서만 true로 바뀜.
+        bCanNextCombo = false; 
 
-        PlayComboMontage();
         SetPlayerState(EPlayerState::Attacking);
+        PlayComboMontage();
     }
-    else if (bCanNextCombo)
+    else if (bCanNextCombo && !bInputCombo)
     {
         bInputCombo = true;
     }
@@ -146,9 +146,6 @@ void APlayerCharacter::PlayComboMontage()
 
 void APlayerCharacter::HandleComboInput()
 {
-    if (CurrentCombo >= MaxCombo)
-        return;
-
     ++CurrentCombo;
     bInputCombo = false;
     bCanNextCombo = false;
@@ -169,8 +166,9 @@ void APlayerCharacter::OnAttackEnd()
         bCanNextCombo = false;
         SetPlayerState(EPlayerState::Idle);
     }
-}//
+}
 
+// 여기부터.
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {
     if (bWasLockedOnWhenDodged)
