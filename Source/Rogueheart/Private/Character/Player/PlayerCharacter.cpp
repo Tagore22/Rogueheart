@@ -271,7 +271,7 @@ void APlayerCharacter::ToggleLockOn()
     }
 }
 
-void APlayerCharacter::FindNearestTarget()
+/*void APlayerCharacter::FindNearestTarget()
 {
     float NearestDist = LockOnRange;
     AActor* NearestEnemy = nullptr;
@@ -290,6 +290,87 @@ void APlayerCharacter::FindNearestTarget()
     }
 
     LockOnTarget = NearestEnemy;
+}*/
+
+void APlayerCharacter::FindNearestTarget()
+{
+    // 초기화
+    LockOnTarget = nullptr;
+
+    // 1단계: 주변 적들 긁어모으기 (Wide Overlap)
+    TArray<FOverlapResult> OverlapResults;
+    FCollisionQueryParams QueryParams;
+    QueryParams.AddIgnoredActor(this); // 나 자신 제외
+
+    // 구체(Sphere) 범위를 생성하여 해당 채널(예: ECC_Pawn)의 물체를 탐색
+    bool bHit = GetWorld()->OverlapMultiByChannel(
+        OverlapResults,
+        GetActorLocation(),
+        FQuat::Identity,
+        ECC_Pawn, // 적의 콜리전 채널에 맞게 변경 가능
+        FCollisionShape::MakeSphere(LockOnRange),
+        QueryParams
+    );
+
+    if (!bHit) return;
+
+    // 후보군을 담을 구조체 리스트
+    struct FTargetCandidate {
+        AActor* Actor;
+        float DistSq;
+    };
+    TArray<FTargetCandidate> Candidates;
+
+    FVector CameraLocation = FollowCamera->GetComponentLocation(); // 또는 GetCameraLocation()
+    FVector CameraForward = FollowCamera->GetForwardVector();
+
+    // 2단계: 시야각(FOV) 및 유효성 필터링
+    for (auto& Result : OverlapResults)
+    {
+        AEnemyBase* Enemy = Cast<AEnemyBase>(Result.GetActor());
+        if (!IsValid(Enemy)) continue;
+
+        FVector ToEnemy = (Enemy->GetActorLocation() - CameraLocation).GetSafeNormal();
+
+        // 내적(Dot Product) 계산
+        float DotResult = FVector::DotProduct(CameraForward, ToEnemy);
+
+        // 기준값 (예: 0.5는 약 60도, 0.7은 약 45도 시야 내)
+        if (DotResult > 0.5f)
+        {
+            float DistSq = FVector::DistSquared(CameraLocation, Enemy->GetActorLocation());
+            Candidates.Add({ Enemy, DistSq });
+        }
+    }
+
+    // 3단계: 거리순 정렬 (람다식 활용)
+    Candidates.Sort([](const FTargetCandidate& A, const FTargetCandidate& B) {
+        return A.DistSq < B.DistSq;
+        });
+
+    // 4단계: 최종 시야 검증 (Line Trace)
+    for (auto& Candidate : Candidates)
+    {
+        FHitResult HitResult;
+        FCollisionQueryParams TraceParams;
+        TraceParams.AddIgnoredActor(this);
+
+        // 내 눈(카메라)에서 적의 위치(보통 가슴 높이 고려)까지 발사
+        bool bIsObstructed = GetWorld()->LineTraceSingleByChannel(
+            HitResult,
+            CameraLocation,
+            Candidate.Actor->GetActorLocation() + FVector(0, 0, 50.0f),
+            ECC_Visibility, // 장애물 체크용 채널
+            TraceParams
+        );
+
+        // 아무것도 안 걸렸거나(하늘 등), 걸린 게 바로 그 적이라면 타겟 확정!
+        if (!bIsObstructed || HitResult.GetActor() == Candidate.Actor)
+        {
+            LockOnTarget = Cast<AEnemyBase>(Candidate.Actor);
+            return; // 찾았으므로 즉시 종료
+        }
+    }
 }
 
 void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
