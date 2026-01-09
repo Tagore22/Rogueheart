@@ -45,7 +45,7 @@ void APlayerCharacter::BeginPlay()
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
         }
     }
-
+    LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance);
     SetGenericTeamId(FGenericTeamId(TeamID));
 }
 
@@ -71,7 +71,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (bIsLockedOn && LockOnTarget)
+    if (IsValid(LockOnTarget))
     {
         UpdateLockOnRotation(DeltaTime);
         CheckLockOnDistance();
@@ -101,7 +101,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
-    if (bIsLockedOn)
+    if (IsValid(LockOnTarget))
         return;
 
     const FVector2D LookAxis = Value.Get<FVector2D>();
@@ -168,20 +168,18 @@ void APlayerCharacter::OnAttackEnd()
     }
 }
 
-// 여기부터.
+// 토클 락온 하는중.
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {
     if (bWasLockedOnWhenDodged)
     {
-        FindNearestTarget();
+        LockOnTarget = FindNearestTarget();
 
-        if (LockOnTarget)
+        if (IsValid(LockOnTarget))
         {
-            bIsLockedOn = true;
             GetCharacterMovement()->bOrientRotationToMovement = false;
             bUseControllerRotationYaw = true;
         }
-
         bWasLockedOnWhenDodged = false;
     }
 }
@@ -192,7 +190,7 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
         return;
 
     SetPlayerState(EPlayerState::Dodging);
-    bWasLockedOnWhenDodged = bIsLockedOn;
+    bWasLockedOnWhenDodged = IsValid(LockOnTarget) ? true : false;
 
     if (!LastMoveInput.IsNearlyZero())
     {
@@ -206,9 +204,9 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
         Anim->Montage_Play(AMT_Dodge);
     }
 
-    if (bIsLockedOn)
+    if(IsValid(LockOnTarget))
     {
-        bIsLockedOn = false;
+        LockOnTarget = nullptr;
         GetCharacterMovement()->bOrientRotationToMovement = true;
         bUseControllerRotationYaw = false;
     }
@@ -241,29 +239,17 @@ void APlayerCharacter::ToggleLockOn()
     if (!CanAct())
         return;
 
-    if (bIsLockedOn)
+    if (IsValid(LockOnTarget))
     {
-        if (CurrentTargetEnemy)
-        {
-            CurrentTargetEnemy->ShowTargetMarker(false);
-        }
-
-        bIsLockedOn = false;
-        LockOnTarget = nullptr;
-        CurrentTargetEnemy = nullptr;
-
-        GetCharacterMovement()->bOrientRotationToMovement = true;
-        bUseControllerRotationYaw = false;
+        ClearLockOn();
     }
     else
     {
-        FindNearestTarget();
-        CurrentTargetEnemy = Cast<AEnemyBase>(LockOnTarget);
+        LockOnTarget = FindNearestTarget();
 
-        if (CurrentTargetEnemy)
+        if (IsValid(LockOnTarget))
         {
-            bIsLockedOn = true;
-            CurrentTargetEnemy->ShowTargetMarker(true);
+            LockOnTarget->ShowTargetMarker(true);
 
             GetCharacterMovement()->bOrientRotationToMovement = false;
             bUseControllerRotationYaw = true;
@@ -271,31 +257,10 @@ void APlayerCharacter::ToggleLockOn()
     }
 }
 
-/*void APlayerCharacter::FindNearestTarget()
-{
-    float NearestDist = LockOnRange;
-    AActor* NearestEnemy = nullptr;
-
-    for (TActorIterator<AEnemyBase> It(GetWorld()); It; ++It)
-    {
-        AEnemyBase* Enemy = *It;
-        if (!IsValid(Enemy)) continue;
-
-        float Dist = FVector::Dist(GetActorLocation(), Enemy->GetActorLocation());
-        if (Dist <= NearestDist)
-        {
-            NearestDist = Dist;
-            NearestEnemy = Enemy;
-        }
-    }
-
-    LockOnTarget = NearestEnemy;
-}*/
-
-void APlayerCharacter::FindNearestTarget()
+AEnemyBase* APlayerCharacter::FindNearestTarget()
 {
     // 초기화
-    LockOnTarget = nullptr;
+    //LockOnTarget = nullptr;
 
     // 1단계: 주변 적들 긁어모으기 (Wide Overlap)
     TArray<FOverlapResult> OverlapResults;
@@ -312,7 +277,8 @@ void APlayerCharacter::FindNearestTarget()
         QueryParams
     );
 
-    if (!bHit) return;
+    if (!bHit) 
+        return nullptr;
 
     // 후보군을 담을 구조체 리스트
     struct FTargetCandidate {
@@ -328,7 +294,8 @@ void APlayerCharacter::FindNearestTarget()
     for (auto& Result : OverlapResults)
     {
         AEnemyBase* Enemy = Cast<AEnemyBase>(Result.GetActor());
-        if (!IsValid(Enemy)) continue;
+        if (!IsValid(Enemy)) 
+            continue;
 
         FVector ToEnemy = (Enemy->GetActorLocation() - CameraLocation).GetSafeNormal();
 
@@ -355,11 +322,14 @@ void APlayerCharacter::FindNearestTarget()
         FCollisionQueryParams TraceParams;
         TraceParams.AddIgnoredActor(this);
 
+        FVector TraceStart = CameraLocation;
+        FVector TraceEnd = Candidate.Actor->GetActorLocation() + FVector(0, 0, 50.0f);
+
         // 내 눈(카메라)에서 적의 위치(보통 가슴 높이 고려)까지 발사
         bool bIsObstructed = GetWorld()->LineTraceSingleByChannel(
             HitResult,
-            CameraLocation,
-            Candidate.Actor->GetActorLocation() + FVector(0, 0, 50.0f),
+            TraceStart,
+            TraceEnd,
             ECC_Visibility, // 장애물 체크용 채널
             TraceParams
         );
@@ -367,15 +337,16 @@ void APlayerCharacter::FindNearestTarget()
         // 아무것도 안 걸렸거나(하늘 등), 걸린 게 바로 그 적이라면 타겟 확정!
         if (!bIsObstructed || HitResult.GetActor() == Candidate.Actor)
         {
-            LockOnTarget = Cast<AEnemyBase>(Candidate.Actor);
-            return; // 찾았으므로 즉시 종료
+            return Cast<AEnemyBase>(Candidate.Actor);
         }
     }
+    return nullptr;
 }
 
 void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
 {
-    if (!LockOnTarget) return;
+    if (!LockOnTarget) 
+        return;
 
     FVector TargetDir = LockOnTarget->GetActorLocation() - GetActorLocation();
     TargetDir.Z = 0.f;
@@ -390,10 +361,10 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
     }
 }
 
-void APlayerCharacter::SwitchTarget(bool bLeft)
+AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
 {
-    if (!bIsLockedOn || !LockOnTarget)
-        return;
+    if (!IsValid(LockOnTarget))
+        return nullptr;
 
     FVector MyLocation = GetActorLocation();
     FVector MyForward = GetActorForwardVector();
@@ -428,18 +399,15 @@ void APlayerCharacter::SwitchTarget(bool bLeft)
             }
         }
     }
-
     if (NewTarget)
     {
-        if (CurrentTargetEnemy)
+        if (IsValid(LockOnTarget)) // clear();
         {
-            CurrentTargetEnemy->ShowTargetMarker(false);
+            LockOnTarget->ShowTargetMarker(false);
         }
-
-        LockOnTarget = NewTarget;
-        CurrentTargetEnemy = NewTarget;
-        CurrentTargetEnemy->ShowTargetMarker(true);
+        return NewTarget;
     }
+    return nullptr;
 }
 
 void APlayerCharacter::SwitchTargetLeft()
@@ -447,7 +415,8 @@ void APlayerCharacter::SwitchTargetLeft()
     if (IsAttacking() || IsDodging())
         return;
 
-    SwitchTarget(true);
+    LockOnTarget = SwitchTarget(true);
+    LockOnTarget->ShowTargetMarker(true);
 }
 
 void APlayerCharacter::SwitchTargetRight()
@@ -455,31 +424,33 @@ void APlayerCharacter::SwitchTargetRight()
     if (IsAttacking() || IsDodging())
         return;
 
-    SwitchTarget(false);
+    LockOnTarget = SwitchTarget(false);
+    LockOnTarget->ShowTargetMarker(true);
 }
 
 void APlayerCharacter::CheckLockOnDistance()
 {
-    if (!bIsLockedOn || !LockOnTarget) return;
+    if (!IsValid(LockOnTarget))
+        return;
 
-    float Dist = FVector::Dist(GetActorLocation(), LockOnTarget->GetActorLocation());
-    if (Dist > LockOnBreakDistance)
+    float Dist = FVector::DistSquared(GetActorLocation(), LockOnTarget->GetActorLocation());
+    if (Dist > LockOnBreakDistanceSq)
     {
-        if (CurrentTargetEnemy)
-        {
-            CurrentTargetEnemy->ShowTargetMarker(false);
-        }
-
-        bIsLockedOn = false;
-        LockOnTarget = nullptr;
-        CurrentTargetEnemy = nullptr;
-
-        GetCharacterMovement()->bOrientRotationToMovement = true;
-        bUseControllerRotationYaw = false;
+        ClearLockOn();
     }
 }
 
 FGenericTeamId APlayerCharacter::GetGenericTeamId() const
 {
     return FGenericTeamId(TeamID);
+}
+
+void APlayerCharacter::ClearLockOn()
+{
+    LockOnTarget->ShowTargetMarker(false);
+    LockOnTarget = nullptr;
+
+    // 이동 모드 복구: 가고자 하는 방향으로 몸을 돌림
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    bUseControllerRotationYaw = false;
 }

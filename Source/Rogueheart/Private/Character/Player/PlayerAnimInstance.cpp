@@ -1,5 +1,6 @@
 #include "Character/Player/PlayerAnimInstance.h"
 #include "Character/Player/PlayerCharacter.h"
+#include "Character/Enemy/EnemyBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 UPlayerAnimInstance::UPlayerAnimInstance()
@@ -22,7 +23,8 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     if (!OwningPawn) return;
 
     APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(OwningPawn);
-    if (!PlayerCharacter) return;
+    if (!IsValid(PlayerCharacter)) 
+        return;
 
     if (PlayerCharacter->IsDodging())
     {
@@ -40,7 +42,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     }
 
     // 락온 상태 확인
-    bIsLockedOn = PlayerCharacter->bIsLockedOn;
+    bIsLockedOn = IsValid(PlayerCharacter->LockOnTarget);
 
     if (bIsLockedOn)
     {

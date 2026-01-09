@@ -61,12 +61,13 @@ protected:
     void UseIceBlast();
 
     void ToggleLockOn();
-    void FindNearestTarget();
+    AEnemyBase* FindNearestTarget();
     void UpdateLockOnRotation(float DeltaTime);
-    void SwitchTarget(bool bLeft);
+    AEnemyBase* SwitchTarget(bool bLeft);
     void SwitchTargetLeft();
     void SwitchTargetRight();
     void CheckLockOnDistance();
+    void ClearLockOn();
 
 public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
@@ -133,16 +134,15 @@ public:
     UUserWidget* CooldownWidget = nullptr;
 
     UPROPERTY(BlueprintReadOnly, Category = "Targeting")
-    AActor* LockOnTarget = nullptr;
-
-    UPROPERTY(BlueprintReadOnly, Category = "Targeting")
-    bool bIsLockedOn = false;
+    AEnemyBase* LockOnTarget = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float LockOnRange = 1200.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float LockOnBreakDistance = 1500.f;
+
+    float LockOnBreakDistanceSq;
 
     bool bWasLockedOnWhenDodged = false;
 
@@ -151,8 +151,6 @@ private:
     EPlayerState CurrentState = EPlayerState::Idle;
 
     FVector LastMoveInput = FVector::ZeroVector;
-
-    AEnemyBase* CurrentTargetEnemy = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     uint8 TeamID = 1;
