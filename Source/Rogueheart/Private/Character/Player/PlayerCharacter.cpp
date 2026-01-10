@@ -171,16 +171,19 @@ void APlayerCharacter::OnAttackEnd()
 // 토클 락온 하는중.
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {
-    if (bWasLockedOnWhenDodged)
+    if (IsValid(PrevLockOnTarget))
+    {
+        LockOnTarget = PrevLockOnTarget;
+        SetLockOnState(true);
+    }
+    else
     {
         LockOnTarget = FindNearestTarget();
 
         if (IsValid(LockOnTarget))
         {
-            GetCharacterMovement()->bOrientRotationToMovement = false;
-            bUseControllerRotationYaw = true;
+            SetLockOnState(true);
         }
-        bWasLockedOnWhenDodged = false;
     }
 }
 
@@ -190,7 +193,6 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
         return;
 
     SetPlayerState(EPlayerState::Dodging);
-    bWasLockedOnWhenDodged = IsValid(LockOnTarget) ? true : false;
 
     if (!LastMoveInput.IsNearlyZero())
     {
@@ -206,9 +208,9 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
 
     if(IsValid(LockOnTarget))
     {
+        PrevLockOnTarget = LockOnTarget;
         LockOnTarget = nullptr;
-        GetCharacterMovement()->bOrientRotationToMovement = true;
-        bUseControllerRotationYaw = false;
+        SetLockOnState(false);
     }
 }
 
@@ -250,18 +252,13 @@ void APlayerCharacter::ToggleLockOn()
         if (IsValid(LockOnTarget))
         {
             LockOnTarget->ShowTargetMarker(true);
-
-            GetCharacterMovement()->bOrientRotationToMovement = false;
-            bUseControllerRotationYaw = true;
+            SetLockOnState(true);
         }
     }
 }
 
 AEnemyBase* APlayerCharacter::FindNearestTarget()
 {
-    // 초기화
-    //LockOnTarget = nullptr;
-
     // 1단계: 주변 적들 긁어모으기 (Wide Overlap)
     TArray<FOverlapResult> OverlapResults;
     FCollisionQueryParams QueryParams;
@@ -415,8 +412,15 @@ void APlayerCharacter::SwitchTargetLeft()
     if (IsAttacking() || IsDodging())
         return;
 
-    LockOnTarget = SwitchTarget(true);
-    LockOnTarget->ShowTargetMarker(true);
+    if (IsValid(LockOnTarget))
+    {
+        AEnemyBase* NewTarget = SwitchTarget(true);
+        if (IsValid(NewTarget))
+        {
+            LockOnTarget = NewTarget;
+            LockOnTarget->ShowTargetMarker(true);
+        }
+    }
 }
 
 void APlayerCharacter::SwitchTargetRight()
@@ -424,8 +428,15 @@ void APlayerCharacter::SwitchTargetRight()
     if (IsAttacking() || IsDodging())
         return;
 
-    LockOnTarget = SwitchTarget(false);
-    LockOnTarget->ShowTargetMarker(true);
+    if (IsValid(LockOnTarget))
+    {
+        AEnemyBase* NewTarget = SwitchTarget(false);
+        if (IsValid(NewTarget))
+        {
+            LockOnTarget = NewTarget;
+            LockOnTarget->ShowTargetMarker(true);
+        }
+    }
 }
 
 void APlayerCharacter::CheckLockOnDistance()
@@ -451,6 +462,19 @@ void APlayerCharacter::ClearLockOn()
     LockOnTarget = nullptr;
 
     // 이동 모드 복구: 가고자 하는 방향으로 몸을 돌림
-    GetCharacterMovement()->bOrientRotationToMovement = true;
-    bUseControllerRotationYaw = false;
+    SetLockOnState(false);
+}
+
+void APlayerCharacter::SetLockOnState(bool bIsLockOn)
+{
+    if (bIsLockOn)
+    {
+        GetCharacterMovement()->bOrientRotationToMovement = false;
+        bUseControllerRotationYaw = true;
+    }
+    else
+    {
+        GetCharacterMovement()->bOrientRotationToMovement = true;
+        bUseControllerRotationYaw = false;
+    }
 }

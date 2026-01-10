@@ -133,8 +133,11 @@ public:
     UPROPERTY()
     UUserWidget* CooldownWidget = nullptr;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+    UPROPERTY(VisibleAnywhere, Category = "Targeting")
     AEnemyBase* LockOnTarget = nullptr;
+
+    UPROPERTY(VisibleAnywhere, Category = "Targeting")
+    AEnemyBase* PrevLockOnTarget = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float LockOnRange = 1200.f;
@@ -154,4 +157,6 @@ private:
 
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     uint8 TeamID = 1;
+
+    void SetLockOnState(bool bIsLockOn);
 };

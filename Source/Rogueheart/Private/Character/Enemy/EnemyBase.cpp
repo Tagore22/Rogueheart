@@ -68,7 +68,7 @@ void AEnemyBase::ResetAttackCooldown()
 
 void AEnemyBase::ShowTargetMarker(bool bShow)
 {
-    if (TargetMarker)
+    if (IsValid(TargetMarker))
     {
         TargetMarker->SetVisibility(bShow);
     }
