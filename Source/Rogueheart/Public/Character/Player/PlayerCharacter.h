@@ -1,7 +1,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "Skill/SkillComponent.h"
 #include "GenericTeamAgentInterface.h"
 #include "PlayerCharacter.generated.h"
 
@@ -11,6 +10,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UUserWidget;
 class UAnimMontage;
+class USkillComponent;
 class AEnemyBase;
 
 UENUM(BlueprintType)
@@ -20,8 +20,17 @@ enum class EPlayerState : uint8
     Moving,
     Attacking,
     Dodging,
-    Parrying,
-    Stunned
+    Stunned,
+    Dead
+};
+
+UENUM(BlueprintType)
+enum class EActionType : uint8
+{
+    Move,
+    Attack,
+    Dodge,
+    UseSkill
 };
 
 UCLASS()
@@ -38,7 +47,7 @@ public:
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     void SetPlayerState(EPlayerState NewState);
-    bool CanAct() const;
+    bool CanAct(EActionType DesiredAction) const;
     bool IsDodging() const { return CurrentState == EPlayerState::Dodging; }
     bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; }
 

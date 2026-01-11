@@ -10,6 +10,7 @@
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Skill/SkillComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -83,10 +84,10 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     const FVector2D MovementVector2D = Value.Get<FVector2D>();
     LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
 
-    if (!CanAct() || MovementVector2D.IsNearlyZero())
+    if (!CanAct(EActionType::Move) || MovementVector2D.IsNearlyZero())
         return;
 
-    if (Controller)
+    if (IsValid(Controller))
     {
         const FRotator Rotation = Controller->GetControlRotation();
         const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
@@ -168,7 +169,6 @@ void APlayerCharacter::OnAttackEnd()
     }
 }
 
-// 토클 락온 하는중.
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {
     if (IsValid(PrevLockOnTarget))
@@ -189,7 +189,10 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
 
 void APlayerCharacter::Dodge(const FInputActionValue& Value)
 {
-    if (!CanAct() || AMT_Dodge == nullptr)
+    // 1. 필수 요소가 하나라도 없으면 아예 구르기를 시작조차 안 함
+    UAnimInstance* Anim = GetMesh() ? GetMesh()->GetAnimInstance() : nullptr;
+
+    if (!CanAct(EActionType::Dodge) || !IsValid(AMT_Dodge) || !Anim)
         return;
 
     SetPlayerState(EPlayerState::Dodging);
@@ -201,10 +204,7 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
         SetActorRotation(DodgeDir.Rotation());
     }
 
-    if (UAnimInstance* Anim = GetMesh()->GetAnimInstance())
-    {
-        Anim->Montage_Play(AMT_Dodge);
-    }
+    Anim->Montage_Play(AMT_Dodge);
 
     if(IsValid(LockOnTarget))
     {
@@ -214,15 +214,20 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     }
 }
 
+// 여기 진행 중.
 void APlayerCharacter::UseFireball()
 {
-    if (!CanAct()) return;
+    if (!CanAct(EActionType::UseSkill))
+        return;
+
     SkillComponent->UseSkill(ESkillType::Fireball);
 }
 
 void APlayerCharacter::UseIceBlast()
 {
-    if (!CanAct()) return;
+    if (!CanAct(EActionType::UseSkill))
+        return;
+
     SkillComponent->UseSkill(ESkillType::IceNova);
 }
 
@@ -231,14 +236,37 @@ void APlayerCharacter::SetPlayerState(EPlayerState NewState)
     CurrentState = NewState;
 }
 
-bool APlayerCharacter::CanAct() const
+/*bool APlayerCharacter::CanAct() const
 {
     return CurrentState != EPlayerState::Attacking && CurrentState != EPlayerState::Dodging && CurrentState != EPlayerState::Stunned;
+}*/
+
+bool APlayerCharacter::CanAct(EActionType DesiredAction) const
+{
+    switch (CurrentState)
+    {
+        case EPlayerState::Idle:
+        case EPlayerState::Moving:
+            return true;
+        case EPlayerState::Attacking:
+        {
+            if (DesiredAction == EActionType::Attack)
+            {
+                return true;
+            }
+            return false;
+        }
+        case EPlayerState::Dodging:
+        case EPlayerState::Stunned:
+        case EPlayerState::Dead:
+            return false;
+    }
+    return false;
 }
 
 void APlayerCharacter::ToggleLockOn()
 {
-    if (!CanAct())
+    if (!CanAct(EActionType::Move))
         return;
 
     if (IsValid(LockOnTarget))
