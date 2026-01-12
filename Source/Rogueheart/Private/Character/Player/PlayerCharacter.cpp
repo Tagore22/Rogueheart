@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Skill/SkillComponent.h"
+#include "InputActionValue.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -214,7 +215,6 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     }
 }
 
-// 여기 진행 중.
 void APlayerCharacter::UseFireball()
 {
     if (!CanAct(EActionType::UseSkill))
@@ -235,11 +235,6 @@ void APlayerCharacter::SetPlayerState(EPlayerState NewState)
 {
     CurrentState = NewState;
 }
-
-/*bool APlayerCharacter::CanAct() const
-{
-    return CurrentState != EPlayerState::Attacking && CurrentState != EPlayerState::Dodging && CurrentState != EPlayerState::Stunned;
-}*/
 
 bool APlayerCharacter::CanAct(EActionType DesiredAction) const
 {
@@ -275,10 +270,12 @@ void APlayerCharacter::ToggleLockOn()
     }
     else
     {
-        LockOnTarget = FindNearestTarget();
+        AEnemyBase * NewTarget = FindNearestTarget();
 
-        if (IsValid(LockOnTarget))
+        if (IsValid(NewTarget))
         {
+            PrevLockOnTarget = nullptr;
+            LockOnTarget = NewTarget;
             LockOnTarget->ShowTargetMarker(true);
             SetLockOnState(true);
         }
@@ -370,14 +367,18 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
 
 void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
 {
-    if (!LockOnTarget) 
+    if (!IsValid(LockOnTarget)) 
         return;
 
     FVector TargetDir = LockOnTarget->GetActorLocation() - GetActorLocation();
     TargetDir.Z = 0.f;
+
+    if (TargetDir.IsNearlyZero()) 
+        return;
+
     FRotator TargetRot = TargetDir.Rotation();
 
-    FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
+    FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, InterpSpeed);
     SetActorRotation(NewRot);
 
     if (Controller)
@@ -386,6 +387,7 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
     }
 }
 
+// 여기 진행 중.
 AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
 {
     if (!IsValid(LockOnTarget))

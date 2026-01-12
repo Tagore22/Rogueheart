@@ -1,6 +1,5 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "InputActionValue.h"
 #include "GenericTeamAgentInterface.h"
 #include "PlayerCharacter.generated.h"
 
@@ -12,6 +11,7 @@ class UUserWidget;
 class UAnimMontage;
 class USkillComponent;
 class AEnemyBase;
+struct InputActionValue;
 
 UENUM(BlueprintType)
 enum class EPlayerState : uint8
@@ -58,10 +58,10 @@ public:
     void RestoreLockOnIfNeeded();
 
 protected:
-    void Move(const FInputActionValue& Value);
-    void Look(const FInputActionValue& Value);
-    void Attack(const FInputActionValue& Value);
-    void Dodge(const FInputActionValue& Value);
+    void Move(const struct FInputActionValue& Value);
+    void Look(const struct FInputActionValue& Value);
+    void Attack(const struct FInputActionValue& Value);
+    void Dodge(const struct FInputActionValue& Value);
 
     UFUNCTION()
     void UseFireball();
@@ -129,6 +129,9 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
     int32 MaxCombo = 3;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Combat")
+    int32 InterpSpeed = 5;
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
     bool bInputCombo = false;
