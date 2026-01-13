@@ -155,6 +155,9 @@ public:
     float LockOnRange = 1200.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+    float MinAngle = 120.f;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float LockOnBreakDistance = 1500.f;
 
     float LockOnBreakDistanceSq;

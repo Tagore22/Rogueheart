@@ -388,7 +388,7 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
 }
 
 // 여기 진행 중.
-AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
+/*AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
 {
     if (!IsValid(LockOnTarget))
         return nullptr;
@@ -433,6 +433,64 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
             LockOnTarget->ShowTargetMarker(false);
         }
         return NewTarget;
+    }
+    return nullptr;
+}*/
+
+AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
+{
+    if (!IsValid(LockOnTarget)) 
+        return nullptr;
+
+    // 1. 범위 내 적들만 필터링, OverlapMultiByObjectType 혹은 OverlapMultiByChannel
+    TArray<FOverlapResult> OverlappingActors;
+    FCollisionShape Sphere = FCollisionShape::MakeSphere(LockOnRange);
+    FCollisionQueryParams Params;
+    Params.AddIgnoredActor(this);
+    GetWorld()->OverlapMultiByObjectType(OverlappingActors, GetActorLocation(), FQuat::Identity, FCollisionObjectQueryParams(ECC_Pawn), Sphere, Params);
+
+    FVector MyForward = GetActorForwardVector();
+    FVector MyRight = GetActorRightVector();
+    FVector MyLocation = GetActorLocation();
+
+    AEnemyBase* BestTarget = nullptr;
+    // 에디터에서 설정한 MinAngle을 '최대 탐색 허용치'로 사용
+    float ClosestAngle = MinAngle;
+
+    for (const FOverlapResult& Result : OverlappingActors)
+    {
+        AEnemyBase* Enemy = Cast<AEnemyBase>(Result.GetActor());
+
+        // 유효성, 현재 타겟 제외
+        if (!IsValid(Enemy) || Enemy == LockOnTarget) 
+            continue;
+
+        FVector ToEnemy = (Enemy->GetActorLocation() - MyLocation).GetSafeNormal2D();
+
+        float DotForward = FVector::DotProduct(ToEnemy, MyForward);
+        // 앞쪽 시야 확보. 내적값에 의해 1은 정면, 0.5는 60도, 0은 90도.
+        if (DotForward < 0.5f) 
+            continue; 
+
+        float DotRight = FVector::DotProduct(ToEnemy, MyRight);
+
+        // 왼쪽/오른쪽 방향성 체크
+        if ((bLeft && DotRight < 0.f) || (!bLeft && DotRight > 0.f))
+        {
+            // Clamp를 통해서 -1 ~ 1안의 값으로 강제함.
+            float Angle = FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(DotForward, -1.f, 1.f)));
+            if (Angle < ClosestAngle)
+            {
+                ClosestAngle = Angle;
+                BestTarget = Enemy;
+            }
+        }
+    }
+    if (BestTarget)
+    {
+        // 락온을 완전히 끄지 말고 타겟만 "교체" (부드러운 전환)
+        LockOnTarget->ShowTargetMarker(false);
+        return BestTarget; // 리턴 후 호출한 곳에서 LockOnTarget = NewTarget; 을 해주겠죠?
     }
     return nullptr;
 }
