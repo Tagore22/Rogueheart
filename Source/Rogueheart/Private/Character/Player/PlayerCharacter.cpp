@@ -261,7 +261,7 @@ bool APlayerCharacter::CanAct(EActionType DesiredAction) const
 
 void APlayerCharacter::ToggleLockOn()
 {
-    if (!CanAct(EActionType::Move))
+    if (!CanAct(EActionType::LockOn))
         return;
 
     if (IsValid(LockOnTarget))
@@ -387,7 +387,6 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
     }
 }
 
-// 여기 진행 중.
 /*AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
 {
     if (!IsValid(LockOnTarget))
@@ -488,14 +487,13 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
     }
     if (BestTarget)
     {
-        // 락온을 완전히 끄지 말고 타겟만 "교체" (부드러운 전환)
-        LockOnTarget->ShowTargetMarker(false);
+        //LockOnTarget->ShowTargetMarker(false);
         return BestTarget; // 리턴 후 호출한 곳에서 LockOnTarget = NewTarget; 을 해주겠죠?
     }
     return nullptr;
 }
 
-void APlayerCharacter::SwitchTargetLeft()
+/*void APlayerCharacter::SwitchTargetLeft()
 {
     if (IsAttacking() || IsDodging())
         return;
@@ -509,9 +507,23 @@ void APlayerCharacter::SwitchTargetLeft()
             LockOnTarget->ShowTargetMarker(true);
         }
     }
+}*/
+
+void APlayerCharacter::SwitchTargetLeft()
+{
+    if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
+        return;
+
+    AEnemyBase* NewTarget = SwitchTarget(true);
+    if (IsValid(NewTarget) && LockOnTarget != NewTarget)
+    {
+        LockOnTarget->ShowTargetMarker(false);
+        LockOnTarget = NewTarget;
+        LockOnTarget->ShowTargetMarker(true);
+    }
 }
 
-void APlayerCharacter::SwitchTargetRight()
+/*void APlayerCharacter::SwitchTargetRight()
 {
     if (IsAttacking() || IsDodging())
         return;
@@ -525,6 +537,20 @@ void APlayerCharacter::SwitchTargetRight()
             LockOnTarget->ShowTargetMarker(true);
         }
     }
+}*/
+
+void APlayerCharacter::SwitchTargetRight()
+{
+    if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
+        return;
+
+    AEnemyBase* NewTarget = SwitchTarget(false);
+    if (IsValid(NewTarget) && LockOnTarget != NewTarget)
+    {
+        LockOnTarget->ShowTargetMarker(false);
+        LockOnTarget = NewTarget;
+        LockOnTarget->ShowTargetMarker(true);
+    }
 }
 
 void APlayerCharacter::CheckLockOnDistance()
@@ -537,6 +563,14 @@ void APlayerCharacter::CheckLockOnDistance()
     {
         ClearLockOn();
     }
+    // 2. (추가 제안) 적이 죽었는지도 여기서 같이 체크하면 좋습니다.
+    // 만약 Enemy 클래스에 IsDead() 같은 함수가 있다면:
+    /*
+    if (LockOnTarget->IsDead())
+    {
+        ClearLockOn();
+    }
+    */
 }
 
 FGenericTeamId APlayerCharacter::GetGenericTeamId() const
@@ -546,6 +580,9 @@ FGenericTeamId APlayerCharacter::GetGenericTeamId() const
 
 void APlayerCharacter::ClearLockOn()
 {
+    if (!IsValid(LockOnTarget))
+        return;
+
     LockOnTarget->ShowTargetMarker(false);
     LockOnTarget = nullptr;
 

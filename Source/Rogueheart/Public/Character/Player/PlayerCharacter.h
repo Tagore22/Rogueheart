@@ -19,6 +19,7 @@ enum class EPlayerState : uint8
     Idle,
     Moving,
     Attacking,
+    LockedOn,
     Dodging,
     Stunned,
     Dead
@@ -29,6 +30,7 @@ enum class EActionType : uint8
 {
     Move,
     Attack,
+    LockOn,
     Dodge,
     UseSkill
 };
