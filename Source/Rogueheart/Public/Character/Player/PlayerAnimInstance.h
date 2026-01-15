@@ -4,6 +4,8 @@
 #include "Animation/AnimInstance.h"
 #include "PlayerAnimInstance.generated.h"
 
+class APlayerCharacter;
+
 UCLASS()
 class ROGUEHEART_API UPlayerAnimInstance : public UAnimInstance
 {
@@ -12,11 +14,13 @@ class ROGUEHEART_API UPlayerAnimInstance : public UAnimInstance
 public:
     UPlayerAnimInstance();
 
-    virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-
     //void SetIsAttacking(bool bNewState);
 
 protected:
+    virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+    virtual void NativeInitializeAnimation() override;
+
     UFUNCTION()
     void AnimNotify_EndAttack();
 
@@ -33,11 +37,11 @@ private:
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     float Speed;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    bool bIsInAir;
+    //UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    //bool bIsInAir;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    bool bIsAccelerating;
+    //UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+    //bool bIsAccelerating;
 
 
     // 전투 상태
@@ -54,4 +58,7 @@ private:
 
     UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
     bool bIsLockedOn;
+
+    UPROPERTY()
+    APlayerCharacter* Player = nullptr;
 };

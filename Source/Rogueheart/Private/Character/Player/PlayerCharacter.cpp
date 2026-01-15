@@ -177,15 +177,6 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
         LockOnTarget = PrevLockOnTarget;
         SetLockOnState(true);
     }
-    else
-    {
-        LockOnTarget = FindNearestTarget();
-
-        if (IsValid(LockOnTarget))
-        {
-            SetLockOnState(true);
-        }
-    }
 }
 
 void APlayerCharacter::Dodge(const FInputActionValue& Value)
@@ -345,7 +336,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         TraceParams.AddIgnoredActor(this);
 
         FVector TraceStart = CameraLocation;
-        FVector TraceEnd = Candidate.Actor->GetActorLocation() + FVector(0, 0, 50.0f);
+        FVector TraceEnd = Candidate.Actor->GetActorLocation() + FVector(0, 0, 50.f);
 
         // 내 눈(카메라)에서 적의 위치(보통 가슴 높이 고려)까지 발사
         bool bIsObstructed = GetWorld()->LineTraceSingleByChannel(
