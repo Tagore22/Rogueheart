@@ -42,18 +42,32 @@ void AEnemyBase::Tick(float DeltaTime)
 
 void AEnemyBase::TryAttack()
 {
-    if (CanAttack() && AttackMontage)
+    if (!CanAttack() || !IsValid(AttackMontage))
+        return;
+
+    USkeletalMeshComponent* MeshPtr = GetMesh();
+    if (!IsValid(MeshPtr))
+        return;
+
+    UAnimInstance* AnimInstance = MeshPtr->GetAnimInstance();
+    if (!IsValid(AnimInstance))
+        return;
+
+    if (AnimInstance->Montage_IsPlaying(AttackMontage))
+        return;
+
+    // 혹여나 애니메이션이 제대로 재생되지 않았을 경우를 처리하기 위한 임시 방편으로 남겨둔다.
+    /*const float PlayLength = AnimInstance->Montage_Play(AttackMontage);
+    if (PlayLength > 0.f)
     {
-        if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-        {
-            if (!AnimInstance->Montage_IsPlaying(AttackMontage))
-            {
-                AnimInstance->Montage_Play(AttackMontage);
-                ResetAttackCooldown();
-                UE_LOG(LogTemp, Warning, TEXT("Attack Executed"));
-            }
-        }
+        ResetAttackCooldown();
+        UE_LOG(LogTemp, Warning, TEXT("Attack Executed"));
     }
+    else
+    {
+    }*/
+    ResetAttackCooldown();
+    UE_LOG(LogTemp, Warning, TEXT("Attack Executed"));
 }
 
 bool AEnemyBase::CanAttack() const
