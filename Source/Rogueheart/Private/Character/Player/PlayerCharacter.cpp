@@ -258,6 +258,7 @@ void APlayerCharacter::ToggleLockOn()
     if (IsValid(LockOnTarget))
     {
         ClearLockOn();
+        PrevLockOnTarget = nullptr;
     }
     else
     {
@@ -265,7 +266,6 @@ void APlayerCharacter::ToggleLockOn()
 
         if (IsValid(NewTarget))
         {
-            PrevLockOnTarget = nullptr;
             LockOnTarget = NewTarget;
             LockOnTarget->ShowTargetMarker(true);
             SetLockOnState(true);

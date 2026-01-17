@@ -78,7 +78,7 @@ void AEnemyAIController::BeginPlay()
     }
 }
 
-void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+/*void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
     if (!Actor)
         return;
@@ -140,8 +140,64 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
             UE_LOG(LogTemp, Warning, TEXT("Player Lost -> Investigating at %s, TeamId: %d"), *LastSeenLocation.ToString(), ActorTeamId.GetId());
         }
     }
+}*/
+
+void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+    if (!IsValid(Actor) || FGenericTeamId::GetTeamIdentifier(Actor) != FGenericTeamId(1))
+        return;
+
+    UBlackboardComponent* BB = GetBlackboardComponent();
+    if (!IsValid(BB))
+        return;
+
+    FVector StimulusLoc = Stimulus.StimulusLocation;
+
+    if (Stimulus.WasSuccessfullySensed())
+    {
+        // 플레이어 발견
+        BB->SetValueAsObject(TEXT("TargetPlayer"), Actor);
+
+        // FIX: 발견 위치는 플레이어(Actor)의 현재 위치로 저장 (이전: ControlledPawn 위치 사용)
+        BB->SetValueAsVector(TEXT("DiscoveredLocation"), StimulusLoc);
+
+        // ADDED: 조사 모드 종료 플래그
+        BB->SetValueAsBool(TEXT("IsInvestigating"), false);
+
+        UE_LOG(LogTemp, Warning, TEXT("Player Detected!"));
+    }
+    else
+    {
+        // 플레이어 놓침: 현재 블랙보드의 타겟과 일치하거나 타겟이 비어있을 때만 조사 시작
+        UObject* CurrentTargetObj = BB->GetValueAsObject(TEXT("TargetPlayer"));    
+
+        if (IsValid(CurrentTargetObj) && CurrentTargetObj != Actor)
+            return;
+
+        // ADDED: 블랙보드에 저장
+        BB->SetValueAsVector(TEXT("DiscoveredLocation"), StimulusLoc);
+
+        BB->SetValueAsBool(TEXT("IsInvestigating"), true);
+
+        // 타겟 클리어해서 전투 브랜치 진입 방지
+        BB->ClearValue(TEXT("TargetPlayer"));
+
+        UE_LOG(LogTemp, Warning, TEXT("Player Lost"));
+    }
+    UWorld* World = GetWorld();
+    if (!IsValid(World))
+        return;
+
+    // ADDED: 조사 타이머 시작 (타이머 만료 시 StopInvestigating 호출)
+    World->GetTimerManager().ClearTimer(InvestigateTimerHandle);
+
+    if (Stimulus.WasSuccessfullySensed())
+        return;
+
+    World->GetTimerManager().SetTimer(InvestigateTimerHandle, this, &AEnemyAIController::StopInvestigating, InvestigateTimeout, false);
 }
 
+// 여기 할 차례.
 void AEnemyAIController::StopInvestigating()
 {
     UBlackboardComponent* BB = GetBlackboardComponent();
