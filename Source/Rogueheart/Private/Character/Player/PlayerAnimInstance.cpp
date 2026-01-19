@@ -20,12 +20,12 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     Super::NativeUpdateAnimation(DeltaSeconds);
 
     APawn* OwningPawn = TryGetPawnOwner();
-    if (!IsValid(OwningPawn)) 
+    if (!OwningPawn) 
         return;
 
     // 혹여라도 BeginPlay()에서 Player를 캐싱하지 못했을 때 여기서 마지막으로
     // 찾아본다.
-    if (IsValid(Player))
+    if (!IsValid(Player))
     {
         Player = Cast<APlayerCharacter>(OwningPawn);
     }
@@ -76,7 +76,7 @@ void UPlayerAnimInstance::NativeInitializeAnimation()
 
     APawn* Owner = TryGetPawnOwner();
 
-    if (IsValid(Owner))
+    if (Owner)
     {
         Player = Cast<APlayerCharacter>(Owner);
     }

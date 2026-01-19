@@ -19,6 +19,10 @@ public:
     // ADDED: 매 Tick마다 디버깅용 시야각 그려줌
     virtual void Tick(float DeltaSeconds) override;
 
+    const static FName TargetPlayerKey;
+    const static FName IsInvestigatingKey;
+    const static FName DiscoveredLocationKey;
+
 protected:
     virtual void BeginPlay() override;
 

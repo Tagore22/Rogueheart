@@ -78,10 +78,19 @@ void APlayerCharacter::Tick(float DeltaTime)
         UpdateLockOnRotation(DeltaTime);
         CheckLockOnDistance();
     }
+    if (IsValid(LockOnTarget))
+    {
+        UE_LOG(LogTemp, Log, TEXT("LockOnTarget: %s"), *LockOnTarget->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("LockOnTarget: nullptr"));
+    }
 }
 
-void APlayerCharacter::Move(const FInputActionValue& Value)
+/*void APlayerCharacter::Move(const FInputActionValue& Value)
 {
+    // 지역 변수를 새로 만들 땐 const를 이용하여 의도의 명확성을 추가함.
     const FVector2D MovementVector2D = Value.Get<FVector2D>();
     LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
 
@@ -99,6 +108,29 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
         AddMovementInput(ForwardDirection, MovementVector2D.X);
         AddMovementInput(RightDirection, MovementVector2D.Y);
     }
+}*/
+
+void APlayerCharacter::Move(const FInputActionValue& Value)
+{
+    // 지역 변수를 새로 만들 땐 const를 이용하여 의도의 명확성을 추가함.
+    const FVector2D MovementVector2D = Value.Get<FVector2D>();
+    LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
+
+    if (!CanAct(EActionType::Move) || MovementVector2D.IsNearlyZero())
+        return;
+
+    AController* PC = GetController();
+    if (!PC)
+        return;
+
+    const FRotator Rotation = PC->GetControlRotation();
+    const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
+
+    const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+    const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+    AddMovementInput(ForwardDirection, MovementVector2D.X);
+    AddMovementInput(RightDirection, MovementVector2D.Y);
 }
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
@@ -176,13 +208,14 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
     {
         LockOnTarget = PrevLockOnTarget;
         SetLockOnState(true);
+        PrevLockOnTarget = nullptr;
     }
 }
 
 void APlayerCharacter::Dodge(const FInputActionValue& Value)
 {
     // 1. 필수 요소가 하나라도 없으면 아예 구르기를 시작조차 안 함
-    UAnimInstance* Anim = GetMesh() ? GetMesh()->GetAnimInstance() : nullptr;
+    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
 
     if (!CanAct(EActionType::Dodge) || !IsValid(AMT_Dodge) || !Anim)
         return;
@@ -258,7 +291,7 @@ void APlayerCharacter::ToggleLockOn()
     if (IsValid(LockOnTarget))
     {
         ClearLockOn();
-        PrevLockOnTarget = nullptr;
+        //PrevLockOnTarget = nullptr;
     }
     else
     {
@@ -307,6 +340,9 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
     for (auto& Result : OverlapResults)
     {
         AEnemyBase* Enemy = Cast<AEnemyBase>(Result.GetActor());
+        // Get함수를 사용하고 있으나 Result는 이 클래스의 액터와 생명주기가 같다는 보장이
+        // 결코 없으니 단순 nullptr 검사 이외에 반드시 IsValid()를 통해 파괴에 대한 안전성
+        // 검사를 해야만 한다.
         if (!IsValid(Enemy)) 
             continue;
 
@@ -452,6 +488,9 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
         AEnemyBase* Enemy = Cast<AEnemyBase>(Result.GetActor());
 
         // 유효성, 현재 타겟 제외
+        // FindNearestTarget()에도 상술하였듯이 Enemy는 나와 생명주기가 같다고
+        // 보장되지 않은 액터 Result의 Get함수이므로 반드시 IsValid()를 통해
+        // 안정성 검사를 해야한다.
         if (!IsValid(Enemy) || Enemy == LockOnTarget) 
             continue;
 

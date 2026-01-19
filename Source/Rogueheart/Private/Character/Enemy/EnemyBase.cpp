@@ -45,12 +45,8 @@ void AEnemyBase::TryAttack()
     if (!CanAttack() || !IsValid(AttackMontage))
         return;
 
-    USkeletalMeshComponent* MeshPtr = GetMesh();
-    if (!IsValid(MeshPtr))
-        return;
-
-    UAnimInstance* AnimInstance = MeshPtr->GetAnimInstance();
-    if (!IsValid(AnimInstance))
+    UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+    if (!AnimInstance)
         return;
 
     if (AnimInstance->Montage_IsPlaying(AttackMontage))

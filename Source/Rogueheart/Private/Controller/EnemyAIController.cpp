@@ -13,6 +13,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Character.h"
 
+const FName AEnemyAIController::TargetPlayerKey = TEXT("TargetPlayer");
+const FName AEnemyAIController::IsInvestigatingKey = TEXT("IsInvestigating");
+const FName AEnemyAIController::DiscoveredLocationKey = TEXT("DiscoveredLocation");
+
 AEnemyAIController::AEnemyAIController()
 {
     PrimaryActorTick.bCanEverTick = true; 
@@ -148,57 +152,53 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
         return;
 
     UBlackboardComponent* BB = GetBlackboardComponent();
-    if (!IsValid(BB))
+    if (!BB)
         return;
 
-    FVector StimulusLoc = Stimulus.StimulusLocation;
+    const FVector StimulusLoc = Stimulus.StimulusLocation;
 
     if (Stimulus.WasSuccessfullySensed())
     {
         // 플레이어 발견
-        BB->SetValueAsObject(TEXT("TargetPlayer"), Actor);
+        BB->SetValueAsObject(TargetPlayerKey, Actor);
 
         // FIX: 발견 위치는 플레이어(Actor)의 현재 위치로 저장 (이전: ControlledPawn 위치 사용)
-        BB->SetValueAsVector(TEXT("DiscoveredLocation"), StimulusLoc);
+        BB->SetValueAsVector(DiscoveredLocationKey, StimulusLoc);
 
         // ADDED: 조사 모드 종료 플래그
-        BB->SetValueAsBool(TEXT("IsInvestigating"), false);
+        BB->SetValueAsBool(IsInvestigatingKey, false);
 
         UE_LOG(LogTemp, Warning, TEXT("Player Detected!"));
     }
     else
     {
         // 플레이어 놓침: 현재 블랙보드의 타겟과 일치하거나 타겟이 비어있을 때만 조사 시작
-        UObject* CurrentTargetObj = BB->GetValueAsObject(TEXT("TargetPlayer"));    
+        UObject* CurrentTargetObj = BB->GetValueAsObject(TargetPlayerKey);
 
-        if (IsValid(CurrentTargetObj) && CurrentTargetObj != Actor)
+        if (CurrentTargetObj && CurrentTargetObj != Actor)
             return;
 
         // ADDED: 블랙보드에 저장
-        BB->SetValueAsVector(TEXT("DiscoveredLocation"), StimulusLoc);
+        BB->SetValueAsVector(DiscoveredLocationKey, StimulusLoc);
 
-        BB->SetValueAsBool(TEXT("IsInvestigating"), true);
+        BB->SetValueAsBool(IsInvestigatingKey, true);
 
         // 타겟 클리어해서 전투 브랜치 진입 방지
-        BB->ClearValue(TEXT("TargetPlayer"));
+        BB->ClearValue(TargetPlayerKey);
 
         UE_LOG(LogTemp, Warning, TEXT("Player Lost"));
     }
-    UWorld* World = GetWorld();
-    if (!IsValid(World))
-        return;
-
+    FTimerManager& Timer = GetWorldTimerManager();
     // ADDED: 조사 타이머 시작 (타이머 만료 시 StopInvestigating 호출)
-    World->GetTimerManager().ClearTimer(InvestigateTimerHandle);
+    Timer.ClearTimer(InvestigateTimerHandle);
 
     if (Stimulus.WasSuccessfullySensed())
         return;
 
-    World->GetTimerManager().SetTimer(InvestigateTimerHandle, this, &AEnemyAIController::StopInvestigating, InvestigateTimeout, false);
+    Timer.SetTimer(InvestigateTimerHandle, this, &AEnemyAIController::StopInvestigating, InvestigateTimeout, false);
 }
 
-// 여기 할 차례.
-void AEnemyAIController::StopInvestigating()
+/*void AEnemyAIController::StopInvestigating()
 {
     UBlackboardComponent* BB = GetBlackboardComponent();
     if (!BB)
@@ -215,6 +215,21 @@ void AEnemyAIController::StopInvestigating()
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Investigation timed out -> Returning to Patrol"));
+}*/
+
+void AEnemyAIController::StopInvestigating()
+{
+    if (UBlackboardComponent* BB = GetBlackboardComponent())
+    {
+        // ADDED: 조사 종료 플래그 및 위치 클리어
+        BB->SetValueAsBool(IsInvestigatingKey, false);
+        BB->ClearValue(DiscoveredLocationKey);
+    }
+
+    // ADDED: 타이머 클리어 안전 처리
+    GetWorldTimerManager().ClearTimer(InvestigateTimerHandle);
+
+    UE_LOG(LogTemp, Warning, TEXT("Investigation timed out -> Returning to Patrol"));
 }
 
 FGenericTeamId AEnemyAIController::GetGenericTeamId() const
@@ -225,7 +240,8 @@ FGenericTeamId AEnemyAIController::GetGenericTeamId() const
 void AEnemyAIController::Debug_DrawFOV()
 {
     APawn* MyPawn = GetPawn();
-    if (!MyPawn || !SightConfig) return;
+    if (!MyPawn || !SightConfig) 
+        return;
 
     FVector PawnLoc = MyPawn->GetActorLocation();
     FVector Forward = MyPawn->GetActorForwardVector();

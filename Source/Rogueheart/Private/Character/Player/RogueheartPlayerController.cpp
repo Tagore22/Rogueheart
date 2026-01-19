@@ -16,7 +16,7 @@ void ARogueheartPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (!IsValid(UIManagerClass) && !UIManager)
+    if (UIManagerClass && !IsValid(UIManager))
     {
         // PlayerController를 Outer로 해서 생성
         UIManager = NewObject<UUIManager>(this, UIManagerClass);
