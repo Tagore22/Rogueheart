@@ -78,14 +78,15 @@ void APlayerCharacter::Tick(float DeltaTime)
         UpdateLockOnRotation(DeltaTime);
         CheckLockOnDistance();
     }
-    if (IsValid(LockOnTarget))
+    // 락온 대상 찾기용 로그
+    /*if (IsValid(LockOnTarget))
     {
         UE_LOG(LogTemp, Log, TEXT("LockOnTarget: %s"), *LockOnTarget->GetName());
     }
     else
     {
         UE_LOG(LogTemp, Log, TEXT("LockOnTarget: nullptr"));
-    }
+    }*/
 }
 
 /*void APlayerCharacter::Move(const FInputActionValue& Value)
