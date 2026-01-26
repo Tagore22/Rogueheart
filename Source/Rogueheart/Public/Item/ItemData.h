@@ -2,9 +2,18 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h" 
+/*#include "Engine/Texture2D.h"
+#include "Engine/StaticMesh.h"
+#include "Engine/SkeletalMesh.h"
+#include "Sound/SoundBase.h"
+#include "NiagaraSystem.h"*/
 #include "ItemData.generated.h"
 
+class UTexture2D;
+class UStaticMesh;
 class UNiagaraSystem;
+class USkeletalMesh;
+class USoundBase;
 
 UENUM(BlueprintType)
 enum class EItemType : uint8
@@ -26,7 +35,7 @@ enum class EItemEffectType : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FItemData : public FTableRowBase
+struct ROGUEHEART_API FItemData : public FTableRowBase
 {
     GENERATED_BODY()
 

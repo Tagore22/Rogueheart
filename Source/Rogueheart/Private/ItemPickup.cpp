@@ -6,7 +6,7 @@
 AItemPickup::AItemPickup()
 {
 	// 지금 당장은 쓸 일이 없다. 프로젝트 종료 혹은 사용할 일이 생길시 변경.
-	// PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
     // 루트 컴포넌트
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
