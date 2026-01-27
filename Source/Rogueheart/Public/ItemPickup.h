@@ -13,8 +13,12 @@ class ROGUEHEART_API AItemPickup : public AActor
 public:	
 	AItemPickup();
 
-	// 이거 하나만 둠 (에디터에서 전체 ItemData를 직접 입력)
+	// 에디터에서 설정할 유일한 키 (DataTable Row Name).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	FName ItemID;
+
+	// 로드된 아이템 데이터 (런타임에 채워짐)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	FItemData ItemData;
 protected:
 	virtual void BeginPlay() override;

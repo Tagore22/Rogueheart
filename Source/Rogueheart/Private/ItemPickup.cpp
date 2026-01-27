@@ -29,7 +29,7 @@ void AItemPickup::BeginPlay()
     // 에디터에서 ItemData가 이미 설정되어 있으니 바로 사용
     // 지금 당장은 별게 없다. 에디터에서 각 BP마다 DT값을 직접 초기화하고 있기 
     // 때문이다. 이후 하나씩 옮겨오도록 하자.
-    if (!ItemData.PickupMesh.IsNull())
+    /*if (!ItemData.PickupMesh.IsNull())
     {
         UStaticMesh* LoadedMesh = ItemData.PickupMesh.LoadSynchronous();
         if (LoadedMesh)
@@ -40,8 +40,33 @@ void AItemPickup::BeginPlay()
         {
             UE_LOG(LogTemp, Warning, TEXT("AItemPickup: PickupMesh load fail - %s"), *ItemData.ItemName.ToString());
         }
-    }
+    }*/
+    if (ItemID.IsNone()) 
+        return;
+
     TriggerSphere->OnComponentBeginOverlap.AddDynamic(this, &AItemPickup::OnTriggerOverlap);
+
+    static const FString DTPath = TEXT("/Game/Characters/DT_Items.DT_Items");
+    UDataTable* ItemTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DTPath));
+
+    if (ItemTable)
+    {
+        const FItemData* RowData = ItemTable->FindRow<FItemData>(ItemID, TEXT(""));
+        if (RowData)
+        {
+            ItemData = *RowData;
+
+            // PickupMesh 로드
+            if (!ItemData.PickupMesh.IsNull())
+            {
+                UStaticMesh* LoadedMesh = ItemData.PickupMesh.LoadSynchronous();
+                if (LoadedMesh)
+                {
+                    MeshComponent->SetStaticMesh(LoadedMesh);
+                }
+            }
+        }
+    }
     // 추가 초기화 (예: 회전 애니메이션 등은 여기서 시작 가능)
 }
 

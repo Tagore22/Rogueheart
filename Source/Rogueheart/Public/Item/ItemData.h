@@ -62,7 +62,7 @@ public:
     TSoftObjectPtr<UNiagaraSystem> PickupParticle = nullptr; // 습득 시 이펙트.
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
-    TSoftObjectPtr<USkeletalMesh> EquipMesh;              // 장착 시 모습 (필요하면)
+    TSoftObjectPtr<UStaticMesh> EquipMesh;              // 장착 시 모습 (필요하면)
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stack")
     int32 MaxStack = 1;                                   // 최대 겹침 개수. 포션은 99, 장비는 1
