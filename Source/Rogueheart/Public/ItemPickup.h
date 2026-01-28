@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Item/ItemData.h"
+#include "Character/Player/PlayerCharacter.h"
+#include "InventoryComponent.h"
 #include "ItemPickup.generated.h"
 
 UCLASS()

@@ -90,7 +90,34 @@ void AItemPickup::OnPickup(AActor* Picker)
     {
         UE_LOG(LogTemp, Warning, TEXT("Item Get : (No Item Name)"));
     }
-    Destroy();
+    //Destroy();
+
+    // 플레이어 캐릭터인지 안전하게 캐스트
+    APlayerCharacter* Player = Cast<APlayerCharacter>(Picker);
+    if (!IsValid(Player))
+        return;
+
+    // InventoryComponent 찾기
+    UInventoryComponent* Inventory = Player->FindComponentByClass<UInventoryComponent>();
+    if (!Inventory)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Player don't have InventoryComponent!"));
+        return;
+    }
+
+    // 인벤토리에 추가 시도
+    bool bAdded = Inventory->AddItem(ItemID, 1);
+
+    if (bAdded)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Item Add Success : %s"), *ItemData.ItemName.ToString());
+        Destroy();  // 습득 성공 시 사라짐
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Inventory is full - Add Fail : %s"), *ItemData.ItemName.ToString());
+        // 실패 시 아이템은 그대로 둠
+    }
 }
 
 /*void AItemPickup::Tick(float DeltaTime)

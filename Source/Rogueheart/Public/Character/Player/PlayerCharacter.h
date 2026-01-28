@@ -13,6 +13,7 @@ class UUserWidget;
 class UAnimMontage;
 class USkillComponent;
 class AEnemyBase;
+class UInventoryComponent;
 struct InputActionValue;
 
 UENUM(BlueprintType)
@@ -82,6 +83,8 @@ protected:
     void CheckLockOnDistance();
     void ClearLockOn();
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    class UInventoryComponent* InventoryComponent;
 public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
     USpringArmComponent* CameraBoom;
