@@ -81,17 +81,6 @@ void AItemPickup::OnTriggerOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 void AItemPickup::OnPickup(AActor* Picker)
 {
-    // 지금은 로그 + 파괴 (테스트용)
-    if (!ItemData.ItemName.IsEmpty())
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Item Get : %s"), *ItemData.ItemName.ToString());
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Item Get : (No Item Name)"));
-    }
-    //Destroy();
-
     // 플레이어 캐릭터인지 안전하게 캐스트
     APlayerCharacter* Player = Cast<APlayerCharacter>(Picker);
     if (!IsValid(Player))
@@ -110,7 +99,7 @@ void AItemPickup::OnPickup(AActor* Picker)
 
     if (bAdded)
     {
-        UE_LOG(LogTemp, Log, TEXT("Item Add Success : %s"), *ItemData.ItemName.ToString());
+        UE_LOG(LogTemp, Warning, TEXT("Item Add Success : %s"), *ItemData.ItemName.ToString());
         Destroy();  // 습득 성공 시 사라짐
     }
     else

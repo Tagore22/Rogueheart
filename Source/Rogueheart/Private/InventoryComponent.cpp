@@ -14,7 +14,7 @@ bool UInventoryComponent::AddItem(FName ItemID, int32 Count)
     if (int32* CurrentCount = ItemCounts.Find(ItemID))
     {
         *CurrentCount += Count;
-        UE_LOG(LogTemp, Log, TEXT("Item Stacked: %s (New Count: %d)"), *ItemID.ToString(), *CurrentCount);
+        UE_LOG(LogTemp, Warning, TEXT("Item Stacked: %s (New Count: %d)"), *ItemID.ToString(), *CurrentCount);
         return true;
     }
 
@@ -29,7 +29,7 @@ bool UInventoryComponent::AddItem(FName ItemID, int32 Count)
     ItemCounts.Add(ItemID, Count);
     ItemIDs.Add(ItemID);
 
-    UE_LOG(LogTemp, Log, TEXT("New Item Added: %s (Count: %d)"), *ItemID.ToString(), Count);
+    UE_LOG(LogTemp, Warning, TEXT("New Item Added: %s (Count: %d)"), *ItemID.ToString(), Count);
     return true;
 }
 
@@ -54,7 +54,7 @@ bool UInventoryComponent::UseItem(FName ItemID)
             UE_LOG(LogTemp, Warning, TEXT("Equipped item consumed and unequipped: %s"), *ItemID.ToString());
         }
     }
-    UE_LOG(LogTemp, Log, TEXT("Item Use: %s"), *ItemID.ToString());
+    UE_LOG(LogTemp, Warning, TEXT("Item Use: %s"), *ItemID.ToString());
     return true;
 }
 
@@ -68,7 +68,7 @@ bool UInventoryComponent::EquipItem(FName ItemID)
     }
 
     EquippedWeaponID = ItemID;
-    UE_LOG(LogTemp, Log, TEXT("Equip success : %s"), *ItemID.ToString());
+    UE_LOG(LogTemp, Warning, TEXT("Equip success : %s"), *ItemID.ToString());
     return true;
 }
 

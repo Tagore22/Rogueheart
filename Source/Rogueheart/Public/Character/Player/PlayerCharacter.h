@@ -67,19 +67,18 @@ protected:
     void Look(const struct FInputActionValue& Value);
     void Attack(const struct FInputActionValue& Value);
     void Dodge(const struct FInputActionValue& Value);
-
     UFUNCTION()
-    void UseFireball();
-
+    void UseFireball(const struct FInputActionValue& Value);
     UFUNCTION()
-    void UseIceBlast();
+    void UseIceBlast(const struct FInputActionValue& Value);
+    void ToggleLockOn(const struct FInputActionValue& Value);
+    void SwitchTargetLeft(const struct FInputActionValue& Value);
+    void SwitchTargetRight(const struct FInputActionValue& Value);
+    void ToggleInventory(const struct FInputActionValue& Value);
 
-    void ToggleLockOn();
     AEnemyBase* FindNearestTarget();
     void UpdateLockOnRotation(float DeltaTime);
     AEnemyBase* SwitchTarget(bool bLeft);
-    void SwitchTargetLeft();
-    void SwitchTargetRight();
     void CheckLockOnDistance();
     void ClearLockOn();
 
@@ -122,6 +121,9 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     UInputAction* IA_SwitchTargetRight;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    UInputAction* IA_InventoryOnOff;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
     UAnimMontage* AMT_Attack;
 
@@ -151,6 +153,12 @@ public:
 
     UPROPERTY()
     UUserWidget* CooldownWidget = nullptr;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<UUserWidget> WB_Inventory;
+
+    UPROPERTY()
+    UUserWidget* InventoryWidget = nullptr;
 
     UPROPERTY(VisibleAnywhere, Category = "Targeting")
     AEnemyBase* LockOnTarget = nullptr;

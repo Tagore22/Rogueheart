@@ -51,6 +51,7 @@ void APlayerCharacter::BeginPlay()
     }
     LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance);
     SetGenericTeamId(FGenericTeamId(TeamID));
+    InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), WB_Inventory);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -68,6 +69,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         EnhancedInput->BindAction(IA_LockOn, ETriggerEvent::Started, this, &APlayerCharacter::ToggleLockOn);
         EnhancedInput->BindAction(IA_SwitchTargetLeft, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetLeft);
         EnhancedInput->BindAction(IA_SwitchTargetRight, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetRight);
+        EnhancedInput->BindAction(IA_InventoryOnOff, ETriggerEvent::Started, this, &APlayerCharacter::ToggleInventory);
     }
 }
 
@@ -150,7 +152,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(LookAxis.Y);
 }
 
-void APlayerCharacter::Attack(const FInputActionValue& Value)
+void APlayerCharacter::Attack(const struct FInputActionValue& Value)
 {
     if (CurrentState == EPlayerState::Dodging || CurrentState == EPlayerState::Stunned)
         return;
@@ -215,7 +217,7 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
     }
 }
 
-void APlayerCharacter::Dodge(const FInputActionValue& Value)
+void APlayerCharacter::Dodge(const struct FInputActionValue& Value)
 {
     // 1. 필수 요소가 하나라도 없으면 아예 구르기를 시작조차 안 함
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
@@ -242,7 +244,7 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     }
 }
 
-void APlayerCharacter::UseFireball()
+void APlayerCharacter::UseFireball(const struct FInputActionValue& Value)
 {
     if (!CanAct(EActionType::UseSkill))
         return;
@@ -250,7 +252,7 @@ void APlayerCharacter::UseFireball()
     SkillComponent->UseSkill(ESkillType::Fireball);
 }
 
-void APlayerCharacter::UseIceBlast()
+void APlayerCharacter::UseIceBlast(const struct FInputActionValue& Value)
 {
     if (!CanAct(EActionType::UseSkill))
         return;
@@ -286,7 +288,7 @@ bool APlayerCharacter::CanAct(EActionType DesiredAction) const
     return false;
 }
 
-void APlayerCharacter::ToggleLockOn()
+void APlayerCharacter::ToggleLockOn(const struct FInputActionValue& Value)
 {
     if (!CanAct(EActionType::LockOn))
         return;
@@ -542,7 +544,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
     }
 }*/
 
-void APlayerCharacter::SwitchTargetLeft()
+void APlayerCharacter::SwitchTargetLeft(const struct FInputActionValue& Value)
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -572,7 +574,7 @@ void APlayerCharacter::SwitchTargetLeft()
     }
 }*/
 
-void APlayerCharacter::SwitchTargetRight()
+void APlayerCharacter::SwitchTargetRight(const struct FInputActionValue& Value)
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -634,5 +636,45 @@ void APlayerCharacter::SetLockOnState(bool bIsLockOn)
     {
         GetCharacterMovement()->bOrientRotationToMovement = true;
         bUseControllerRotationYaw = false;
+    }
+}
+
+void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
+{
+    // 인벤토리가 켜져있으면 끄고, 꺼져있으면 킨다.
+    // 아마 현재 UI가 nullptr인지로 알 수 있다.
+    UE_LOG(LogTemp, Warning, TEXT("Inventory Toggle"));
+    //UE_LOG(LogTemp, Log, TEXT("LockOnTarget: nullptr"));
+
+    if (!InventoryWidget)
+        return;
+
+    APlayerController* PC = Cast<APlayerController>(GetController());
+    if (!PC)
+        return;
+
+    // 현재 인벤토리가 켜져 있음.
+    if (InventoryWidget->IsInViewport())
+    {
+        InventoryWidget->RemoveFromParent();
+
+        // 마우스 커서 숨기고 게임 입력으로 전환
+        FInputModeGameOnly InputMode;
+        PC->SetInputMode(InputMode);
+        PC->bShowMouseCursor = false;
+        PC->SetPause(false);
+    }
+    else
+    {
+        InventoryWidget->AddToViewport();
+
+        // 마우스 커서 보이고 UI 입력으로 전환
+        FInputModeGameAndUI InputMode;
+        // 마우스 클릭 시 커서가 갑자기 사라지는 걸 방지
+        InputMode.SetHideCursorDuringCapture(false);
+        InputMode.SetWidgetToFocus(InventoryWidget->TakeWidget());
+        PC->SetInputMode(InputMode);
+        PC->bShowMouseCursor = true;
+        PC->SetPause(true);
     }
 }
