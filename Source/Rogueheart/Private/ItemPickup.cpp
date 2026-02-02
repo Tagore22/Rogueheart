@@ -2,6 +2,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "InventoryComponent.h"
+#include "RogueheartGameInstance.h"
+#include "Engine/DataTable.h"
 
 AItemPickup::AItemPickup()
 {
@@ -46,9 +49,9 @@ void AItemPickup::BeginPlay()
 
     TriggerSphere->OnComponentBeginOverlap.AddDynamic(this, &AItemPickup::OnTriggerOverlap);
 
-    static const FString DTPath = TEXT("/Game/Characters/DT_Items.DT_Items");
-    UDataTable* ItemTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DTPath));
-
+    URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetWorld()->GetGameInstance());
+    UDataTable* ItemTable = GI ? GI->GetItemDataTable() : nullptr;
+    
     if (ItemTable)
     {
         const FItemData* RowData = ItemTable->FindRow<FItemData>(ItemID, TEXT(""));
@@ -81,13 +84,20 @@ void AItemPickup::OnTriggerOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 void AItemPickup::OnPickup(AActor* Picker)
 {
+    //APlayerCharacter* Player = Cast<APlayerCharacter>(Picker);
+    //if (!IsValid(Player))
+    //    return;
+
     // 플레이어 캐릭터인지 안전하게 캐스트
-    APlayerCharacter* Player = Cast<APlayerCharacter>(Picker);
-    if (!IsValid(Player))
+    if (!Picker->ActorHasTag(FName("Player")))
+        return;
+
+    URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetGameInstance());
+    if (!GI)
         return;
 
     // InventoryComponent 찾기
-    UInventoryComponent* Inventory = Player->FindComponentByClass<UInventoryComponent>();
+    UInventoryComponent* Inventory = GI->GetInventoryComponent();
     if (!Inventory)
     {
         UE_LOG(LogTemp, Warning, TEXT("Player don't have InventoryComponent!"));

@@ -4,8 +4,12 @@
 #include "GameFramework/Actor.h"
 #include "Item/ItemData.h"
 #include "Character/Player/PlayerCharacter.h"
-#include "InventoryComponent.h"
+//#include "InventoryComponent.h"
 #include "ItemPickup.generated.h"
+
+class URogueheartGameInstance;
+class UInventoryComponent;
+class UDataTable;
 
 UCLASS()
 class ROGUEHEART_API AItemPickup : public AActor

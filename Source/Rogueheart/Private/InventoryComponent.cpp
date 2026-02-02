@@ -1,4 +1,6 @@
 #include "InventoryComponent.h"
+#include "Engine/DataTable.h"
+#include "RogueheartGameInstance.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -33,7 +35,7 @@ bool UInventoryComponent::AddItem(FName ItemID, int32 Count)
     return true;
 }
 
-bool UInventoryComponent::UseItem(FName ItemID)
+/*bool UInventoryComponent::UseItem(FName ItemID)
 {
     int32* CurrentCount = ItemCounts.Find(ItemID);
     if (!CurrentCount)
@@ -55,6 +57,85 @@ bool UInventoryComponent::UseItem(FName ItemID)
         }
     }
     UE_LOG(LogTemp, Warning, TEXT("Item Use: %s"), *ItemID.ToString());
+    return true;
+}*/
+
+bool UInventoryComponent::UseItem(FName ItemID)
+{
+    // 1. 인벤토리 내 존재 확인
+    int32* CurrentCount = ItemCounts.Find(ItemID);
+    if (!CurrentCount || *CurrentCount <= 0)
+    {
+        return false;
+    }
+    UE_LOG(LogTemp, Warning, TEXT("1"));
+
+    // 2. 아이템 데이터 테이블에서 정보 가져오기 
+    // (사용자의 데이터 매니저나 구조에 맞게 수정하세요)
+    // 현재 인벤토리가 게임인스턴스에서 생성된다. GetOwner()는 액터에 붙어있는 컴포넌트들만 가지기에
+    // 아래에서 GetOuter() 대신 GetOwner()를 호출하면 nullptr이 반환된다.
+    URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetOuter());
+    if (!GI)
+        return false;
+    UE_LOG(LogTemp, Warning, TEXT("2"));
+    UDataTable* ItemTable = GI ? GI->GetItemDataTable() : nullptr;
+    if (!ItemTable)
+        return false;
+    UE_LOG(LogTemp, Warning, TEXT("3"));
+    const FItemData* ItemData = ItemTable->FindRow<FItemData>(ItemID, TEXT(""));
+    if (!ItemData)
+        return false;
+    UE_LOG(LogTemp, Warning, TEXT("4"));
+
+    // 3. 아이템 타입에 따른 분기 처리
+    switch (ItemData->ItemType)
+    {
+    case EItemType::Equipment:
+        // [장착 로직] 수량은 줄이지 않고 장착 상태만 변경 (Toggle 방식)
+        if (EquippedWeaponID == ItemID)
+        {
+            EquippedWeaponID = NAME_None; // 이미 장착 중이면 해제
+            UE_LOG(LogTemp, Warning, TEXT("Item Unequipped: %s"), *ItemID.ToString());
+        }
+        else
+        {
+            EquippedWeaponID = ItemID;    // 새로 장착
+            UE_LOG(LogTemp, Warning, TEXT("Item Equipped: %s"), *ItemID.ToString());
+        }
+        break;
+
+    case EItemType::Consumable:
+        // [소모 로직] 수량 감소 및 효과 적용
+        *CurrentCount -= 1;
+        UE_LOG(LogTemp, Warning, TEXT("Item Consumed: %s (Remaining: %d)"), *ItemID.ToString(), *CurrentCount);
+
+        // 효과 적용 로직 (예: HealPlayer(ItemData->EffectValue))을 여기에 추가
+
+        // 수량이 다 떨어졌을 때 처리
+        if (*CurrentCount <= 0)
+        {
+            ItemCounts.Remove(ItemID);
+            ItemIDs.Remove(ItemID);
+
+            // 혹시라도 장착 중인 소모품(화살 등)이었다면 해제
+            if (EquippedWeaponID == ItemID)
+            {
+                EquippedWeaponID = NAME_None;
+            }
+        }
+        break;
+
+    case EItemType::Material:
+    case EItemType::KeyItem:
+        // 재료나 퀘스트 아이템은 '사용' 개념이 다를 수 있으므로 일단 보류
+        UE_LOG(LogTemp, Warning, TEXT("This item cannot be used directly: %s"), *ItemID.ToString());
+        return false;
+
+    default:
+        break;
+    }
+    // 4. 데이터가 변했으므로 UI 갱신을 위한 델리게이트 호출 등을 여기에 배치
+    // OnInventoryUpdated.Broadcast();
     return true;
 }
 
