@@ -61,7 +61,7 @@ bool UInventoryComponent::AddItem(FName ItemID, int32 Count)
 }*/
 
 bool UInventoryComponent::UseItem(FName ItemID)
-{
+w{
     // 1. 인벤토리 내 존재 확인
     int32* CurrentCount = ItemCounts.Find(ItemID);
     if (!CurrentCount || *CurrentCount <= 0)
@@ -116,7 +116,7 @@ bool UInventoryComponent::UseItem(FName ItemID)
         {
             ItemCounts.Remove(ItemID);
             ItemIDs.Remove(ItemID);
-
+            UE_LOG(LogTemp, Warning, TEXT("Item Delete"));
             // 혹시라도 장착 중인 소모품(화살 등)이었다면 해제
             if (EquippedWeaponID == ItemID)
             {
