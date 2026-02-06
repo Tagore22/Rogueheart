@@ -82,6 +82,15 @@ protected:
     void CheckLockOnDistance();
     void ClearLockOn();
 
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    int32 GetMaxHP() const;
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    int32 GetCurHP() const;
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    int32 GetMaxStamina() const;
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    int32 GetCurStamina() const;
+
     //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     //class UInventoryComponent* InventoryComponent;
 public:
@@ -149,16 +158,22 @@ public:
     bool bCanNextCombo = false;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UUserWidget> WB_SkillCooldownClass;
+    TSubclassOf<UUserWidget> WBP_SkillCooldownClass;
 
     UPROPERTY()
     UUserWidget* CooldownWidget = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UUserWidget> WB_Inventory;
+    TSubclassOf<UUserWidget> WBP_Inventory;
 
     UPROPERTY()
     UUserWidget* InventoryWidget = nullptr;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<UUserWidget> WBP_HPBar;
+
+    UPROPERTY()
+    UUserWidget* HPBarWidget = nullptr;
 
     UPROPERTY(VisibleAnywhere, Category = "Targeting")
     AEnemyBase* LockOnTarget = nullptr;
@@ -189,4 +204,9 @@ private:
     uint8 TeamID = 1;
 
     void SetLockOnState(bool bIsLockOn);
+
+    int32 MaxHP = 100;
+    int32 CurHP = 100;
+    int32 MaxStamina = 100;
+    int32 CurStamina = 100;
 };

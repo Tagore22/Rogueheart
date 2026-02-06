@@ -35,7 +35,6 @@ APlayerCharacter::APlayerCharacter()
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
-    //InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 }
 
 void APlayerCharacter::BeginPlay()
@@ -51,7 +50,9 @@ void APlayerCharacter::BeginPlay()
     }
     LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance);
     SetGenericTeamId(FGenericTeamId(TeamID));
-    InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), WB_Inventory);
+    InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), WBP_Inventory);
+    HPBarWidget = CreateWidget<UUserWidget>(GetWorld(), WBP_HPBar);
+    HPBarWidget->AddToViewport();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -677,4 +678,24 @@ void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
         PC->bShowMouseCursor = true;
         PC->SetPause(true);
     }
+}
+
+int32 APlayerCharacter::GetMaxHP() const
+{
+    return MaxHP;
+}
+
+int32 APlayerCharacter::GetCurHP() const
+{
+    return CurHP;
+}
+
+int32 APlayerCharacter::GetMaxStamina() const
+{
+    return MaxStamina;
+}
+
+int32 APlayerCharacter::GetCurStamina() const
+{
+    return CurStamina;
 }

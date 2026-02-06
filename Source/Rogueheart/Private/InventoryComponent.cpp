@@ -61,7 +61,7 @@ bool UInventoryComponent::AddItem(FName ItemID, int32 Count)
 }*/
 
 bool UInventoryComponent::UseItem(FName ItemID)
-w{
+{
     // 1. 인벤토리 내 존재 확인
     int32* CurrentCount = ItemCounts.Find(ItemID);
     if (!CurrentCount || *CurrentCount <= 0)

@@ -20,6 +20,17 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
     UDataTable* GetItemDataTable() const { return ItemDataTable; }
+
+    int32 GetMaxHP() const { return MaxHP; }
+    int32 GetCurHP() const { return CurHP; }
+    int32 GetMaxStamina() const { return MaxStamina; }
+    int32 GetCurStamina() const { return CurStamina; }
+
+    void SetMaxHP(int NewMaxHP) { MaxHP = NewMaxHP; }
+    void SetCurHP(int NewCurHP) { CurHP = NewCurHP; }
+    void SetMaxStamina(int NewMaxStamina) { MaxStamina = NewMaxStamina; }
+    void SetCurStamina(int NewCurStamina) { CurHP = NewCurStamina; }
+
 private:
     UPROPERTY()
     UUIManager* UIManager;
@@ -29,4 +40,9 @@ private:
 
     UPROPERTY(EditDefaultsOnly, Category = "Data")
     UDataTable* ItemDataTable;
+
+    int32 MaxHP = 100;
+    int32 CurHP = 100;
+    int32 MaxStamina = 100;
+    int32 CurStamina = 100;
 };
