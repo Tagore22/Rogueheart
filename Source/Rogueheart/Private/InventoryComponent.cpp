@@ -1,6 +1,8 @@
 #include "InventoryComponent.h"
 #include "Engine/DataTable.h"
 #include "RogueheartGameInstance.h"
+#include "GameFramework/PlayerController.h"
+#include "Character/Player/PlayerCharacter.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -68,8 +70,6 @@ bool UInventoryComponent::UseItem(FName ItemID)
     {
         return false;
     }
-    UE_LOG(LogTemp, Warning, TEXT("1"));
-
     // 2. 아이템 데이터 테이블에서 정보 가져오기 
     // (사용자의 데이터 매니저나 구조에 맞게 수정하세요)
     // 현재 인벤토리가 게임인스턴스에서 생성된다. GetOwner()는 액터에 붙어있는 컴포넌트들만 가지기에
@@ -77,15 +77,12 @@ bool UInventoryComponent::UseItem(FName ItemID)
     URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetOuter());
     if (!GI)
         return false;
-    UE_LOG(LogTemp, Warning, TEXT("2"));
     UDataTable* ItemTable = GI ? GI->GetItemDataTable() : nullptr;
     if (!ItemTable)
         return false;
-    UE_LOG(LogTemp, Warning, TEXT("3"));
     const FItemData* ItemData = ItemTable->FindRow<FItemData>(ItemID, TEXT(""));
     if (!ItemData)
         return false;
-    UE_LOG(LogTemp, Warning, TEXT("4"));
 
     // 3. 아이템 타입에 따른 분기 처리
     switch (ItemData->ItemType)
@@ -110,7 +107,14 @@ bool UInventoryComponent::UseItem(FName ItemID)
         UE_LOG(LogTemp, Warning, TEXT("Item Consumed: %s (Remaining: %d)"), *ItemID.ToString(), *CurrentCount);
 
         // 효과 적용 로직 (예: HealPlayer(ItemData->EffectValue))을 여기에 추가
-
+        // 2. 게임 인스턴스를 통해 컨트롤러 획득
+        if (APlayerController* PC = GI->GetFirstLocalPlayerController())
+        {
+            if (APlayerCharacter* Player = Cast<APlayerCharacter>(PC->GetCharacter()))
+            {
+                Player->HealPlayer(ItemData->EffectValue);
+            }
+        }
         // 수량이 다 떨어졌을 때 처리
         if (*CurrentCount <= 0)
         {

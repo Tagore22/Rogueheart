@@ -5,6 +5,9 @@
 #include "GenericTeamAgentInterface.h"
 #include "PlayerCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaChanged);
+
 class UInputMappingContext;
 class UInputAction;
 class USpringArmComponent;
@@ -13,7 +16,6 @@ class UUserWidget;
 class UAnimMontage;
 class USkillComponent;
 class AEnemyBase;
-class UInventoryComponent;
 struct InputActionValue;
 
 UENUM(BlueprintType)
@@ -59,8 +61,8 @@ public:
     void PlayComboMontage();
     void HandleComboInput();
     void OnAttackEnd();
-
     void RestoreLockOnIfNeeded();
+    void HealPlayer(float PlusHP);
 
 protected:
     void Move(const struct FInputActionValue& Value);
@@ -83,16 +85,14 @@ protected:
     void ClearLockOn();
 
     UFUNCTION(BlueprintCallable, BlueprintPure)
-    int32 GetMaxHP() const;
+    float GetMaxHP() const;
     UFUNCTION(BlueprintCallable, BlueprintPure)
-    int32 GetCurHP() const;
+    float GetCurHP() const;
     UFUNCTION(BlueprintCallable, BlueprintPure)
-    int32 GetMaxStamina() const;
+    float GetMaxStamina() const;
     UFUNCTION(BlueprintCallable, BlueprintPure)
-    int32 GetCurStamina() const;
+    float GetCurStamina() const;
 
-    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    //class UInventoryComponent* InventoryComponent;
 public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
     USpringArmComponent* CameraBoom;
@@ -205,8 +205,11 @@ private:
 
     void SetLockOnState(bool bIsLockOn);
 
-    int32 MaxHP = 100;
-    int32 CurHP = 100;
-    int32 MaxStamina = 100;
-    int32 CurStamina = 100;
+    float MaxHP = 100.f;
+    float CurHP = 50.f;
+    float MaxStamina = 100.f;
+    float CurStamina = 100.f;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events", meta = (AllowPrivateAccess = "true"))
+    FOnHPChanged OnHPChanged;
 };

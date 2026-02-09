@@ -680,22 +680,29 @@ void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
     }
 }
 
-int32 APlayerCharacter::GetMaxHP() const
+float APlayerCharacter::GetMaxHP() const
 {
     return MaxHP;
 }
 
-int32 APlayerCharacter::GetCurHP() const
+float APlayerCharacter::GetCurHP() const
 {
     return CurHP;
 }
 
-int32 APlayerCharacter::GetMaxStamina() const
+float APlayerCharacter::GetMaxStamina() const
 {
     return MaxStamina;
 }
 
-int32 APlayerCharacter::GetCurStamina() const
+float APlayerCharacter::GetCurStamina() const
 {
     return CurStamina;
+}
+
+void APlayerCharacter::HealPlayer(float PlusHP)
+{
+    UE_LOG(LogTemp, Warning, TEXT("PrevHP : %f"), CurHP);
+    CurHP = FMath::Min(CurHP + PlusHP, MaxHP);
+    UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
 }
