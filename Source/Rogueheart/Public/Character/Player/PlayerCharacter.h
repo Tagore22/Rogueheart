@@ -40,7 +40,7 @@ enum class EActionType : uint8
     UseSkill
 };
 
-UCLASS(Blueprintable, BlueprintType)
+UCLASS()
 class ROGUEHEART_API APlayerCharacter : public ACharacter, public IGenericTeamAgentInterface
 {
     GENERATED_BODY()
