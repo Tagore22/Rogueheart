@@ -37,6 +37,7 @@ APlayerCharacter::APlayerCharacter()
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
 }
 
+// 여기부터 복기.
 void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
