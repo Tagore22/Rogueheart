@@ -13,6 +13,7 @@
 #include "Skill/SkillComponent.h"
 #include "InputActionValue.h"
 #include "InventoryComponent.h"
+#include "Character/Player/RogueheartPlayerController.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -51,9 +52,6 @@ void APlayerCharacter::BeginPlay()
     }
     LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance);
     SetGenericTeamId(FGenericTeamId(TeamID));
-    InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), WBP_Inventory);
-    HPBarWidget = CreateWidget<UUserWidget>(GetWorld(), WBP_HPBar);
-    HPBarWidget->AddToViewport();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -116,6 +114,13 @@ void APlayerCharacter::Tick(float DeltaTime)
         AddMovementInput(RightDirection, MovementVector2D.Y);
     }
 }*/
+
+void APlayerCharacter::PossessedBy(AController* NewController)
+{
+    Super::PossessedBy(NewController);
+
+    Controller = Cast<ARogueheartPlayerController>(NewController);
+}
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
@@ -641,7 +646,7 @@ void APlayerCharacter::SetLockOnState(bool bIsLockOn)
     }
 }
 
-void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
+/*void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
 {
     // 인벤토리가 켜져있으면 끄고, 꺼져있으면 킨다.
     // 아마 현재 UI가 nullptr인지로 알 수 있다.
@@ -679,6 +684,15 @@ void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
         PC->bShowMouseCursor = true;
         PC->SetPause(true);
     }
+}*/
+
+void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
+{
+    // 전부 UI가 있는 컨트롤러로 옮겨졌음.
+    if (!Controller)
+        return;
+
+    Controller->ToggleInventory();
 }
 
 float APlayerCharacter::GetMaxHP() const

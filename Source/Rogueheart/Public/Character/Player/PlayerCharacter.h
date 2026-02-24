@@ -16,6 +16,7 @@ class UUserWidget;
 class UAnimMontage;
 class USkillComponent;
 class AEnemyBase;
+class ARogueheartPlayerController;
 struct InputActionValue;
 
 UENUM(BlueprintType)
@@ -65,6 +66,8 @@ public:
     void HealPlayer(float PlusHP);
 
 protected:
+    virtual void PossessedBy(AController* NewController) override;
+
     void Move(const struct FInputActionValue& Value);
     void Look(const struct FInputActionValue& Value);
     void Attack(const struct FInputActionValue& Value);
@@ -163,18 +166,6 @@ public:
     UPROPERTY()
     UUserWidget* CooldownWidget = nullptr;
 
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UUserWidget> WBP_Inventory;
-
-    UPROPERTY()
-    UUserWidget* InventoryWidget = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UUserWidget> WBP_HPBar;
-
-    UPROPERTY()
-    UUserWidget* HPBarWidget = nullptr;
-
     UPROPERTY(VisibleAnywhere, Category = "Targeting")
     AEnemyBase* LockOnTarget = nullptr;
 
@@ -212,4 +203,6 @@ private:
 
     UPROPERTY(BlueprintAssignable, Category = "Events", meta = (AllowPrivateAccess = "true"))
     FOnHPChanged OnHPChanged;
+
+    ARogueheartPlayerController* Controller = nullptr;
 };
