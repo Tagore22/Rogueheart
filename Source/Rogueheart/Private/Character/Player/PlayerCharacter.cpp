@@ -42,10 +42,10 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+    // 여기부터 복기
+    if (CachedController)
     {
-        // 여기부터 복기
-        if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+        if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(CachedController->GetLocalPlayer()))
         {
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
         }
@@ -119,7 +119,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
 
-    Controller = Cast<ARogueheartPlayerController>(NewController);
+    CachedController = Cast<ARogueheartPlayerController>(NewController);
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
@@ -131,11 +131,10 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     if (!CanAct(EActionType::Move) || MovementVector2D.IsNearlyZero())
         return;
 
-    AController* PC = GetController();
-    if (!PC)
+    if (!CachedController)
         return;
 
-    const FRotator Rotation = PC->GetControlRotation();
+    const FRotator Rotation = CachedController->GetControlRotation();
     const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
     const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -420,9 +419,9 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
     FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, InterpSpeed);
     SetActorRotation(NewRot);
 
-    if (Controller)
+    if (CachedController)
     {
-        Controller->SetControlRotation(NewRot);
+        CachedController->SetControlRotation(NewRot);
     }
 }
 
@@ -689,10 +688,10 @@ void APlayerCharacter::SetLockOnState(bool bIsLockOn)
 void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
 {
     // 전부 UI가 있는 컨트롤러로 옮겨졌음.
-    if (!Controller)
+    if (!CachedController)
         return;
 
-    Controller->ToggleInventory();
+    CachedController->ToggleInventory();
 }
 
 float APlayerCharacter::GetMaxHP() const

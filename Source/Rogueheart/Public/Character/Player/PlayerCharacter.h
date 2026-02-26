@@ -204,5 +204,6 @@ private:
     UPROPERTY(BlueprintAssignable, Category = "Events", meta = (AllowPrivateAccess = "true"))
     FOnHPChanged OnHPChanged;
 
-    ARogueheartPlayerController* Controller = nullptr;
+    UPROPERTY()
+    ARogueheartPlayerController* CachedController = nullptr;
 };
