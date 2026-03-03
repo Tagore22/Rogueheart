@@ -42,7 +42,6 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-    // 여기부터 복기
     if (CachedController)
     {
         if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(CachedController->GetLocalPlayer()))
@@ -54,6 +53,7 @@ void APlayerCharacter::BeginPlay()
     SetGenericTeamId(FGenericTeamId(TeamID));
 }
 
+// 여기부터 복기
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
