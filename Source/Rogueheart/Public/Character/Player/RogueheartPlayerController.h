@@ -6,6 +6,7 @@
 
 class UUIManager;
 class UUserWidget;
+class UInputMappingContext;
 
 /** 플레이어 컨트롤러에서 UIManager 생성 */
 UCLASS()
@@ -16,10 +17,8 @@ class ROGUEHEART_API ARogueheartPlayerController : public APlayerController
 public:
     ARogueheartPlayerController();
 
-    virtual void BeginPlay() override;
-
     void ToggleInventory();
-private:
+protected:
     /** BP_UIManager 서브클래스를 여기에 저장 */
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<UUIManager> UIManagerClass;
@@ -39,4 +38,11 @@ private:
 
     UPROPERTY()
     UUserWidget* HPBarWidget = nullptr;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    UInputMappingContext* DefaultMappingContext;
+
+    virtual void BeginPlay() override;
+
+    virtual void SetupInputComponent() override;
 };

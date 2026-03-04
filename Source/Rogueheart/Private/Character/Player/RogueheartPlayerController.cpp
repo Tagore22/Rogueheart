@@ -2,6 +2,8 @@
 #include "UI/UIManager.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
 
 ARogueheartPlayerController::ARogueheartPlayerController()
 {
@@ -31,6 +33,16 @@ void ARogueheartPlayerController::BeginPlay()
     {
         HPBarWidget = CreateWidget<UUserWidget>(GetWorld(), WBP_HPBar);
         HPBarWidget->AddToViewport(); 
+    }
+}
+
+void ARogueheartPlayerController::SetupInputComponent()
+{
+    Super::SetupInputComponent();
+
+    if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+    {
+        Subsystem->AddMappingContext(DefaultMappingContext, 0);
     }
 }
 

@@ -42,13 +42,13 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (CachedController)
+    /*if (CachedController)
     {
         if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(CachedController->GetLocalPlayer()))
         {
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
         }
-    }
+    }*/
     LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance);
     SetGenericTeamId(FGenericTeamId(TeamID));
 }

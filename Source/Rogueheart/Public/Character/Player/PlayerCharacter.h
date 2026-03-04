@@ -8,11 +8,9 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaChanged);
 
-class UInputMappingContext;
 class UInputAction;
 class USpringArmComponent;
 class UCameraComponent;
-class UUserWidget;
 class UAnimMontage;
 class USkillComponent;
 class AEnemyBase;
@@ -104,9 +102,6 @@ public:
     UCameraComponent* FollowCamera;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputMappingContext* DefaultMappingContext;
-
-    UPROPERTY(EditDefaultsOnly, Category = "Input")
     UInputAction* IA_Move;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -159,12 +154,6 @@ public:
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
     bool bCanNextCombo = false;
-
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UUserWidget> WBP_SkillCooldownClass;
-
-    UPROPERTY()
-    UUserWidget* CooldownWidget = nullptr;
 
     UPROPERTY(VisibleAnywhere, Category = "Targeting")
     AEnemyBase* LockOnTarget = nullptr;
