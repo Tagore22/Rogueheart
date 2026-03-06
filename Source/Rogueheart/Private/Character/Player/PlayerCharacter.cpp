@@ -53,7 +53,7 @@ void APlayerCharacter::BeginPlay()
     SetGenericTeamId(FGenericTeamId(TeamID));
 }
 
-// 여기부터 복기
+/// 여기부터 복기
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -78,19 +78,10 @@ void APlayerCharacter::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     if (IsValid(LockOnTarget))
-    {
-        UpdateLockOnRotation(DeltaTime);
-        CheckLockOnDistance();
-    }
-    // 락온 대상 찾기용 로그
-    /*if (IsValid(LockOnTarget))
-    {
-        UE_LOG(LogTemp, Log, TEXT("LockOnTarget: %s"), *LockOnTarget->GetName());
-    }
-    else
-    {
-        UE_LOG(LogTemp, Log, TEXT("LockOnTarget: nullptr"));
-    }*/
+        return;
+
+    UpdateLockOnRotation(DeltaTime);
+    CheckLockOnDistance();
 }
 
 /*void APlayerCharacter::Move(const FInputActionValue& Value)
@@ -408,21 +399,19 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
     if (!IsValid(LockOnTarget)) 
         return;
 
-    FVector TargetDir = LockOnTarget->GetActorLocation() - GetActorLocation();
-    TargetDir.Z = 0.f;
-
-    if (TargetDir.IsNearlyZero()) 
+    FVector CameraDir = LockOnTarget->GetActorLocation() - GetActorLocation();
+    FVector TargetDir = FVector(CameraDir.X, CameraDir.Y, 0.f);
+    if (CameraDir.IsNearlyZero() || TargetDir.IsNearlyZero())
         return;
 
-    FRotator TargetRot = TargetDir.Rotation();
+    FRotator NewActorRot = FMath::RInterpTo(GetActorRotation(), TargetDir.Rotation(), DeltaTime, InterpSpeed);
+    SetActorRotation(NewActorRot);
 
-    FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, InterpSpeed);
-    SetActorRotation(NewRot);
+    if (!CachedController)
+        return;
 
-    if (CachedController)
-    {
-        CachedController->SetControlRotation(NewRot);
-    }
+    FRotator NewCameraRot = FMath::RInterpTo(GetControlRotation(), CameraDir.Rotation(), DeltaTime, InterpSpeed);
+    CachedController->SetControlRotation(NewCameraRot);
 }
 
 /*AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
@@ -612,6 +601,7 @@ void APlayerCharacter::CheckLockOnDistance()
         ClearLockOn();
     }
     */
+    // 위 코드를 추가할 시 따로 if문을 만들지 말고 or 연산으로 위 if문에 추가할 것.
 }
 
 FGenericTeamId APlayerCharacter::GetGenericTeamId() const
