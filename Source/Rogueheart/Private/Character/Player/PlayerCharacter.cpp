@@ -53,7 +53,6 @@ void APlayerCharacter::BeginPlay()
     SetGenericTeamId(FGenericTeamId(TeamID));
 }
 
-/// 여기부터 복기
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -116,20 +115,19 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
     // 지역 변수를 새로 만들 땐 const를 이용하여 의도의 명확성을 추가함.
+    // value.Get<>()에서 캐스팅되는 타입은 에디터에서 해당 InputAction에 설정한
+    // 값에 따라 다르다. Axis1D = float, Axis2D = FVector2D, Axis3D = FVector이다.
     const FVector2D MovementVector2D = Value.Get<FVector2D>();
     LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
 
     if (!CanAct(EActionType::Move) || MovementVector2D.IsNearlyZero())
         return;
 
-    if (!CachedController)
-        return;
+    const FRotator Rotation = GetControlRotation();
+    const FRotationMatrix YawMatrix(FRotator(0.f, Rotation.Yaw, 0.f));
 
-    const FRotator Rotation = CachedController->GetControlRotation();
-    const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
-
-    const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-    const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+    const FVector ForwardDirection = YawMatrix.GetUnitAxis(EAxis::X);
+    const FVector RightDirection = YawMatrix.GetUnitAxis(EAxis::Y);
 
     AddMovementInput(ForwardDirection, MovementVector2D.X);
     AddMovementInput(RightDirection, MovementVector2D.Y);
@@ -149,6 +147,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(LookAxis.Y);
 }
 
+// 여기부터 복기 시작.
 void APlayerCharacter::Attack(const struct FInputActionValue& Value)
 {
     if (CurrentState == EPlayerState::Dodging || CurrentState == EPlayerState::Stunned)
