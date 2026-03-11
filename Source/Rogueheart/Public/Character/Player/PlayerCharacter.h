@@ -58,7 +58,6 @@ public:
     bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; }
 
     void PlayComboMontage();
-    void HandleComboInput();
     void OnAttackEnd();
     void RestoreLockOnIfNeeded();
     void HealPlayer(float PlusHP);

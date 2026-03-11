@@ -114,13 +114,15 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
+    if (!CanAct(EActionType::Move))
+        return;
+
     // 지역 변수를 새로 만들 땐 const를 이용하여 의도의 명확성을 추가함.
     // value.Get<>()에서 캐스팅되는 타입은 에디터에서 해당 InputAction에 설정한
     // 값에 따라 다르다. Axis1D = float, Axis2D = FVector2D, Axis3D = FVector이다.
     const FVector2D MovementVector2D = Value.Get<FVector2D>();
     LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
-
-    if (!CanAct(EActionType::Move) || MovementVector2D.IsNearlyZero())
+    if (MovementVector2D.IsNearlyZero())
         return;
 
     const FRotator Rotation = GetControlRotation();
@@ -139,7 +141,6 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
         return;
 
     const FVector2D LookAxis = Value.Get<FVector2D>();
-
     if (LookAxis.IsNearlyZero())
         return;
 
@@ -148,9 +149,9 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 }
 
 // 여기부터 복기 시작.
-void APlayerCharacter::Attack(const struct FInputActionValue& Value)
+void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
-    if (CurrentState == EPlayerState::Dodging || CurrentState == EPlayerState::Stunned)
+    if (!CanAct(EActionType::Attack))
         return;
 
     if (CurrentState != EPlayerState::Attacking)
@@ -179,28 +180,22 @@ void APlayerCharacter::PlayComboMontage()
     }
 }
 
-void APlayerCharacter::HandleComboInput()
-{
-    ++CurrentCombo;
-    bInputCombo = false;
-    bCanNextCombo = false;
-
-    PlayComboMontage();
-}
-
 void APlayerCharacter::OnAttackEnd()
 {
+    // 지금은 if문과 else문이 짧아서 그냥 두지만 길어질 경우
+    // 함수로 묶어버릴 것.
     if (bInputCombo && CurrentCombo < MaxCombo)
     {
-        HandleComboInput();
+        ++CurrentCombo;
+        PlayComboMontage();
     }
     else
     {
         CurrentCombo = 0;
-        bInputCombo = false;
-        bCanNextCombo = false;
         SetPlayerState(EPlayerState::Idle);
     }
+    bInputCombo = false;
+    bCanNextCombo = false;
 }
 
 void APlayerCharacter::RestoreLockOnIfNeeded()
@@ -213,7 +208,7 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
     }
 }
 
-void APlayerCharacter::Dodge(const struct FInputActionValue& Value)
+void APlayerCharacter::Dodge(const FInputActionValue& Value)
 {
     // 1. 필수 요소가 하나라도 없으면 아예 구르기를 시작조차 안 함
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
@@ -240,7 +235,7 @@ void APlayerCharacter::Dodge(const struct FInputActionValue& Value)
     }
 }
 
-void APlayerCharacter::UseFireball(const struct FInputActionValue& Value)
+void APlayerCharacter::UseFireball(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::UseSkill))
         return;
@@ -248,7 +243,7 @@ void APlayerCharacter::UseFireball(const struct FInputActionValue& Value)
     SkillComponent->UseSkill(ESkillType::Fireball);
 }
 
-void APlayerCharacter::UseIceBlast(const struct FInputActionValue& Value)
+void APlayerCharacter::UseIceBlast(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::UseSkill))
         return;
@@ -284,7 +279,7 @@ bool APlayerCharacter::CanAct(EActionType DesiredAction) const
     return false;
 }
 
-void APlayerCharacter::ToggleLockOn(const struct FInputActionValue& Value)
+void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::LockOn))
         return;
@@ -399,7 +394,7 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
         return;
 
     FVector CameraDir = LockOnTarget->GetActorLocation() - GetActorLocation();
-    FVector TargetDir = FVector(CameraDir.X, CameraDir.Y, 0.f);
+    FVector TargetDir(CameraDir.X, CameraDir.Y, 0.f);
     if (CameraDir.IsNearlyZero() || TargetDir.IsNearlyZero())
         return;
 
@@ -538,7 +533,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
     }
 }*/
 
-void APlayerCharacter::SwitchTargetLeft(const struct FInputActionValue& Value)
+void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -568,7 +563,7 @@ void APlayerCharacter::SwitchTargetLeft(const struct FInputActionValue& Value)
     }
 }*/
 
-void APlayerCharacter::SwitchTargetRight(const struct FInputActionValue& Value)
+void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -674,7 +669,7 @@ void APlayerCharacter::SetLockOnState(bool bIsLockOn)
     }
 }*/
 
-void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
+void APlayerCharacter::ToggleInventory(const FInputActionValue& Value)
 {
     // 전부 UI가 있는 컨트롤러로 옮겨졌음.
     if (!CachedController)
