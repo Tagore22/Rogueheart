@@ -31,8 +31,6 @@ protected:
     void AnimNotify_EndDodge();
 
 private:
-    void ResetPlayerToIdle();
-
     // 이동 관련
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     float Speed;

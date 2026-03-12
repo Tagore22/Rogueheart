@@ -76,7 +76,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (IsValid(LockOnTarget))
+    if (!IsValid(LockOnTarget))
         return;
 
     UpdateLockOnRotation(DeltaTime);
@@ -148,7 +148,6 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(LookAxis.Y);
 }
 
-// 여기부터 복기 시작.
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::Attack))
@@ -180,10 +179,10 @@ void APlayerCharacter::PlayComboMontage()
     }
 }
 
+// 공격 애니메이션의 재생이 끝나면 호출되는 노티파이인
+// UPlayerAnimInstance::AnimNotify_EndAttack()에서 이 함수를 호출한다.
 void APlayerCharacter::OnAttackEnd()
 {
-    // 지금은 if문과 else문이 짧아서 그냥 두지만 길어질 경우
-    // 함수로 묶어버릴 것.
     if (bInputCombo && CurrentCombo < MaxCombo)
     {
         ++CurrentCombo;
@@ -198,6 +197,9 @@ void APlayerCharacter::OnAttackEnd()
     bCanNextCombo = false;
 }
 
+// 여기부터 복기 시작.
+// Dodge 애니메이션의 재생이 끝나면 호출되는 노티파이인
+// UPlayerAnimInstance::AnimNotify_EndDodge()에서 이 함수를 호출한다.
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {
     if (IsValid(PrevLockOnTarget))
@@ -210,7 +212,6 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
 
 void APlayerCharacter::Dodge(const FInputActionValue& Value)
 {
-    // 1. 필수 요소가 하나라도 없으면 아예 구르기를 시작조차 안 함
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
 
     if (!CanAct(EActionType::Dodge) || !IsValid(AMT_Dodge) || !Anim)

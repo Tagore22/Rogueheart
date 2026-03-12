@@ -101,11 +101,6 @@ void UPlayerAnimInstance::AnimNotify_NextCombo()
 
 void UPlayerAnimInstance::AnimNotify_EndDodge()
 {
-    ResetPlayerToIdle();
-}
-
-void UPlayerAnimInstance::ResetPlayerToIdle()
-{
     if (IsValid(Player))
     {
         Player->SetPlayerState(EPlayerState::Idle);
