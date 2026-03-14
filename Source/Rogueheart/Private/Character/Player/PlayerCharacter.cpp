@@ -14,6 +14,7 @@
 #include "InputActionValue.h"
 #include "InventoryComponent.h"
 #include "Character/Player/RogueheartPlayerController.h"
+#include "Rogueheart.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -401,7 +402,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         OverlapResults,
         GetActorLocation(),
         FQuat::Identity,
-        ECC_Pawn, // 적의 콜리전 채널에 맞게 변경 가능
+        ECC_Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
         FCollisionShape::MakeSphere(LockOnRange),
         QueryParams
     );
