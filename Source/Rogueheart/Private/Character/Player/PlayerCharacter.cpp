@@ -198,7 +198,6 @@ void APlayerCharacter::OnAttackEnd()
     bCanNextCombo = false;
 }
 
-// 여기부터 복기 시작.
 // Dodge 애니메이션의 재생이 끝나면 호출되는 노티파이인
 // UPlayerAnimInstance::AnimNotify_EndDodge()에서 이 함수를 호출한다.
 void APlayerCharacter::RestoreLockOnIfNeeded()
@@ -382,7 +381,7 @@ void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value)
         );
 
         // 아무것도 안 걸렸거나(하늘 등), 걸린 게 바로 그 적이라면 타겟 확정!
-        if (!bIsObstructed || HitResult.GetActor() == Candidate.Actor)
+        if (!bIs    Obstructed || HitResult.GetActor() == Candidate.Actor)
         {
             return Cast<AEnemyBase>(Candidate.Actor);
         }
@@ -403,6 +402,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         GetActorLocation(),
         FQuat::Identity,
         ECC_Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
+                   // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
         FCollisionShape::MakeSphere(LockOnRange),
         QueryParams
     );
@@ -426,11 +426,11 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
 
         FVector ToEnemy = (Enemy->GetActorLocation() - CameraLocation).GetSafeNormal();
 
-        // 내적(Dot Product) 계산
+        // 내적(Dot Product) 계산. 1은 두 벡터가 같은 방향, 0은 수직, -1은 반대방향.
         float DotResult = FVector::DotProduct(CameraForward, ToEnemy);
 
         // 기준값 (예: 0.5는 약 60도, 0.7은 약 45도 시야 내)
-        if (DotResult > 0.5f)
+        if (DotResult > TargetingAngle)
         {
             float DistSq = FVector::DistSquared(CameraLocation, Enemy->GetActorLocation());
             Candidates.Add({ DistSq, Enemy });
@@ -459,7 +459,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
             TraceParams
         );
 
-        // 아무것도 안 걸렸거나(하늘 등), 걸린 게 바로 그 적이라면 타겟 확정!
+        // 적보다 높게 쏴서 아무것도 안 걸렸거나, 걸린 게 바로 그 적이라면 타겟 확정!
         if (!bIsObstructed || HitResult.GetActor() == Candidate.Value)
         {
             return Cast<AEnemyBase>(Candidate.Value);

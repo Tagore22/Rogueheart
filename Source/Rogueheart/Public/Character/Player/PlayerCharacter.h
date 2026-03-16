@@ -173,7 +173,7 @@ public:
 
     bool bWasLockedOnWhenDodged = false;
 
-private:
+protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
     EPlayerState CurrentState = EPlayerState::Idle;
 
@@ -184,6 +184,7 @@ private:
 
     void SetLockOnState(bool bIsLockOn);
 
+    const float TargetingAngle = 0.5f;
     float MaxHP = 100.f;
     float CurHP = 50.f;
     float MaxStamina = 100.f;
