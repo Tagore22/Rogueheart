@@ -280,6 +280,7 @@ bool APlayerCharacter::CanAct(EActionType DesiredAction) const
     return false;
 }
 
+// 여기부터 복기.
 void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::LockOn))
@@ -411,7 +412,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         return nullptr;
 
     TArray<TPair<float, AEnemyBase*>> Candidates;
-    FVector CameraLocation = FollowCamera->GetComponentLocation(); // 또는 GetCameraLocation()
+    FVector CameraLocation = FollowCamera->GetComponentLocation();
     FVector CameraForward = FollowCamera->GetForwardVector();
 
     // 2단계: 시야각(FOV) 및 유효성 필터링
@@ -427,10 +428,10 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         FVector ToEnemy = (Enemy->GetActorLocation() - CameraLocation).GetSafeNormal();
 
         // 내적(Dot Product) 계산. 1은 두 벡터가 같은 방향, 0은 수직, -1은 반대방향.
-        float DotResult = FVector::DotProduct(CameraForward, ToEnemy);
+        float DotResult = CameraForward.Dot(ToEnemy);
 
         // 기준값 (예: 0.5는 약 60도, 0.7은 약 45도 시야 내)
-        if (DotResult > TargetingAngle)
+        if (DotResult >= TargetingAngle)
         {
             float DistSq = FVector::DistSquared(CameraLocation, Enemy->GetActorLocation());
             Candidates.Add({ DistSq, Enemy });
@@ -462,7 +463,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         // 적보다 높게 쏴서 아무것도 안 걸렸거나, 걸린 게 바로 그 적이라면 타겟 확정!
         if (!bIsObstructed || HitResult.GetActor() == Candidate.Value)
         {
-            return Cast<AEnemyBase>(Candidate.Value);
+            return Candidate.Value;
         }
     }
     return nullptr;
@@ -474,10 +475,10 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
         return;
 
     FVector CameraDir = LockOnTarget->GetActorLocation() - GetActorLocation();
-    FVector TargetDir(CameraDir.X, CameraDir.Y, 0.f);
-    if (CameraDir.IsNearlyZero() || TargetDir.IsNearlyZero())
+    if (CameraDir.IsNearlyZero())
         return;
 
+    FVector TargetDir(CameraDir.X, CameraDir.Y, 0.f);
     FRotator NewActorRot = FMath::RInterpTo(GetActorRotation(), TargetDir.Rotation(), DeltaTime, InterpSpeed);
     SetActorRotation(NewActorRot);
 
