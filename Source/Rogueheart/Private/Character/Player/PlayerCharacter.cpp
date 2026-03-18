@@ -280,7 +280,6 @@ bool APlayerCharacter::CanAct(EActionType DesiredAction) const
     return false;
 }
 
-// 여기부터 복기.
 void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::LockOn))
@@ -538,6 +537,7 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
     return nullptr;
 }*/
 
+// 이 곳 리팩토링 할 것.
 AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
 {
     if (!IsValid(LockOnTarget)) 
@@ -573,7 +573,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
 
         float DotForward = FVector::DotProduct(ToEnemy, MyForward);
         // 앞쪽 시야 확보. 내적값에 의해 1은 정면, 0.5는 60도, 0은 90도.
-        if (DotForward < 0.5f) 
+        if (DotForward < TargetingAngle) 
             continue; 
 
         float DotRight = FVector::DotProduct(ToEnemy, MyRight);
