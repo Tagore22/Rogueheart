@@ -164,9 +164,6 @@ public:
     float LockOnRange = 1200.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-    float MinAngle = 120.f;
-
-    UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float LockOnBreakDistance = 1500.f;
 
     float LockOnBreakDistanceSq;
@@ -184,10 +181,15 @@ protected:
 
     void SetLockOnState(bool bIsLockOn);
 
-    const float TargetingAngle = 0.5f;
+    UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+    float TargetingAngle = 0.5f;
+    UPROPERTY(EditDefaultsOnly, Category = "HP")
     float MaxHP = 100.f;
+    UPROPERTY(EditDefaultsOnly, Category = "HP")
     float CurHP = 50.f;
+    UPROPERTY(EditDefaultsOnly, Category = "Stamina")
     float MaxStamina = 100.f;
+    UPROPERTY(EditDefaultsOnly, Category = "Stamina")
     float CurStamina = 100.f;
 
     UPROPERTY(BlueprintAssignable, Category = "Events", meta = (AllowPrivateAccess = "true"))

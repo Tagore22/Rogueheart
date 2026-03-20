@@ -33,7 +33,7 @@ APlayerCharacter::APlayerCharacter()
     bUseControllerRotationYaw = false;
     bUseControllerRotationRoll = false;
 
-    GetCharacterMovement()->bOrientRotationToMovement = true;
+    SetLockOnState(false);
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
@@ -415,7 +415,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
     FVector CameraForward = FollowCamera->GetForwardVector();
 
     // 2단계: 시야각(FOV) 및 유효성 필터링
-    for (auto& Result : OverlapResults)
+    for (const FOverlapResult& Result : OverlapResults)
     {
         AEnemyBase* Enemy = Cast<AEnemyBase>(Result.GetActor());
         // Get함수를 사용하고 있으나 Result는 이 클래스의 액터와 생명주기가 같다는 보장이
@@ -424,7 +424,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         if (!IsValid(Enemy))
             continue;
 
-        FVector ToEnemy = (Enemy->GetActorLocation() - CameraLocation).GetSafeNormal();
+        FVector ToEnemy = (Enemy->GetActorLocation() - CameraLocation).GetSafeNormal2D();
 
         // 내적(Dot Product) 계산. 1은 두 벡터가 같은 방향, 0은 수직, -1은 반대방향.
         float DotResult = CameraForward.Dot(ToEnemy);
@@ -537,28 +537,40 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
     return nullptr;
 }*/
 
-// 이 곳 리팩토링 할 것.
 AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
 {
     if (!IsValid(LockOnTarget)) 
         return nullptr;
 
     // 1. 범위 내 적들만 필터링, OverlapMultiByObjectType 혹은 OverlapMultiByChannel
-    TArray<FOverlapResult> OverlappingActors;
-    FCollisionShape Sphere = FCollisionShape::MakeSphere(LockOnRange);
-    FCollisionQueryParams Params;
-    Params.AddIgnoredActor(this);
-    GetWorld()->OverlapMultiByObjectType(OverlappingActors, GetActorLocation(), FQuat::Identity, FCollisionObjectQueryParams(ECC_Pawn), Sphere, Params);
+    TArray<FOverlapResult> OverlapResults;
+    FCollisionQueryParams QueryParams;
+    QueryParams.AddIgnoredActor(this); // 나 자신 제외
 
-    FVector MyForward = GetActorForwardVector();
-    FVector MyRight = GetActorRightVector();
+    // 구체(Sphere) 범위를 생성하여 해당 채널(예: ECC_Pawn)의 물체를 탐색
+    bool bHit = GetWorld()->OverlapMultiByChannel(
+        OverlapResults,
+        GetActorLocation(),
+        FQuat::Identity,
+        ECC_Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
+                   // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
+        FCollisionShape::MakeSphere(LockOnRange),
+        QueryParams
+    );
+
+    if (!bHit)
+        return nullptr;
+
     FVector MyLocation = GetActorLocation();
+    FVector MyForward = (LockOnTarget->GetActorLocation() - MyLocation).GetSafeNormal2D();
+    FVector MyRight = FVector::UpVector.Cross(MyForward);
+
 
     AEnemyBase* BestTarget = nullptr;
-    // 에디터에서 설정한 MinAngle을 '최대 탐색 허용치'로 사용
-    float ClosestAngle = MinAngle;
+    // 에디터에서 설정한 TargetingAngle을 '최대 탐색 허용치'로 사용
+    float ClosestAngle = TargetingAngle;
 
-    for (const FOverlapResult& Result : OverlappingActors)
+    for (const FOverlapResult& Result : OverlapResults)
     {
         AEnemyBase* Enemy = Cast<AEnemyBase>(Result.GetActor());
 
@@ -571,21 +583,19 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
 
         FVector ToEnemy = (Enemy->GetActorLocation() - MyLocation).GetSafeNormal2D();
 
-        float DotForward = FVector::DotProduct(ToEnemy, MyForward);
+        float DotForward = MyForward.Dot(ToEnemy);
         // 앞쪽 시야 확보. 내적값에 의해 1은 정면, 0.5는 60도, 0은 90도.
         if (DotForward < TargetingAngle) 
             continue; 
 
-        float DotRight = FVector::DotProduct(ToEnemy, MyRight);
+        float DotRight = MyRight.Dot(ToEnemy);
 
         // 왼쪽/오른쪽 방향성 체크
         if ((bLeft && DotRight < 0.f) || (!bLeft && DotRight > 0.f))
         {
-            // Clamp를 통해서 -1 ~ 1안의 값으로 강제함.
-            float Angle = FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(DotForward, -1.f, 1.f)));
-            if (Angle < ClosestAngle)
+            if (DotForward > ClosestAngle)
             {
-                ClosestAngle = Angle;
+                ClosestAngle = DotForward;
                 BestTarget = Enemy;
             }
         }
