@@ -43,13 +43,6 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-    /*if (CachedController)
-    {
-        if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(CachedController->GetLocalPlayer()))
-        {
-            Subsystem->AddMappingContext(DefaultMappingContext, 0);
-        }
-    }*/
     LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance);
     SetGenericTeamId(FGenericTeamId(TeamID));
 }
@@ -84,28 +77,6 @@ void APlayerCharacter::Tick(float DeltaTime)
     CheckLockOnDistance();
 }
 
-/*void APlayerCharacter::Move(const FInputActionValue& Value)
-{
-    // 지역 변수를 새로 만들 땐 const를 이용하여 의도의 명확성을 추가함.
-    const FVector2D MovementVector2D = Value.Get<FVector2D>();
-    LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
-
-    if (!CanAct(EActionType::Move) || MovementVector2D.IsNearlyZero())
-        return;
-
-    if (IsValid(Controller))
-    {
-        const FRotator Rotation = Controller->GetControlRotation();
-        const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
-
-        const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-        const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-        AddMovementInput(ForwardDirection, MovementVector2D.X);
-        AddMovementInput(RightDirection, MovementVector2D.Y);
-    }
-}*/
-
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
@@ -122,12 +93,13 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     // value.Get<>()에서 캐스팅되는 타입은 에디터에서 해당 InputAction에 설정한
     // 값에 따라 다르다. Axis1D = float, Axis2D = FVector2D, Axis3D = FVector이다.
     const FVector2D MovementVector2D = Value.Get<FVector2D>();
-    LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
     if (MovementVector2D.IsNearlyZero())
         return;
 
+    LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
+
     const FRotator Rotation = GetControlRotation();
-    const FRotationMatrix YawMatrix(FRotator(0.f, Rotation.Yaw, 0.f));
+    const FRotationMatrix YawMatrix = FRotator(0.f, Rotation.Yaw, 0.f);
 
     const FVector ForwardDirection = YawMatrix.GetUnitAxis(EAxis::X);
     const FVector RightDirection = YawMatrix.GetUnitAxis(EAxis::Y);
@@ -136,6 +108,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     AddMovementInput(RightDirection, MovementVector2D.Y);
 }
 
+// 여기부터.
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
     if (IsValid(LockOnTarget))
@@ -477,7 +450,7 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
     if (CameraDir.IsNearlyZero())
         return;
 
-    FVector TargetDir(CameraDir.X, CameraDir.Y, 0.f);
+    FVector TargetDir = FVector(CameraDir.X, CameraDir.Y, 0.f);
     FRotator NewActorRot = FMath::RInterpTo(GetActorRotation(), TargetDir.Rotation(), DeltaTime, InterpSpeed);
     SetActorRotation(NewActorRot);
 
@@ -487,55 +460,6 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
     FRotator NewCameraRot = FMath::RInterpTo(GetControlRotation(), CameraDir.Rotation(), DeltaTime, InterpSpeed);
     CachedController->SetControlRotation(NewCameraRot);
 }
-
-/*AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
-{
-    if (!IsValid(LockOnTarget))
-        return nullptr;
-
-    FVector MyLocation = GetActorLocation();
-    FVector MyForward = GetActorForwardVector();
-    FVector MyRight = GetActorRightVector();
-
-    float MinAngle = 180.f;
-    AEnemyBase* NewTarget = nullptr;
-
-    for (TActorIterator<AEnemyBase> It(GetWorld()); It; ++It)
-    {
-        AEnemyBase* Enemy = *It;
-        if (!IsValid(Enemy) || Enemy == LockOnTarget)
-            continue;
-
-        FVector ToEnemy = Enemy->GetActorLocation() - MyLocation;
-        ToEnemy.Z = 0.f;
-        ToEnemy.Normalize();
-
-        float DotRight = FVector::DotProduct(ToEnemy, MyRight);
-        float DotForward = FVector::DotProduct(ToEnemy, MyForward);
-
-        if (DotForward < 0.3f)
-            continue;
-
-        if ((bLeft && DotRight < 0.f) || (!bLeft && DotRight > 0.f))
-        {
-            float Angle = FMath::Acos(FVector::DotProduct(MyForward, ToEnemy)) * (180.f / PI);
-            if (Angle < MinAngle)
-            {
-                MinAngle = Angle;
-                NewTarget = Enemy;
-            }
-        }
-    }
-    if (NewTarget)
-    {
-        if (IsValid(LockOnTarget)) // clear();
-        {
-            LockOnTarget->ShowTargetMarker(false);
-        }
-        return NewTarget;
-    }
-    return nullptr;
-}*/
 
 AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
 {
