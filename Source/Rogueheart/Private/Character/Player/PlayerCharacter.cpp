@@ -145,12 +145,12 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 
 void APlayerCharacter::PlayComboMontage()
 {
-    UPlayerAnimInstance* Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-    if (Anim && AMT_Attack)
-    {
-        Anim->Montage_Play(AMT_Attack);
-        Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Combo%d"), CurrentCombo)), AMT_Attack);
-    }
+    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+    if (!Anim || !AMT_Attack)
+        return;
+
+    Anim->Montage_Play(AMT_Attack);
+    Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Combo%d"), CurrentCombo)), AMT_Attack);
 }
 
 // 공격 애니메이션의 재생이 끝나면 호출되는 노티파이인
@@ -175,12 +175,12 @@ void APlayerCharacter::OnAttackEnd()
 // UPlayerAnimInstance::AnimNotify_EndDodge()에서 이 함수를 호출한다.
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {
-    if (IsValid(PrevLockOnTarget))
-    {
-        LockOnTarget = PrevLockOnTarget;
-        SetLockOnState(true);
-        PrevLockOnTarget = nullptr;
-    }
+    if (!IsValid(PrevLockOnTarget))
+        return;
+    
+    LockOnTarget = PrevLockOnTarget;
+    SetLockOnState(true);
+    PrevLockOnTarget = nullptr;
 }
 
 void APlayerCharacter::Dodge(const FInputActionValue& Value)
@@ -209,6 +209,7 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     }
 }
 
+// 여기부터 시작.
 void APlayerCharacter::UseFireball(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::UseSkill))
