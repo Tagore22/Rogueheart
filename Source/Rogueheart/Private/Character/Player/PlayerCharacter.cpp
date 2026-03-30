@@ -14,7 +14,7 @@
 #include "InputActionValue.h"
 #include "InventoryComponent.h"
 #include "Character/Player/RogueheartPlayerController.h"
-#include "Rogueheart.h"
+#include "Rogueheart.h" // ECC_Enemy를 불러오기 위함.
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -122,6 +122,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(LookAxis.Y);
 }
 
+// 여기부터.
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::Attack))
@@ -209,7 +210,6 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     }
 }
 
-// 여기부터 시작.
 void APlayerCharacter::UseFireball(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::UseSkill))
