@@ -108,7 +108,6 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     AddMovementInput(RightDirection, MovementVector2D.Y);
 }
 
-// 여기부터.
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
     if (IsValid(LockOnTarget))
@@ -122,7 +121,6 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(LookAxis.Y);
 }
 
-// 여기부터.
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::Attack))
@@ -174,6 +172,7 @@ void APlayerCharacter::OnAttackEnd()
 
 // Dodge 애니메이션의 재생이 끝나면 호출되는 노티파이인
 // UPlayerAnimInstance::AnimNotify_EndDodge()에서 이 함수를 호출한다.
+// 락온 상태에서 구르기 행동시에만 발동하여 PrevLockOnTarget의 처리를 담당한다.
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {
     if (!IsValid(PrevLockOnTarget))
@@ -184,6 +183,7 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
     PrevLockOnTarget = nullptr;
 }
 
+// 여기부터.
 void APlayerCharacter::Dodge(const FInputActionValue& Value)
 {
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
