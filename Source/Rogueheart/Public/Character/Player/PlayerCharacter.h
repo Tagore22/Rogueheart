@@ -77,6 +77,7 @@ protected:
     void SwitchTargetLeft(const struct FInputActionValue& Value);
     void SwitchTargetRight(const struct FInputActionValue& Value);
     void ToggleInventory(const struct FInputActionValue& Value);
+    void SetLockOnTarget(AEnemyBase* NewTarget);
 
     AEnemyBase* FindNearestTarget();
     void UpdateLockOnRotation(float DeltaTime);

@@ -183,16 +183,17 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
     PrevLockOnTarget = nullptr;
 }
 
-// 여기부터.
 void APlayerCharacter::Dodge(const FInputActionValue& Value)
 {
-    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-
-    if (!CanAct(EActionType::Dodge) || !IsValid(AMT_Dodge) || !Anim)
+    if (LastMoveInput.IsNearlyZero() || !CanAct(EActionType::Dodge))
         return;
 
-    SetPlayerState(EPlayerState::Dodging);
 
+    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+    if (!AMT_Dodge || !Anim)
+        return;
+
+    // 구르기 이전 해당 방향으로 액터를 회전. 후에 부자연스럽다면 삭제할 것.
     if (!LastMoveInput.IsNearlyZero())
     {
         FRotator ControlRot = FRotator(0.f, GetControlRotation().Yaw, 0.f);
@@ -200,6 +201,7 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
         SetActorRotation(DodgeDir.Rotation());
     }
 
+    SetPlayerState(EPlayerState::Dodging);
     Anim->Montage_Play(AMT_Dodge);
 
     if(IsValid(LockOnTarget))
@@ -267,12 +269,9 @@ void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value)
     else
     {
         AEnemyBase * NewTarget = FindNearestTarget();
-
         if (IsValid(NewTarget))
         {
-            LockOnTarget = NewTarget;
-            LockOnTarget->ShowTargetMarker(true);
-            SetLockOnState(true);
+            SetLockOnTarget(NewTarget);
         }
     }
 }
@@ -363,6 +362,7 @@ void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value)
     return nullptr;
 }*/
 
+// 이거랑 바로 밑에인 Update~만 하면 됨.
 AEnemyBase* APlayerCharacter::FindNearestTarget()
 {
     // 1단계: 주변 적들 긁어모으기 (Wide Overlap)
@@ -549,7 +549,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
     }
 }*/
 
-void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value)
+/*void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value)
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -561,6 +561,19 @@ void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value)
         LockOnTarget = NewTarget;
         LockOnTarget->ShowTargetMarker(true);
     }
+}*/
+
+void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value)
+{
+    if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
+        return;
+
+    AEnemyBase* Newtarget = SwitchTarget(true);
+    if (!IsValid(Newtarget) || Newtarget == LockOnTarget)
+        return;
+
+    ClearLockOn();
+    SetLockOnTarget(Newtarget);
 }
 
 /*void APlayerCharacter::SwitchTargetRight()
@@ -585,12 +598,11 @@ void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value)
         return;
 
     AEnemyBase* NewTarget = SwitchTarget(false);
-    if (IsValid(NewTarget) && LockOnTarget != NewTarget)
-    {
-        LockOnTarget->ShowTargetMarker(false);
-        LockOnTarget = NewTarget;
-        LockOnTarget->ShowTargetMarker(true);
-    }
+    if (!IsValid(NewTarget) || NewTarget == LockOnTarget)
+        return;
+
+    ClearLockOn();
+    SetLockOnTarget(NewTarget);
 }
 
 void APlayerCharacter::CheckLockOnDistance()
@@ -719,4 +731,14 @@ void APlayerCharacter::HealPlayer(float PlusHP)
     UE_LOG(LogTemp, Warning, TEXT("PrevHP : %f"), CurHP);
     CurHP = FMath::Min(CurHP + PlusHP, MaxHP);
     UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
+}
+
+void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget)
+{
+    if (!IsValid(NewTarget))
+        return;
+
+    LockOnTarget = NewTarget;
+    LockOnTarget->ShowTargetMarker(true);
+    SetLockOnState(true);
 }
