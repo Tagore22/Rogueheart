@@ -362,10 +362,10 @@ void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value)
     return nullptr;
 }*/
 
-// 이거랑 바로 밑에인 Update~만 하면 됨.
 AEnemyBase* APlayerCharacter::FindNearestTarget()
 {
     // 1단계: 주변 적들 긁어모으기 (Wide Overlap)
+    FVector CameraLocation = FollowCamera->GetComponentLocation();
     TArray<FOverlapResult> OverlapResults;
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(this); // 나 자신 제외
@@ -373,7 +373,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
     // 구체(Sphere) 범위를 생성하여 해당 채널(예: ECC_Pawn)의 물체를 탐색
     bool bHit = GetWorld()->OverlapMultiByChannel(
         OverlapResults,
-        GetActorLocation(),
+        CameraLocation,
         FQuat::Identity,
         ECC_Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
                    // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
@@ -385,7 +385,6 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         return nullptr;
 
     TArray<TPair<float, AEnemyBase*>> Candidates;
-    FVector CameraLocation = FollowCamera->GetComponentLocation();
     FVector CameraForward = FollowCamera->GetForwardVector();
 
     // 2단계: 시야각(FOV) 및 유효성 필터링
@@ -401,7 +400,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         FVector ToEnemy = (Enemy->GetActorLocation() - CameraLocation).GetSafeNormal2D();
 
         // 내적(Dot Product) 계산. 1은 두 벡터가 같은 방향, 0은 수직, -1은 반대방향.
-        float DotResult = CameraForward.Dot(ToEnemy);
+        float DotResult = FVector::DotProduct(CameraForward, ToEnemy);
 
         // 기준값 (예: 0.5는 약 60도, 0.7은 약 45도 시야 내)
         if (DotResult >= TargetingAngle)
@@ -425,7 +424,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         FVector TraceEnd = Candidate.Value->GetActorLocation() + FVector(0.f, 0.f, 50.f);
 
         // 내 눈(카메라)에서 적의 위치(보통 가슴 높이 고려)까지 발사
-        bool bIsObstructed = GetWorld()->LineTraceSingleByChannel(
+        bHit = GetWorld()->LineTraceSingleByChannel(
             HitResult,
             TraceStart,
             TraceEnd,
@@ -434,7 +433,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         );
 
         // 적보다 높게 쏴서 아무것도 안 걸렸거나, 걸린 게 바로 그 적이라면 타겟 확정!
-        if (!bIsObstructed || HitResult.GetActor() == Candidate.Value)
+        if (!bHit || HitResult.GetActor() == Candidate.Value)
         {
             return Candidate.Value;
         }
@@ -442,6 +441,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
     return nullptr;
 }
 
+// 마지막.
 void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
 {
     if (!IsValid(LockOnTarget)) 
