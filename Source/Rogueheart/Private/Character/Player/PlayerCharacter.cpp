@@ -441,7 +441,6 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
     return nullptr;
 }
 
-// 마지막.
 void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
 {
     if (!IsValid(LockOnTarget)) 
@@ -503,15 +502,15 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
         // FindNearestTarget()에도 상술하였듯이 Enemy는 나와 생명주기가 같다고
         // 보장되지 않은 액터 Result의 Get함수이므로 반드시 IsValid()를 통해
         // 안정성 검사를 해야한다.
-        if (!IsValid(Enemy) || Enemy == LockOnTarget) 
+        if (!IsValid(Enemy) || Enemy == LockOnTarget)
             continue;
 
         FVector ToEnemy = (Enemy->GetActorLocation() - MyLocation).GetSafeNormal2D();
 
         float DotForward = MyForward.Dot(ToEnemy);
         // 앞쪽 시야 확보. 내적값에 의해 1은 정면, 0.5는 60도, 0은 90도.
-        if (DotForward < TargetingAngle) 
-            continue; 
+        if (DotForward < TargetingAngle)
+            continue;
 
         float DotRight = MyRight.Dot(ToEnemy);
 
@@ -532,6 +531,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
     }
     return nullptr;
 }
+
 
 /*void APlayerCharacter::SwitchTargetLeft()
 {
