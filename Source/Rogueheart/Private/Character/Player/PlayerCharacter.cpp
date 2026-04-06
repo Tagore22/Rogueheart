@@ -197,7 +197,8 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     if (!LastMoveInput.IsNearlyZero())
     {
         FRotator ControlRot = FRotator(0.f, GetControlRotation().Yaw, 0.f);
-        FVector DodgeDir = ControlRot.RotateVector(LastMoveInput);
+        FQuat ControlQuat = ControlRot.Quaternion();
+        FVector DodgeDir = ControlQuat.RotateVector(LastMoveInput);
         SetActorRotation(DodgeDir.Rotation());
     }
 

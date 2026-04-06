@@ -33,7 +33,7 @@ protected:
 private:
     // 이동 관련
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-    float Speed;
+    float Speed = 0.f;
 
     //UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
     //bool bIsInAir;
@@ -49,13 +49,13 @@ private:
 
     // 락온 이동용 BlendSpace 파라미터
     UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
-    float WalkSpeed;
+    float WalkSpeed = 0.f;
 
     UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
-    float Direct;
+    float Direct = 0.f;
 
     UPROPERTY(BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
-    bool bIsLockedOn;
+    bool bIsLockedOn = false;
 
     UPROPERTY()
     APlayerCharacter* Player = nullptr;
