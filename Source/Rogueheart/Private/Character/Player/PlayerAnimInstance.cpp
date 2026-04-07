@@ -14,17 +14,21 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
     if (!IsValid(Player))
     {
-        APawn* OwningPawn = TryGetPawnOwner();
-        if (IsValid(OwningPawn))
-        {
-            Player = Cast<APlayerCharacter>(OwningPawn);
-        }
+        // TryGetPawnOwner()가 nullptr을 반환하더라도 Cast<>()에서 그대로 nullptr을
+        // 반환하기 때문에 가독성을 높일 수 있었다. 모든 Getter함수가 유효성 체크를
+        // 하지 않고 모든 Try함수도 유효성 체크를 하지 않기에 일일히 찾아보거나
+        // 아니면 맘편하게 IsValid()를 사용하여야 한다.
+        Player = Cast<APlayerCharacter>(TryGetPawnOwner());
     }
 
     if (!IsValid(Player))
         return;
 
+    // Velocity는 단순히 수치 계산을 위해 쓰인다. 이동, 회전, 방향에 쓰일 경우에는
+    // FVector::IsNearlyZero()를 통해 걸러내야할 수도 있다.
     FVector Velocity = Player->GetVelocity();
+
+    // z축의 이동값까지 끼게 되면 값이 튀어버린다. 따라서 z값은 버린다.
     FVector HorizontalVelocity = FVector(Velocity.X, Velocity.Y, 0.f);
 
     // 루트 모션을 이용한 애니메이션을 사용시 속도의 조절은 불필요함.
@@ -32,18 +36,12 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     // 때문에 없앨 수 없다.
     Speed = HorizontalVelocity.Size();
 
-    /*if (const UCharacterMovementComponent* Movement = Player->GetCharacterMovement())
-    {
-        bIsInAir = Movement->IsFalling();
-        // 0과의 비교라면 굳이 제곱근을 사용하는 Size()보다 SizeSquared()가 낫다.
-        bIsAccelerating = Movement->GetCurrentAcceleration().SizeSquared() > 0.f;
-    }*/
-
     // 락온 상태 확인. ABP에서 트랜지션의 조건값이기에 없앨 수 없음.
     bIsLockedOn = IsValid(Player->LockOnTarget);
 
     if (bIsLockedOn)
     {
+        // 아래 내적보다 FQuat 연산을 통해 한번에 알아낼 수 있다.
         /*FVector Velocity = OwningPawn->GetVelocity();
         FVector Forward = OwningPawn->GetActorForwardVector();
         FVector Right = OwningPawn->GetActorRightVector();
@@ -63,7 +61,8 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         // 즉 왼쪽으로 움직임인데 이것은 동쪽으로의 회전을 서쪽으로 역회전시키므로써
         // 북쪽으로의 움직임이 왼쪽으로의 움직임을 파악할 수 있다.
         FVector RelativeVelocity = Player->GetActorQuat().UnrotateVector(HorizontalVelocity);
-        // 블론드 스페이스의 두 변수들.
+
+        // 블렌드 스페이스의 두 변수들.
         WalkSpeed = RelativeVelocity.X;
         Direct = RelativeVelocity.Y;
     }
@@ -78,15 +77,13 @@ void UPlayerAnimInstance::NativeInitializeAnimation()
 {
     Super::NativeInitializeAnimation();
 
-    APawn* OwningPawn = TryGetPawnOwner();
-
-    if (OwningPawn)
-    {
-        Player = Cast<APlayerCharacter>(OwningPawn);
-    }
+    Player = Cast<APlayerCharacter>(TryGetPawnOwner());
 }
 
 // 노티파이 연동시키는거 잊어버렸다. 여기부터 볼 것.
+
+// 몽타주에 노티파이를 만들어놓고 이곳에서 AnimNotify_뒤에 그 노티파이명으로
+// 함수를 만들어놓으면 델리게이트에 의해 연동되어 알아서 호출됨.
 void UPlayerAnimInstance::AnimNotify_EndAttack()
 {
     if (IsValid(Player))
