@@ -64,7 +64,7 @@ void ARogueheartPlayerController::ToggleInventory()
         // 마우스 커서 숨기고 게임 입력으로 전환
         FInputModeGameOnly InputMode;
         SetInputMode(InputMode);
-        bShowMouseCursor = false;
+        SetShowMouseCursor(false);
         SetPause(false);
     }
     else
@@ -72,12 +72,13 @@ void ARogueheartPlayerController::ToggleInventory()
         InventoryWidget->AddToViewport();
 
         // 마우스 커서 보이고 UI 입력으로 전환
+        // 인벤토리를 끌 때에도 키보드를 입력하는 Game모드이기에 UIOnly는 불가능하다.
         FInputModeGameAndUI InputMode;
         // 마우스 클릭 시 커서가 갑자기 사라지는 걸 방지
         InputMode.SetHideCursorDuringCapture(false);
         InputMode.SetWidgetToFocus(InventoryWidget->TakeWidget());
         SetInputMode(InputMode);
-        bShowMouseCursor = true;
+        SetShowMouseCursor(true);
         SetPause(true);
     }
 }
