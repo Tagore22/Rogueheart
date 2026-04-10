@@ -6,6 +6,7 @@
 #include "RogueheartGameInstance.h"
 #include "Engine/DataTable.h"
 
+// 여기부터
 AItemPickup::AItemPickup()
 {
 	// 지금 당장은 쓸 일이 없다. 프로젝트 종료 혹은 사용할 일이 생길시 변경.
