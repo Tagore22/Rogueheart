@@ -48,6 +48,7 @@ void AItemPickup::BeginPlay()
     if (ItemID.IsNone()) 
         return;
 
+    // 여기부터.
     TriggerSphere->OnComponentBeginOverlap.AddDynamic(this, &AItemPickup::OnTriggerOverlap);
 
     URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetWorld()->GetGameInstance());
