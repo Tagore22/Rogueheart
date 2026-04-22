@@ -376,8 +376,8 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         OverlapResults,
         CameraLocation,
         FQuat::Identity,
-        ECC_Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
-                   // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
+        TraceChannel::Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
+                             // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
         FCollisionShape::MakeSphere(LockOnRange),
         QueryParams
     );
@@ -477,8 +477,8 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
         OverlapResults,
         GetActorLocation(),
         FQuat::Identity,
-        ECC_Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
-                   // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
+        TraceChannel::Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
+                             // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
         FCollisionShape::MakeSphere(LockOnRange),
         QueryParams
     );

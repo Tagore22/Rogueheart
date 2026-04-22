@@ -2,4 +2,7 @@
 
 #include "CoreMinimal.h"
 
-#define ECC_Enemy ECC_GameTraceChannel1
+namespace TraceChannel
+{
+	constexpr ECollisionChannel Enemy = ECC_GameTraceChannel1;
+}
