@@ -3,6 +3,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "InventoryComponent.h"
+#include "InventorySubsystem.h"
 #include "RogueheartGameInstance.h"
 #include "Engine/DataTable.h"
 
@@ -98,11 +99,12 @@ void AItemPickup::OnPickup(AActor* Picker)
     if (!GI)
         return;
 
-    // InventoryComponent 찾기
-    UInventoryComponent* Inventory = GI->GetInventoryComponent();
+    // InventorySubsystem 찾기
+    UInventorySubsystem* Inventory = GI->GetSubsystem<UInventorySubsystem>();
+    //UInventoryComponent* Inventory = GI->GetInventoryComponent();
     if (!Inventory)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Player don't have InventoryComponent!"));
+        UE_LOG(LogTemp, Warning, TEXT("Player don't have InventorySubsystem!"));
         return;
     }
 
