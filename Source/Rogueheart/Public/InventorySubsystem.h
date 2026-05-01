@@ -4,7 +4,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "InventorySubsystem.generated.h"
 
-UCLASS(BlueprintType)
+UCLASS()
 class ROGUEHEART_API UInventorySubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
