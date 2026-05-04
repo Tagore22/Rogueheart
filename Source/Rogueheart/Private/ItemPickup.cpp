@@ -2,7 +2,6 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "InventoryComponent.h"
 #include "InventorySubsystem.h"
 #include "RogueheartGameInstance.h"
 #include "Engine/DataTable.h"
@@ -101,7 +100,6 @@ void AItemPickup::OnPickup(AActor* Picker)
 
     // InventorySubsystem Ã£±â
     UInventorySubsystem* Inventory = GI->GetSubsystem<UInventorySubsystem>();
-    //UInventoryComponent* Inventory = GI->GetInventoryComponent();
     if (!Inventory)
     {
         UE_LOG(LogTemp, Warning, TEXT("Player don't have InventorySubsystem!"));
