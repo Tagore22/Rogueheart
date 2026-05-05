@@ -184,6 +184,7 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float TargetingAngle = 0.5f;
+    // StatSubsystem으로 옮겨야 하는 변수들.
     UPROPERTY(EditDefaultsOnly, Category = "HP")
     float MaxHP = 100.f;
     UPROPERTY(EditDefaultsOnly, Category = "HP")

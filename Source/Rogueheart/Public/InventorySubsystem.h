@@ -10,8 +10,6 @@ class ROGUEHEART_API UInventorySubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-    UInventorySubsystem();
-
     // 아이템 추가 (TMap에 개수 증가, TArray에 순서 관리)
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     bool AddItem(FName ItemID, int32 Count = 1);
