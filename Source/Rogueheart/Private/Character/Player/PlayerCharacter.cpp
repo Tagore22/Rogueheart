@@ -743,3 +743,8 @@ void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget)
     LockOnTarget->ShowTargetMarker(true);
     SetLockOnState(true);
 }
+
+void APlayerCharacter::SetupWeapon(AWeaponBase* Weapon)
+{
+    CachedWeapon = Weapon;
+}

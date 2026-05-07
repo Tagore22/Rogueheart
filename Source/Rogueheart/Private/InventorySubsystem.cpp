@@ -4,6 +4,9 @@
 #include "GameFramework/PlayerController.h"
 #include "Character/Player/PlayerCharacter.h"
 #include "StatSubsystem.h"
+#include "WeaponBase.h"
+#include "Character/Player/PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 
 bool UInventorySubsystem::AddItem(FName ItemID, int32 Count)
@@ -94,6 +97,14 @@ bool UInventorySubsystem::UseItem(FName ItemID)
         else
         {
             EquippedWeaponID = ItemID;    // »õ·Î ÀåÂø
+            AWeaponBase* NewWeapon = GetWorld()->SpawnActor<AWeaponBase>();
+            APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+            if (IsValid(Player) && IsValid(NewWeapon))
+            {
+                Player->SetupWeapon(NewWeapon);
+                NewWeapon->SetupWeapon(ItemData->PickupMesh);
+                NewWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Weapon_Socket"));
+            }
             UE_LOG(LogTemp, Warning, TEXT("Item Equipped: %s"), *ItemID.ToString());
         }
         break;

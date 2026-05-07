@@ -16,6 +16,7 @@ class USkillComponent;
 class AEnemyBase;
 class ARogueheartPlayerController;
 struct InputActionValue;
+class AWeaponBase;
 
 UENUM(BlueprintType)
 enum class EPlayerState : uint8
@@ -61,6 +62,7 @@ public:
     void OnAttackEnd();
     void RestoreLockOnIfNeeded();
     void HealPlayer(float PlusHP);
+    void SetupWeapon(AWeaponBase* Weapon);
 
 protected:
     virtual void PossessedBy(AController* NewController) override;
@@ -199,4 +201,7 @@ protected:
 
     UPROPERTY()
     ARogueheartPlayerController* CachedController = nullptr;
+
+    UPROPERTY()
+    AWeaponBase* CachedWeapon = nullptr;
 };

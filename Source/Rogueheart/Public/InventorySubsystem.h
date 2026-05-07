@@ -34,7 +34,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
     int32 MaxSlots = 20;
 
-protected:
+protected: 
     // 개수 관리 (빠른 조회용)
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
     TMap<FName, int32> ItemCounts;
