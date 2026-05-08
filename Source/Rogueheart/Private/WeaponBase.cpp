@@ -1,4 +1,5 @@
 #include "WeaponBase.h"
+#include "Item/ItemData.h"
 
 AWeaponBase::AWeaponBase()
 {
@@ -16,9 +17,9 @@ void AWeaponBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AWeaponBase::SetupWeapon(TSoftObjectPtr<UStaticMesh> PickupMesh)
+void AWeaponBase::SetupWeapon(const FItemData& ItemData)
 {
-	UStaticMesh* Mesh = PickupMesh.LoadSynchronous();
+	UStaticMesh* Mesh = ItemData.PickupMesh.LoadSynchronous();
 	WeaponMesh->SetStaticMesh(Mesh);
 }
 

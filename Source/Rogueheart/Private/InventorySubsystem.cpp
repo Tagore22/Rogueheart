@@ -98,13 +98,14 @@ bool UInventorySubsystem::UseItem(FName ItemID)
         {
             EquippedWeaponID = ItemID;    // »õ·Î ÀåÂø
             AWeaponBase* NewWeapon = GetWorld()->SpawnActor<AWeaponBase>();
+            if (!IsValid(NewWeapon))
+                break;
             APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-            if (IsValid(Player) && IsValid(NewWeapon))
-            {
-                Player->SetupWeapon(NewWeapon);
-                NewWeapon->SetupWeapon(ItemData->PickupMesh);
-                NewWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Weapon_Socket"));
-            }
+            if (!IsValid(Player))
+                break;
+            Player->SetupWeapon(NewWeapon);
+            NewWeapon->SetupWeapon(*ItemData);
+            NewWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Weapon_Socket"));
             UE_LOG(LogTemp, Warning, TEXT("Item Equipped: %s"), *ItemID.ToString());
         }
         break;
