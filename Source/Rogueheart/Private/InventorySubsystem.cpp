@@ -74,10 +74,11 @@ bool UInventorySubsystem::UseItem(FName ItemID)
     // (사용자의 데이터 매니저나 구조에 맞게 수정하세요)
     // 현재 인벤토리가 게임인스턴스에서 생성된다. GetOwner()는 액터에 붙어있는 컴포넌트들만 가지기에
     // 아래에서 GetOuter() 대신 GetOwner()를 호출하면 nullptr이 반환된다.
-    URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetOuter());
+    // URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetOuter());
+    URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetGameInstance());
     if (!GI)
         return false;
-    UDataTable* ItemTable = GI ? GI->GetItemDataTable() : nullptr;
+    UDataTable* ItemTable = GI->GetItemDataTable();
     if (!ItemTable)
         return false;
     const FItemData* ItemData = ItemTable->FindRow<FItemData>(ItemID, TEXT(""));
