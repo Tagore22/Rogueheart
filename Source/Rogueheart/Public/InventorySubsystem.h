@@ -4,6 +4,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "InventorySubsystem.generated.h"
 
+class AWeaponBase;
+
 UCLASS()
 class ROGUEHEART_API UInventorySubsystem : public UGameInstanceSubsystem
 {
@@ -42,4 +44,7 @@ protected:
     // 순서 관리 (UI 표시용, 삽입 순서 유지)
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
     TArray<FName> ItemIDs;
+
+    UPROPERTY()
+    AWeaponBase* CurWeapon = nullptr;
 };

@@ -7,6 +7,7 @@
 #include "WeaponBase.h"
 #include "Character/Player/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "WeaponBase.h"
 
 
 bool UInventorySubsystem::AddItem(FName ItemID, int32 Count)
@@ -93,20 +94,26 @@ bool UInventorySubsystem::UseItem(FName ItemID)
         if (EquippedWeaponID == ItemID)
         {
             EquippedWeaponID = NAME_None; // 이미 장착 중이면 해제
+            CurWeapon->Destroy();
+            CurWeapon = nullptr;
             UE_LOG(LogTemp, Warning, TEXT("Item Unequipped: %s"), *ItemID.ToString());
         }
         else
         {
+            if (CurWeapon)
+            {
+                CurWeapon->Destroy();
+                CurWeapon = nullptr;
+            }
             EquippedWeaponID = ItemID;    // 새로 장착
-            AWeaponBase* NewWeapon = GetWorld()->SpawnActor<AWeaponBase>();
-            if (!IsValid(NewWeapon))
+            CurWeapon = GetWorld()->SpawnActor<AWeaponBase>();
+            if (!IsValid(CurWeapon))
                 break;
             APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
             if (!IsValid(Player))
                 break;
-            Player->SetupWeapon(NewWeapon);
-            NewWeapon->SetupWeapon(*ItemData);
-            NewWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Weapon_Socket"));
+            CurWeapon->SetupWeapon(*ItemData);
+            CurWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Weapon_Socket"));
             UE_LOG(LogTemp, Warning, TEXT("Item Equipped: %s"), *ItemID.ToString());
         }
         break;
