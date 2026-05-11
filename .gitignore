@@ -31,3 +31,6 @@ Thumbs.db
 .vs/
 *.VC.db
 *.VC.opendb
+
+*_BuiltData.uasset
+/Content/Weapon_Pack/Textures/HDRI/HDRI_Epic_Courtyard_Daylight.uasset

@@ -19,6 +19,7 @@ AItemPickup::AItemPickup()
     MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     MeshComponent->SetupAttachment(RootComponent);
     MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);  // 물리 충돌 끄기
+    MeshComponent->SetRelativeLocation(FVector(0.f, 0.f, 30.f));
 
     // 트리거 구체
     TriggerSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
