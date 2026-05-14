@@ -14,7 +14,7 @@
 #include "InputActionValue.h"
 #include "InventoryComponent.h"
 #include "Character/Player/RogueheartPlayerController.h"
-#include "Rogueheart.h" // ECC_Enemy를 불러오기 위함.
+#include "Rogueheart.h" 
 
 APlayerCharacter::APlayerCharacter()
 {

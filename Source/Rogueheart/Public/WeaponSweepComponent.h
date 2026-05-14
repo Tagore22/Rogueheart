@@ -23,6 +23,7 @@ public:
 	void SetPrevSocketLocation(const FVector& Location);
 	FVector GetCurSocketLocation() const;
 	void SetCurSocketLocation(const FVector& Location);
+	void SweepAttack(const FVector& Location);
 private:
 	TArray<AActor*> HitActors;
 	FVector PrevSocketLocation;
