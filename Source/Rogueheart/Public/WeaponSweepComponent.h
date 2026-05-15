@@ -26,6 +26,6 @@ public:
 	void SweepAttack(const FVector& Location);
 private:
 	TArray<AActor*> HitActors;
-	FVector PrevSocketLocation;
-	FVector CurSocketLocation;
+	FVector PrevSocketLocation = FVector(0.f, 0.f, 0.f);
+	FVector CurSocketLocation = FVector(0.f, 0.f, 0.f);;
 };

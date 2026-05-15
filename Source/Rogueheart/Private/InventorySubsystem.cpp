@@ -86,6 +86,7 @@ bool UInventorySubsystem::UseItem(FName ItemID)
     if (!ItemData)
         return false;
 
+
     // 3. 아이템 타입에 따른 분기 처리
     switch (ItemData->ItemType)
     {
@@ -112,6 +113,7 @@ bool UInventorySubsystem::UseItem(FName ItemID)
             APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
             if (!IsValid(Player))
                 break;
+            Player->SetEquippedWeapon(CurWeapon);
             CurWeapon->SetupWeapon(*ItemData);
             CurWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Weapon_Socket"));
             UE_LOG(LogTemp, Warning, TEXT("Item Equipped: %s"), *ItemID.ToString());

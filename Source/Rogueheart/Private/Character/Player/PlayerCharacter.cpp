@@ -15,6 +15,8 @@
 #include "InventoryComponent.h"
 #include "Character/Player/RogueheartPlayerController.h"
 #include "Rogueheart.h" 
+#include "WeaponSweepComponent.h"
+#include "WeaponBase.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -37,6 +39,7 @@ APlayerCharacter::APlayerCharacter()
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
+    SweepComp = CreateDefaultSubobject<UWeaponSweepComponent>(TEXT("WeaponSweepComponent"));
 }
 
 void APlayerCharacter::BeginPlay()
@@ -188,11 +191,11 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value)
     if (LastMoveInput.IsNearlyZero() || !CanAct(EActionType::Dodge))
         return;
 
-
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
     if (!AMT_Dodge || !Anim)
         return;
 
+    SetWeaponVisible(true);
     // 구르기 이전 해당 방향으로 액터를 회전. 후에 부자연스럽다면 삭제할 것.
     if (!LastMoveInput.IsNearlyZero())
     {
@@ -742,4 +745,24 @@ void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget)
     LockOnTarget = NewTarget;
     LockOnTarget->ShowTargetMarker(true);
     SetLockOnState(true);
+}
+
+void APlayerCharacter::SetEquippedWeapon(AWeaponBase* CurWeapon)
+{
+    EquippedWeapon = CurWeapon;
+}
+
+void APlayerCharacter::SetWeaponVisible(bool IsVisible)
+{
+    if (!IsValid(EquippedWeapon))
+        return;
+
+    if (IsVisible)
+    {
+        EquippedWeapon->SetActorHiddenInGame(true);
+    }
+    else
+    {
+        EquippedWeapon->SetActorHiddenInGame(false);
+    }
 }

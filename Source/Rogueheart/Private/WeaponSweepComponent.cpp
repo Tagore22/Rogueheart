@@ -69,6 +69,7 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location)
 		if (IsValid(HitActor) && !HitActors.Contains(HitActor))
 		{
 			HitActors.Add(HitActor);
+			UE_LOG(LogTemp, Warning, TEXT("Another Enemy Attacked!"));
 			// 여기서 HitActor의 ApplyDamage()를 호출한다.
 		}
 	}

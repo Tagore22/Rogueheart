@@ -107,5 +107,6 @@ void UPlayerAnimInstance::AnimNotify_EndDodge()
     {
         Player->SetPlayerState(EPlayerState::Idle);
         Player->RestoreLockOnIfNeeded();
+        Player->SetWeaponVisible(false);
     }
 }
