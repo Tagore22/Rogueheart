@@ -30,6 +30,7 @@ public:
     /** 마지막 공격 시간 리셋 */
     void ResetAttackCooldown();
 
+    virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;

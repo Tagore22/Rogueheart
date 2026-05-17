@@ -83,3 +83,12 @@ void AEnemyBase::ShowTargetMarker(bool bShow)
         TargetMarker->SetVisibility(bShow);
     }
 }
+
+float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+    float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+    UE_LOG(LogTemp, Warning, TEXT("Enemy Take %f Damage!"), ActualDamage);
+
+    return ActualDamage;
+}

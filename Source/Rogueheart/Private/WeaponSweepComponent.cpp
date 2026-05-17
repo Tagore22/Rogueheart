@@ -1,6 +1,7 @@
 #include "WeaponSweepComponent.h"
 #include "Character/Player/PlayerCharacter.h"
 #include "Rogueheart.h"
+#include "Kismet/GameplayStatics.h"
 
 UWeaponSweepComponent::UWeaponSweepComponent()
 {
@@ -63,6 +64,7 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location)
 	if (!bHit)
 		return;
 
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
 	for (FHitResult Hit : OutHits)
 	{
 		AActor* HitActor = Hit.GetActor();
@@ -70,7 +72,8 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location)
 		{
 			HitActors.Add(HitActor);
 			UE_LOG(LogTemp, Warning, TEXT("Another Enemy Attacked!"));
-			// 여기서 HitActor의 ApplyDamage()를 호출한다.
+			// 여기서 HitActor의 ApplyDamage()를 호출한다. 20은 임시이며, 이후 추가 수정할 것.
+			UGameplayStatics::ApplyDamage(HitActor, 20.f, Player->GetController(), Player, nullptr);
 		}
 	}
 	// 마지막에 현재 소켓 좌표를 이전 소켓 좌표로 갱신후에 함수 종료.
