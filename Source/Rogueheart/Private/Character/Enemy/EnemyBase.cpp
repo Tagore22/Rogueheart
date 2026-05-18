@@ -88,6 +88,9 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+    // 현재 체력이 ActualDamage만큼 줄어든다.
+    // 만약 체력이 0보다 작다면 사망.
+    // 피격 애니메이션 실행.
     UE_LOG(LogTemp, Warning, TEXT("Enemy Take %f Damage!"), ActualDamage);
 
     return ActualDamage;

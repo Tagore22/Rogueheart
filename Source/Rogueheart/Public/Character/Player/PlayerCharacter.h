@@ -82,6 +82,7 @@ protected:
     void SwitchTargetRight(const struct FInputActionValue& Value);
     void ToggleInventory(const struct FInputActionValue& Value);
     void SetLockOnTarget(AEnemyBase* NewTarget);
+    virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
     AEnemyBase* FindNearestTarget();
     void UpdateLockOnRotation(float DeltaTime);

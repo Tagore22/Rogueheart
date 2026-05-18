@@ -766,3 +766,18 @@ void APlayerCharacter::SetWeaponVisible(bool IsVisible)
         EquippedWeapon->SetActorHiddenInGame(false);
     }
 }
+
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+    float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+    CurHP -= ActualDamage;
+    // 만약 체력이 0보다 작다면 사망.
+
+    // 여기서 그 이후 행동들을 실행함.
+    // 피격 애니메이션 실행.
+    // 스턴에 빠짐으로 인한 스테이터스 변화.
+    // 스턴이 끝나면 스테이터스는 idle로 되돌아간다.
+
+    return ActualDamage;
+}
