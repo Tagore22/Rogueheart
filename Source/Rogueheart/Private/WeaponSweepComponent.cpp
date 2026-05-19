@@ -12,10 +12,10 @@ void UWeaponSweepComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
-	if (!IsValid(Player))
+	const ACharacter* Owner = Cast<ACharacter>(GetOwner());
+	if (!IsValid(Owner))
 		return;
-	const USkeletalMeshComponent* MeshComp = Player->GetMesh();
+	const USkeletalMeshComponent* MeshComp = Owner->GetMesh();
 	if (!MeshComp)
 		return;
 	PrevSocketLocation = MeshComp->GetSocketLocation(TEXT("Weapon_Socket"));
@@ -64,16 +64,16 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location)
 	if (!bHit)
 		return;
 
-	APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
+	ACharacter* Owner = Cast<ACharacter>(GetOwner());
 	for (FHitResult Hit : OutHits)
 	{
 		AActor* HitActor = Hit.GetActor();
 		if (IsValid(HitActor) && !HitActors.Contains(HitActor))
 		{
 			HitActors.Add(HitActor);
-			UE_LOG(LogTemp, Warning, TEXT("Another Enemy Attacked!"));
+			UE_LOG(LogTemp, Warning, TEXT("Another Actor Attacked!"));
 			// 여기서 HitActor의 ApplyDamage()를 호출한다. 20은 임시이며, 이후 추가 수정할 것.
-			UGameplayStatics::ApplyDamage(HitActor, 20.f, Player->GetController(), Player, nullptr);
+			UGameplayStatics::ApplyDamage(HitActor, 20.f, Owner->GetController(), Owner, nullptr);
 		}
 	}
 	// 마지막에 현재 소켓 좌표를 이전 소켓 좌표로 갱신후에 함수 종료.
