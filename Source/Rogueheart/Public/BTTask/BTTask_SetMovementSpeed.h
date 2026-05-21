@@ -12,7 +12,7 @@ class ROGUEHEART_API UBTTask_SetMovementSpeed : public UBTTaskNode
 public:
     UBTTask_SetMovementSpeed();
 
-    UPROPERTY(EditAnywhere, Category = "Movement")
+    UPROPERTY(EditDefaultsOnly, Category = "Movement")
     float MovementSpeed = 150.0f;
 
 protected:

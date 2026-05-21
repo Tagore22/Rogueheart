@@ -42,6 +42,8 @@ void AEnemyBase::Tick(float DeltaTime)
 
 void AEnemyBase::TryAttack()
 {
+    // 밑에 AttackMontage가 없기 때문에 이곳은 바로 return 된다. 몽타주를 여기에 둘지 상속받은 클래스에 둘지
+    // 고민중이다. 일단은 밑에 두었는데 나중에 옮길일이 있다면 옮기자.
     if (!CanAttack() || !IsValid(AttackMontage))
         return;
 

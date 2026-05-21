@@ -18,7 +18,7 @@ public:
 
     /** 공격 시도 (비헤이비어 트리에서 호출) */
     UFUNCTION(BlueprintCallable, Category = "Combat")
-    void TryAttack();
+    virtual void TryAttack();
 
     /** 타겟 마커 표시/숨기기 */
     void ShowTargetMarker(bool bShow);

@@ -100,6 +100,8 @@ protected:
     float GetCurStamina() const;
 
 public:
+    // 잘 정리해서 public이 아니라 private쪽으로 넘길 것. meta = AllowPrivateAccess는 BP에서 접근하는 게 아니면 쓸모가 없다.
+    // 에디터에서 접근하는 건 없어도 된다.
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
     USpringArmComponent* CameraBoom;
 
@@ -136,13 +138,13 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     UInputAction* IA_InventoryOnOff;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
     UAnimMontage* AMT_Attack;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
     UAnimMontage* AMT_Dodge;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     USkillComponent* SkillComponent;
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")

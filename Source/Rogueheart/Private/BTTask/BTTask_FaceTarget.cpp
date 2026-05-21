@@ -40,6 +40,7 @@ EBTNodeResult::Type UBTTask_FaceTarget::ExecuteTask(UBehaviorTreeComponent& Owne
     FVector Direction = TargetActor->GetActorLocation() - EnemyBase->GetActorLocation();
     Direction.Z = 0.0f; // 수평면에서만 회전
 
+    // 플레이어가 일정거리 이상 떨어져있다면 플레이어를 정면으로 바라보게끔 회전한다.
     if (Direction.SizeSquared() > 0.0f)
     {
         FRotator TargetRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
