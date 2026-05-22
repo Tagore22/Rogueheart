@@ -35,7 +35,7 @@ AEnemyAIController::AEnemyAIController()
         SightConfig->PeripheralVisionAngleDegrees = 60.f;
 
         // FIX: 캐시(MaxAge)를 짧게 해서 실시간성 개선
-        SightConfig->SetMaxAge(0.5f);
+        SightConfig->SetMaxAge(3.5f);
 
         SightConfig->DetectionByAffiliation.bDetectEnemies = true;
         SightConfig->DetectionByAffiliation.bDetectFriendlies = false;
@@ -160,7 +160,7 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
     if (Stimulus.WasSuccessfullySensed())
     {
         // 플레이어 발견
-        BB->SetValueAsObject(TargetPlayerKey, Actor);
+        BB->SetValueAsObject(TEXT("TargetPlayer"), Actor);
 
         // FIX: 발견 위치는 플레이어(Actor)의 현재 위치로 저장 (이전: ControlledPawn 위치 사용)
         BB->SetValueAsVector(DiscoveredLocationKey, StimulusLoc);
