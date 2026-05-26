@@ -41,16 +41,21 @@ private:
 
 public:
     /** 공격 범위 */
-    UPROPERTY(EditAnywhere, Category = "Combat")
+    UPROPERTY(EditDefaultsOnly, Category = "Combat")
     float AttackRange = 150.f;
 
     /** 공격 쿨타임 */
-    UPROPERTY(EditAnywhere, Category = "Combat")
+    UPROPERTY(EditDefaultsOnly, Category = "Combat")
     float AttackCooldown = 2.f;
 
+    // 이후 이 클래스를 BP화하여 여러개를 만들어 적마다 다른 몽타주를 넣으면 된다.
     /** 공격 모션 */
-    UPROPERTY(EditAnywhere, Category = "Combat")
-    UAnimMontage* AttackMontage;
+    UPROPERTY(EditDefaultsOnly, Category = "Attack Montage")
+    class UAnimMontage* AMT_Attack;
+
+    /** 피격 모션 */
+    UPROPERTY(EditDefaultsOnly, Category = "Damaged Montage")
+    class UAnimMontage* AMT_Damaged;
 
     /** 타겟 마커 UI */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")

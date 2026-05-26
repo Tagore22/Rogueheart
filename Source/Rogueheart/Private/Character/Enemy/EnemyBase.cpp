@@ -42,29 +42,9 @@ void AEnemyBase::Tick(float DeltaTime)
 
 void AEnemyBase::TryAttack()
 {
-    // 밑에 AttackMontage가 없기 때문에 이곳은 바로 return 된다. 몽타주를 여기에 둘지 상속받은 클래스에 둘지
-    // 고민중이다. 일단은 밑에 두었는데 나중에 옮길일이 있다면 옮기자.
-    if (!CanAttack() || !IsValid(AttackMontage))
-        return;
-
-    UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-    if (!AnimInstance)
-        return;
-
-    if (AnimInstance->Montage_IsPlaying(AttackMontage))
-        return;
-
-    // 혹여나 애니메이션이 제대로 재생되지 않았을 경우를 처리하기 위한 임시 방편으로 남겨둔다.
-    /*const float PlayLength = AnimInstance->Montage_Play(AttackMontage);
-    if (PlayLength > 0.f)
-    {
-        ResetAttackCooldown();
-        UE_LOG(LogTemp, Warning, TEXT("Attack Executed"));
-    }
-    else
-    {
-    }*/
-    ResetAttackCooldown();
+    // 일단은 중요한 일들이 자식클래스에 있을 확률이 높아 이곳은 비워둔다.
+    // 이후에 공통적으로 묶어야할 일이 있거든 이곳에 구현하되, 없다면 순수 가상 함수도
+    // 생각해봄직하다.
     UE_LOG(LogTemp, Warning, TEXT("Attack Executed"));
 }
 
@@ -93,6 +73,12 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
     // 현재 체력이 ActualDamage만큼 줄어든다.
     // 만약 체력이 0보다 작다면 사망.
     // 피격 애니메이션 실행.
+    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+    if (!Anim || !AMT_Damaged)
+        return ActualDamage;
+    int32 CurDamagedNum = FMath::RandRange(1, 2);
+    Anim->Montage_Play(AMT_Damaged);
+    Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Damaged%d"), CurDamagedNum)), AMT_Damaged);
     UE_LOG(LogTemp, Warning, TEXT("Enemy Take %f Damage!"), ActualDamage);
 
     return ActualDamage;

@@ -25,8 +25,4 @@ protected:
     /** 공격 간격 */
     UPROPERTY(EditDefaultsOnly, Category = "Combat")
     float AttackInterval = 3.f;
-
-    // 이후 이 클래스를 BP화하여 여러개를 만들어 적마다 다른 몽타주를 넣으면 된다.
-    UPROPERTY(EditDefaultsOnly, Category = "AnimationMontage")
-    class UAnimMontage* AMT_Attack;
 };
