@@ -15,7 +15,6 @@
 #include "InventoryComponent.h"
 #include "Character/Player/RogueheartPlayerController.h"
 #include "Rogueheart.h" 
-#include "WeaponSweepComponent.h"
 #include "WeaponBase.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -39,7 +38,6 @@ APlayerCharacter::APlayerCharacter()
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
-    SweepComp = CreateDefaultSubobject<UWeaponSweepComponent>(TEXT("WeaponSweepComponent"));
 }
 
 void APlayerCharacter::BeginPlay()

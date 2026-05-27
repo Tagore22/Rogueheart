@@ -208,6 +208,4 @@ protected:
     ARogueheartPlayerController* CachedController = nullptr;
     UPROPERTY()
     AWeaponBase* EquippedWeapon = nullptr;
-    UPROPERTY()
-    UWeaponSweepComponent* SweepComp = nullptr;
 };

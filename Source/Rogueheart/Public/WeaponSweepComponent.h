@@ -28,4 +28,6 @@ private:
 	TArray<AActor*> HitActors;
 	FVector PrevSocketLocation = FVector(0.f, 0.f, 0.f);
 	FVector CurSocketLocation = FVector(0.f, 0.f, 0.f);;
+	UPROPERTY(EditDefaultsOnly, Category = "SweepLength")
+	float SweepLength = 20.f;
 };

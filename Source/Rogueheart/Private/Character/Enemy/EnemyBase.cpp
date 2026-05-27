@@ -74,12 +74,14 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
     // 만약 체력이 0보다 작다면 사망.
     // 피격 애니메이션 실행.
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-    if (!Anim || !AMT_Damaged)
+    if (!Anim || DamagedMontages.Num() == 0)
         return ActualDamage;
-    int32 CurDamagedNum = FMath::RandRange(1, 2);
-    Anim->Montage_Play(AMT_Damaged);
-    Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Damaged%d"), CurDamagedNum)), AMT_Damaged);
+
     UE_LOG(LogTemp, Warning, TEXT("Enemy Take %f Damage!"), ActualDamage);
+
+    //
+    int32 DamagedIndex = FMath::RandRange(1, DamagedMontages.Num() - 1);
+    Anim->Montage_Play(DamagedMontages[DamagedIndex]);
 
     return ActualDamage;
 }

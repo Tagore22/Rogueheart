@@ -60,7 +60,7 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location)
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(GetOwner());
 
-	bool bHit = GetWorld()->SweepMultiByChannel(OutHits, PrevSocketLocation, CurSocketLocation, FQuat::Identity, TraceChannel::Enemy, FCollisionShape::MakeSphere(20.f), Params);
+	bool bHit = GetWorld()->SweepMultiByChannel(OutHits, PrevSocketLocation, CurSocketLocation, FQuat::Identity, TraceChannel::Enemy, FCollisionShape::MakeSphere(SweepLength), Params);
 	if (!bHit)
 		return;
 
