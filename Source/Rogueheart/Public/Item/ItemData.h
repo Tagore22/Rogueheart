@@ -2,18 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h" 
-/*#include "Engine/Texture2D.h"
-#include "Engine/StaticMesh.h"
-#include "Engine/SkeletalMesh.h"
-#include "Sound/SoundBase.h"
-#include "NiagaraSystem.h"*/
 #include "ItemData.generated.h"
-
-class UTexture2D;
-class UStaticMesh;
-class UNiagaraSystem;
-class USkeletalMesh;
-class USoundBase;
 
 UENUM(BlueprintType)
 enum class EItemType : uint8
@@ -53,16 +42,16 @@ public:
     EItemType ItemType = EItemType::None;                 // 소모품/장비/재료/키아이템 등의 구분.
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
-    TSoftObjectPtr<UTexture2D> Icon;                      // 인벤토리 슬롯등에 표시될 2D 아이콘.
+    TSoftObjectPtr<class UTexture2D> Icon;                // 인벤토리 슬롯등에 표시될 2D 아이콘.
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
-    TSoftObjectPtr<UStaticMesh> PickupMesh;               // 필드에 떨어진 모습.
+    TSoftObjectPtr<class UStaticMesh> PickupMesh;         // 필드에 떨어진 모습.
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
-    TSoftObjectPtr<UNiagaraSystem> PickupParticle = nullptr; // 습득 시 이펙트.
+    TSoftObjectPtr<class UNiagaraSystem> PickupParticle = nullptr; // 습득 시 이펙트.
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
-    TSoftObjectPtr<UStaticMesh> EquipMesh;              // 장착 시 모습 (필요하면)
+    TSoftObjectPtr<class UStaticMesh> EquipMesh;          // 장착 시 모습 (필요하면)
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stack")
     int32 MaxStack = 1;                                   // 최대 겹침 개수. 포션은 99, 장비는 1
@@ -92,5 +81,5 @@ public:
     FName EquipSocketName = NAME_None;                    // 장착 시 붙일 소켓 이름 (RightHandSocket 등).
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
-    TSoftObjectPtr<USoundBase> UseSound = nullptr;        // 사용 시 재생될 사운드.
+    TSoftObjectPtr<class USoundBase> UseSound = nullptr;  // 사용 시 재생될 사운드.
 };

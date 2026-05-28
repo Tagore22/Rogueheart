@@ -4,8 +4,6 @@
 #include "Animation/AnimInstance.h"
 #include "PlayerAnimInstance.generated.h"
 
-class APlayerCharacter;
-
 UCLASS()
 class ROGUEHEART_API UPlayerAnimInstance : public UAnimInstance
 {
@@ -58,5 +56,5 @@ private:
     bool bIsLockedOn = false;
 
     UPROPERTY()
-    APlayerCharacter* Player = nullptr;
+    class APlayerCharacter* Player = nullptr;
 };

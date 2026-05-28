@@ -37,7 +37,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     Speed = HorizontalVelocity.Size();
 
     // 락온 상태 확인. ABP에서 트랜지션의 조건값이기에 없앨 수 없음.
-    bIsLockedOn = IsValid(Player->LockOnTarget);
+    bIsLockedOn = Player->HasLockTarget();
 
     if (bIsLockedOn)
     {
@@ -97,7 +97,7 @@ void UPlayerAnimInstance::AnimNotify_NextCombo()
 {
     if (IsValid(Player))
     {
-        Player->bCanNextCombo = true;
+        Player->SetCanNextComboTrue();
     }
 }
 

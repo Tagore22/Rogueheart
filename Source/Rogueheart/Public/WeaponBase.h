@@ -4,8 +4,6 @@
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
 
-struct FItemData;
-
 UCLASS()
 class ROGUEHEART_API AWeaponBase : public AActor
 {
@@ -19,7 +17,7 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
-	void SetupWeapon(const FItemData& ItemData);
+	void SetupWeapon(const struct FItemData& ItemData);
 
 private:
 	UPROPERTY()

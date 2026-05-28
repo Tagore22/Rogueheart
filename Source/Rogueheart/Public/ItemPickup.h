@@ -2,14 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Item/ItemData.h"
-#include "Character/Player/PlayerCharacter.h"
-//#include "InventoryComponent.h"
+#include "Item/ItemData.h" // FItemData ItemData이 레퍼런스나 포인터가 아니기에 전방선언 불가능.
 #include "ItemPickup.generated.h"
-
-class URogueheartGameInstance;
-class UInventoryComponent;
-class UDataTable;
 
 UCLASS()
 class ROGUEHEART_API AItemPickup : public AActor
@@ -25,7 +19,7 @@ public:
 
 	// 로드된 아이템 데이터 (런타임에 채워짐)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
-	FItemData ItemData;
+	struct FItemData ItemData;
 protected:
 	virtual void BeginPlay() override;
 

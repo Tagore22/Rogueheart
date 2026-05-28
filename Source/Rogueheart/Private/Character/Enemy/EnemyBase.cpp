@@ -4,10 +4,13 @@
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimInstance.h"
+//#include "Components/CapsuleComponent.h"
 
 AEnemyBase::AEnemyBase()
 {
     PrimaryActorTick.bCanEverTick = true;
+
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     // 타겟 마커 UI 생성
     TargetMarker = CreateDefaultSubobject<UWidgetComponent>(TEXT("TargetMarker"));
@@ -70,18 +73,41 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-    // 현재 체력이 ActualDamage만큼 줄어든다.
-    // 만약 체력이 0보다 작다면 사망.
-    // 피격 애니메이션 실행.
-    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-    if (!Anim || DamagedMontages.Num() == 0)
-        return ActualDamage;
+    if (ActualDamage >= CurHP)
+    {
+        EnemyDie();
+    }
+    else
+    {
+        // 현재 체력이 ActualDamage만큼 줄어든다.
+        // 만약 체력이 0보다 작다면 사망.
+        // 피격 애니메이션 실행.
+        UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+        if (!Anim || DamagedMontages.Num() == 0)
+            return ActualDamage;
 
-    UE_LOG(LogTemp, Warning, TEXT("Enemy Take %f Damage!"), ActualDamage);
+        UE_LOG(LogTemp, Warning, TEXT("Enemy Take %f Damage!"), ActualDamage);
 
-    //
-    int32 DamagedIndex = FMath::RandRange(1, DamagedMontages.Num() - 1);
-    Anim->Montage_Play(DamagedMontages[DamagedIndex]);
+        //
+        int32 DamagedIndex = FMath::RandRange(1, DamagedMontages.Num() - 1);
+        Anim->Montage_Play(DamagedMontages[DamagedIndex]);
+        CurHP -= ActualDamage;
+    }
 
     return ActualDamage;
+}
+
+void AEnemyBase::EnemyDie()
+{
+    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+    if (!Anim || !AMT_Die)
+        return;
+
+    Anim->Montage_Play(AMT_Die);
+    // 꼭 콜리전을 꺼야 하는가?
+    FTimerHandle DestroyTimer;
+    GetWorldTimerManager().SetTimer(DestroyTimer, [this]()
+        {
+            Destroy();
+        }, DyingTime, false);
 }

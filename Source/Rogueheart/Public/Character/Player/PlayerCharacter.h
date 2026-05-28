@@ -8,17 +8,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaChanged);
 
-class UInputAction;
-class USpringArmComponent;
-class UCameraComponent;
-class UAnimMontage;
-class USkillComponent;
-class AEnemyBase;
-class ARogueheartPlayerController;
-struct InputActionValue;
-class AWeaponBase;
-class UWeaponSweepComponent;
-
 UENUM(BlueprintType)
 enum class EPlayerState : uint8
 {
@@ -63,8 +52,10 @@ public:
     void OnAttackEnd();
     void RestoreLockOnIfNeeded();
     void HealPlayer(float PlusHP);
-    void SetEquippedWeapon(AWeaponBase* CurWeapon);
+    void SetEquippedWeapon(class AWeaponBase* CurWeapon);
     void SetWeaponVisible(bool IsVisible);
+    bool HasLockTarget() const;
+    void SetCanNextComboTrue();
 
 protected:
     virtual void PossessedBy(AController* NewController) override;
@@ -81,12 +72,12 @@ protected:
     void SwitchTargetLeft(const struct FInputActionValue& Value);
     void SwitchTargetRight(const struct FInputActionValue& Value);
     void ToggleInventory(const struct FInputActionValue& Value);
-    void SetLockOnTarget(AEnemyBase* NewTarget);
+    void SetLockOnTarget(class AEnemyBase* NewTarget);
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-    AEnemyBase* FindNearestTarget();
+    class AEnemyBase* FindNearestTarget();
     void UpdateLockOnRotation(float DeltaTime);
-    AEnemyBase* SwitchTarget(bool bLeft);
+    class AEnemyBase* SwitchTarget(bool bLeft);
     void CheckLockOnDistance();
     void ClearLockOn();
 
@@ -99,53 +90,53 @@ protected:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     float GetCurStamina() const;
 
-public:
+protected:
     // 잘 정리해서 public이 아니라 private쪽으로 넘길 것. meta = AllowPrivateAccess는 BP에서 접근하는 게 아니면 쓸모가 없다.
     // 에디터에서 접근하는 건 없어도 된다.
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    USpringArmComponent* CameraBoom;
+    class USpringArmComponent* CameraBoom;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-    UCameraComponent* FollowCamera;
+    class UCameraComponent* FollowCamera;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Move;
+    class UInputAction* IA_Move;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Look;
+    class UInputAction* IA_Look;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Attack;
+    class UInputAction* IA_Attack;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Dodge;
+    class UInputAction* IA_Dodge;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Skill1;
+    class UInputAction* IA_Skill1;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_Skill2;
+    class UInputAction* IA_Skill2;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_LockOn;
+    class UInputAction* IA_LockOn;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_SwitchTargetLeft;
+    class UInputAction* IA_SwitchTargetLeft;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_SwitchTargetRight;
+    class UInputAction* IA_SwitchTargetRight;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    UInputAction* IA_InventoryOnOff;
+    class UInputAction* IA_InventoryOnOff;
+ 
+    UPROPERTY(EditDefaultsOnly, Category = "Animation")
+    TArray<class UAnimMontage*> AttackMontages;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
-    UAnimMontage* AMT_Attack;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
-    UAnimMontage* AMT_Dodge;
+    class UAnimMontage* AMT_Dodge;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    USkillComponent* SkillComponent;
+    class USkillComponent* SkillComponent;
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
     int32 CurrentCombo = 0;
@@ -163,10 +154,10 @@ public:
     bool bCanNextCombo = false;
 
     UPROPERTY(VisibleAnywhere, Category = "Targeting")
-    AEnemyBase* LockOnTarget = nullptr;
+    class AEnemyBase* LockOnTarget = nullptr;
 
     UPROPERTY(VisibleAnywhere, Category = "Targeting")
-    AEnemyBase* PrevLockOnTarget = nullptr;
+    class AEnemyBase* PrevLockOnTarget = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float LockOnRange = 1200.f;
@@ -205,7 +196,7 @@ protected:
     FOnHPChanged OnHPChanged;
 
     UPROPERTY()
-    ARogueheartPlayerController* CachedController = nullptr;
+    class ARogueheartPlayerController* CachedController = nullptr;
     UPROPERTY()
-    AWeaponBase* EquippedWeapon = nullptr;
+    class AWeaponBase* EquippedWeapon = nullptr;
 };

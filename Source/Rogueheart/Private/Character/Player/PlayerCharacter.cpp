@@ -37,6 +37,8 @@ APlayerCharacter::APlayerCharacter()
     SetLockOnState(false);
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
 }
 
@@ -146,11 +148,17 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 void APlayerCharacter::PlayComboMontage()
 {
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-    if (!Anim || !AMT_Attack)
+    /*if (!Anim || !AMT_Attack)
         return;
 
     Anim->Montage_Play(AMT_Attack);
-    Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Combo%d"), CurrentCombo)), AMT_Attack);
+    Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Combo%d"), CurrentCombo)), AMT_Attack);*/
+
+    //
+    if (!Anim || AttackMontages.Num() == 0)
+        return;
+
+    Anim->Montage_Play(AttackMontages[CurrentCombo - 1]);
 }
 
 // 공격 애니메이션의 재생이 끝나면 호출되는 노티파이인
@@ -778,4 +786,14 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
     // 스턴이 끝나면 스테이터스는 idle로 되돌아간다.
 
     return ActualDamage;
+}
+
+bool APlayerCharacter::HasLockTarget() const
+{
+    return LockOnTarget == nullptr ? false : true;
+}
+
+void APlayerCharacter::SetCanNextComboTrue()
+{
+    bCanNextCombo = true;
 }

@@ -4,10 +4,6 @@
 #include "GameFramework/Character.h"
 #include "EnemyBase.generated.h"
 
-class UWidgetComponent;
-class UAnimMontage;
-class AActor;
-
 UCLASS()
 class ROGUEHEART_API AEnemyBase : public ACharacter
 {
@@ -34,14 +30,30 @@ public:
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
+    virtual void EnemyDie();
 
 protected:
     /** 마지막 공격 이후 경과 시간 */
     float TimeSinceLastAttack = 0.f;
-    UPROPERTY(EditDefaultsOnly, Category = "MontageArrays")
+
+    UPROPERTY(EditDefaultsOnly, Category = "Animation")
     TArray<class UAnimMontage*> AttackMontages;
-    UPROPERTY(EditDefaultsOnly, Category = "MontageArrays")
+
+    UPROPERTY(EditDefaultsOnly, Category = "Animation")
     TArray<class UAnimMontage*> DamagedMontages;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Animation")
+    class UAnimMontage* AMT_Die;
+
+
+    UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true), Category = "HP")
+    float MaxHP = 100.f;
+
+    UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true), Category = "HP")
+    float CurHP = 100.f;
+
+    UPROPERTY(EditDefaultsOnly, Category = "DyingTime")
+    float DyingTime = 3.f;
 
 public:
     /** 공격 범위 */
@@ -54,7 +66,7 @@ public:
 
     /** 타겟 마커 UI */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-    UWidgetComponent* TargetMarker;
+    class UWidgetComponent* TargetMarker;
 
     /** 순찰 포인트들 */
     UPROPERTY(EditInstanceOnly, Category = "AI|Patrol")

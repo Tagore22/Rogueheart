@@ -2,11 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "InventoryComponent.h"
+//#include "InventoryComponent.h"
 #include "RogueheartGameInstance.generated.h"
-
-class UUIManager;
-class UDataTable;
 
 UCLASS(Blueprintable, BlueprintType)
 class ROGUEHEART_API URogueheartGameInstance : public UGameInstance
@@ -16,10 +13,10 @@ class ROGUEHEART_API URogueheartGameInstance : public UGameInstance
 public:
     virtual void Init() override;
 
-    UUIManager* GetUIManager() const { return UIManager; }
+    class UUIManager* GetUIManager() const { return UIManager; }
     UFUNCTION(BlueprintCallable, BlueprintPure)
-    UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
-    UDataTable* GetItemDataTable() const { return ItemDataTable; }
+    //UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+    class UDataTable* GetItemDataTable() const { return ItemDataTable; }
 
     int32 GetMaxHP() const { return MaxHP; }
     int32 GetCurHP() const { return CurHP; }
@@ -33,13 +30,13 @@ public:
 
 private:
     UPROPERTY()
-    UUIManager* UIManager;
+    class UUIManager* UIManager;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Components")
-    UInventoryComponent* InventoryComponent;
+    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Components")
+    //class UInventoryComponent* InventoryComponent;
 
     UPROPERTY(EditDefaultsOnly, Category = "Data")
-    UDataTable* ItemDataTable;
+    class UDataTable* ItemDataTable;
 
     int32 MaxHP = 100;
     int32 CurHP = 100;
