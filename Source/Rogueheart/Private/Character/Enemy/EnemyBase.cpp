@@ -4,6 +4,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimInstance.h"
+#include "AIController.h"
+#include "BrainComponent.h"
 //#include "Components/CapsuleComponent.h"
 
 AEnemyBase::AEnemyBase()
@@ -72,8 +74,12 @@ void AEnemyBase::ShowTargetMarker(bool bShow)
 float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+    if (CurHP <= 0.f)
+        return ActualDamage;
 
-    if (ActualDamage >= CurHP)
+    CurHP -= ActualDamage;
+
+    if (CurHP <= 0.f)
     {
         EnemyDie();
     }
@@ -91,7 +97,6 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
         //
         int32 DamagedIndex = FMath::RandRange(1, DamagedMontages.Num() - 1);
         Anim->Montage_Play(DamagedMontages[DamagedIndex]);
-        CurHP -= ActualDamage;
     }
 
     return ActualDamage;
@@ -104,10 +109,23 @@ void AEnemyBase::EnemyDie()
         return;
 
     Anim->Montage_Play(AMT_Die);
+
+    AAIController* AIC = Cast<AAIController>(GetController());
+    if (!AIC)
+        return;
+
+    AIC->StopMovement();
+    AIC->BrainComponent->StopLogic(TEXT("EnemyDie"));
+
     // 꼭 콜리전을 꺼야 하는가?
     FTimerHandle DestroyTimer;
     GetWorldTimerManager().SetTimer(DestroyTimer, [this]()
         {
             Destroy();
         }, DyingTime, false);
+}
+
+float AEnemyBase::GetCurHP() const
+{
+    return CurHP;
 }

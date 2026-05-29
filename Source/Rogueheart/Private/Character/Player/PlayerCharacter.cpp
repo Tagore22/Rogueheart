@@ -73,8 +73,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (!IsValid(LockOnTarget))
+    if (!IsValid(LockOnTarget) || LockOnTarget->GetCurHP() <= 0.f)
+    {
+        ClearLockOn();
         return;
+    }
 
     UpdateLockOnRotation(DeltaTime);
     CheckLockOnDistance();
