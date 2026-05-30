@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "AIController.h"
 #include "BrainComponent.h"
+#include "Blueprint/UserWidget.h"
 //#include "Components/CapsuleComponent.h"
 
 AEnemyBase::AEnemyBase()
@@ -30,6 +31,9 @@ AEnemyBase::AEnemyBase()
         TargetMarker->SetWidgetClass(MarkerWidgetClass.Class);
     }
     TargetMarker->SetVisibility(false);
+
+    HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
+    HPBarWidget->SetupAttachment(RootComponent);
 }
 
 void AEnemyBase::BeginPlay()

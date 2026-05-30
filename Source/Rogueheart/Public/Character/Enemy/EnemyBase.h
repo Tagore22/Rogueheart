@@ -56,6 +56,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "DyingTime")
     float DyingTime = 3.f;
 
+    UPROPERTY(VisibleAnywhere, Category = "UI")
+    class UWidgetComponent* HPBarWidget = nullptr;
+
 public:
     /** 공격 범위 */
     UPROPERTY(EditDefaultsOnly, Category = "Combat")
