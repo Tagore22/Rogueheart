@@ -17,7 +17,11 @@ public:
     virtual void TryAttack();
 
     /** 타겟 마커 표시/숨기기 */
-    void ShowTargetMarker(bool bShow);
+    void ShowTargetWidget(bool bShow);
+
+    void ShowHPBarWidget(bool bShow);
+
+    void ResetHPBarTimer();
 
     /** 공격 쿨다운 체크 */
     UFUNCTION(BlueprintCallable, Category = "Combat")
@@ -36,6 +40,8 @@ protected:
 protected:
     /** 마지막 공격 이후 경과 시간 */
     float TimeSinceLastAttack = 0.f;
+
+    float HPBarTimer = -1.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
     TArray<class UAnimMontage*> AttackMontages;
@@ -56,8 +62,14 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "DyingTime")
     float DyingTime = 3.f;
 
+    UPROPERTY(EditDefaultsOnly, Category = "HPBarEndTime")
+    float HPBarEndTime = 3.f;
+
     UPROPERTY(VisibleAnywhere, Category = "UI")
     class UWidgetComponent* HPBarWidget = nullptr;
+
+    UPROPERTY(VisibleAnywhere, Category = "UI")
+    class UWidgetComponent* TargetWidget = nullptr;
 
 public:
     /** 공격 범위 */
@@ -67,10 +79,6 @@ public:
     /** 공격 쿨타임 */
     UPROPERTY(EditDefaultsOnly, Category = "Combat")
     float AttackCooldown = 2.f;
-
-    /** 타겟 마커 UI */
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-    class UWidgetComponent* TargetMarker;
 
     /** 순찰 포인트들 */
     UPROPERTY(EditInstanceOnly, Category = "AI|Patrol")

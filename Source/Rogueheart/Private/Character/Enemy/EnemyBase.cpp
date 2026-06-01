@@ -7,7 +7,6 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "Blueprint/UserWidget.h"
-//#include "Components/CapsuleComponent.h"
 
 AEnemyBase::AEnemyBase()
 {
@@ -15,25 +14,20 @@ AEnemyBase::AEnemyBase()
 
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    // 타겟 마커 UI 생성
-    TargetMarker = CreateDefaultSubobject<UWidgetComponent>(TEXT("TargetMarker"));
-    TargetMarker->SetupAttachment(RootComponent);
-    TargetMarker->SetWidgetSpace(EWidgetSpace::Screen);
-    TargetMarker->SetDrawAtDesiredSize(true);
-    TargetMarker->SetRelativeLocation(FVector(0.f, 0.f, 120.f));
-
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 
-    static ConstructorHelpers::FClassFinder<UUserWidget> MarkerWidgetClass(TEXT("/Game/Characters/WBP_TargetMarker.WBP_TargetMarker_C"));
-    if (MarkerWidgetClass.Succeeded())
-    {
-        TargetMarker->SetWidgetClass(MarkerWidgetClass.Class);
-    }
-    TargetMarker->SetVisibility(false);
+    TargetWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("TargetWidget"));
+    TargetWidget->SetupAttachment(RootComponent);
+    TargetWidget->SetWidgetSpace(EWidgetSpace::Screen);
+    TargetWidget->SetVisibility(false);
+    TargetWidget->SetRelativeLocation(FVector(0.f, 0.f, -20.f)); // 후에 에디터에서 수정 이후 확정지을 것.
 
     HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
     HPBarWidget->SetupAttachment(RootComponent);
+    HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+    HPBarWidget->SetVisibility(false);
+    HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 45.f)); // 후에 에디터에서 수정 이후 확정지을 것.
 }
 
 void AEnemyBase::BeginPlay()
@@ -47,6 +41,20 @@ void AEnemyBase::Tick(float DeltaTime)
 
     // 공격 쿨다운만 업데이트
     TimeSinceLastAttack += DeltaTime;
+
+    if (HPBarTimer < 0)
+    {
+        return;
+    }
+    else if (HPBarTimer < HPBarEndTime)
+    {
+        HPBarTimer += DeltaTime;
+    }
+    else if (HPBarTimer >= HPBarEndTime)
+    {
+        HPBarTimer = -1.f;
+        ShowHPBarWidget(false);
+    }
 }
 
 void AEnemyBase::TryAttack()
@@ -67,12 +75,33 @@ void AEnemyBase::ResetAttackCooldown()
     TimeSinceLastAttack = 0.f;
 }
 
-void AEnemyBase::ShowTargetMarker(bool bShow)
+void AEnemyBase::ShowTargetWidget(bool bShow)
 {
-    if (IsValid(TargetMarker))
+    // 어떠한 적이 타겟팅 되었을 때에는 반드시 체력바도 등장하게 되어있다.
+    // 그 반대는 성립되지 않는다.
+
+    if (TargetWidget)
     {
-        TargetMarker->SetVisibility(bShow);
+        TargetWidget->SetVisibility(bShow);
     }
+    if (HPBarWidget)
+    {
+        ShowHPBarWidget(bShow);
+    }
+}
+
+void AEnemyBase::ShowHPBarWidget(bool bShow)
+{
+    if (HPBarWidget)
+    {
+        HPBarWidget->SetVisibility(bShow);
+    }
+    ResetHPBarTimer();
+}
+
+void AEnemyBase::ResetHPBarTimer()
+{
+    HPBarTimer = 0.f;
 }
 
 float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -120,6 +149,8 @@ void AEnemyBase::EnemyDie()
 
     AIC->StopMovement();
     AIC->BrainComponent->StopLogic(TEXT("EnemyDie"));
+
+    ShowTargetWidget(false);
 
     // 꼭 콜리전을 꺼야 하는가?
     FTimerHandle DestroyTimer;

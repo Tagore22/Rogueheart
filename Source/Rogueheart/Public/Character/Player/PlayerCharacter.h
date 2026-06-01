@@ -56,6 +56,7 @@ public:
     void SetWeaponVisible(bool IsVisible);
     bool HasLockTarget() const;
     void SetCanNextComboTrue();
+    void ClearLockOn();
 
 protected:
     virtual void PossessedBy(AController* NewController) override;
@@ -79,7 +80,6 @@ protected:
     void UpdateLockOnRotation(float DeltaTime);
     class AEnemyBase* SwitchTarget(bool bLeft);
     void CheckLockOnDistance();
-    void ClearLockOn();
 
     UFUNCTION(BlueprintCallable, BlueprintPure)
     float GetMaxHP() const;
