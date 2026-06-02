@@ -73,12 +73,23 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if(IsValid(LockOnTarget))
+    /*if (IsValid(LockOnTarget))
     {
         LockOnTarget->ResetHPBarTimer();
         UpdateLockOnRotation(DeltaTime);
         CheckLockOnDistance();
+    }*/
+    if (!IsValid(LockOnTarget))
+        return;
+    
+    if (LockOnTarget->GetCurHP() <= 0.f)
+    {
+        ClearLockOn();
+        return;
     }
+
+    UpdateLockOnRotation(DeltaTime);
+    CheckLockOnDistance();
 }
 
 void APlayerCharacter::PossessedBy(AController* NewController)
@@ -648,6 +659,8 @@ void APlayerCharacter::ClearLockOn()
         return;
 
     LockOnTarget->ShowTargetWidget(false);
+    LockOnTarget->ResetHPBarTimer();
+    LockOnTarget->SetIsTargeted(false);
     LockOnTarget = nullptr;
 
     // 이동 모드 복구: 가고자 하는 방향으로 몸을 돌림
@@ -751,6 +764,8 @@ void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget)
 
     LockOnTarget = NewTarget;
     LockOnTarget->ShowTargetWidget(true);
+    LockOnTarget->ShowHPBarWidget(true);
+    LockOnTarget->SetIsTargeted(true);
     SetLockOnState(true);
 }
 

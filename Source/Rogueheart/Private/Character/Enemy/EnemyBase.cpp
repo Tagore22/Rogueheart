@@ -42,7 +42,10 @@ void AEnemyBase::Tick(float DeltaTime)
     // 공격 쿨다운만 업데이트
     TimeSinceLastAttack += DeltaTime;
 
-    if (HPBarTimer < 0)
+    if (bIsTargeted)
+        return;
+
+    if (HPBarTimer < 0.f)
     {
         return;
     }
@@ -84,10 +87,6 @@ void AEnemyBase::ShowTargetWidget(bool bShow)
     {
         TargetWidget->SetVisibility(bShow);
     }
-    if (HPBarWidget)
-    {
-        ShowHPBarWidget(bShow);
-    }
 }
 
 void AEnemyBase::ShowHPBarWidget(bool bShow)
@@ -104,12 +103,26 @@ void AEnemyBase::ResetHPBarTimer()
     HPBarTimer = 0.f;
 }
 
+void AEnemyBase::SetIsTargeted(bool bTargeted)
+{
+    if (bTargeted)
+    {
+        bIsTargeted = true;
+        HPBarTimer = -1.f;
+    }
+    else
+    {
+        bIsTargeted = false;
+    }
+}
+
 float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
     if (CurHP <= 0.f)
         return ActualDamage;
 
+    ShowHPBarWidget(true);
     CurHP -= ActualDamage;
 
     if (CurHP <= 0.f)

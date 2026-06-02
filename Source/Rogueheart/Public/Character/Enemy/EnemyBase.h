@@ -23,6 +23,8 @@ public:
 
     void ResetHPBarTimer();
 
+    void SetIsTargeted(bool bTargeted);
+
     /** 공격 쿨다운 체크 */
     UFUNCTION(BlueprintCallable, Category = "Combat")
     bool CanAttack() const;
@@ -38,6 +40,8 @@ protected:
     virtual void EnemyDie();
 
 protected:
+    bool bIsTargeted = false;
+
     /** 마지막 공격 이후 경과 시간 */
     float TimeSinceLastAttack = 0.f;
 
