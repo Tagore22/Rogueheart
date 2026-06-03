@@ -31,7 +31,11 @@ public:
 
     /** 마지막 공격 시간 리셋 */
     void ResetAttackCooldown();
+
+    UFUNCTION(BlueprintCallable)
     float GetCurHP() const;
+    UFUNCTION(BlueprintCallable)
+    float GetMaxHP() const;
 
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 protected:

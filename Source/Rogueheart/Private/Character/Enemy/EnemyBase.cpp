@@ -177,3 +177,8 @@ float AEnemyBase::GetCurHP() const
 {
     return CurHP;
 }
+
+float AEnemyBase::GetMaxHP() const
+{
+    return MaxHP;
+}
