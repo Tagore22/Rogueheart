@@ -7,6 +7,8 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/EnemyHPBarWidget.h"
+
 
 AEnemyBase::AEnemyBase()
 {
@@ -123,7 +125,11 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
         return ActualDamage;
 
     ShowHPBarWidget(true);
-    CurHP -= ActualDamage;
+    CurHP = FMath::Max(CurHP - ActualDamage, 0.f);
+    UEnemyHPBarWidget* HealthBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+    if (!HealthBar)
+        return ActualDamage;
+    HealthBar->HPBar->SetPercent(CurHP / MaxHP);
 
     if (CurHP <= 0.f)
     {
@@ -141,7 +147,7 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
         UE_LOG(LogTemp, Warning, TEXT("Enemy Take %f Damage!"), ActualDamage);
 
         //
-        int32 DamagedIndex = FMath::RandRange(1, DamagedMontages.Num() - 1);
+        int32 DamagedIndex = FMath::RandRange(0, DamagedMontages.Num() - 1);
         Anim->Montage_Play(DamagedMontages[DamagedIndex]);
     }
 
