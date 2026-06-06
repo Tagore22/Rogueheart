@@ -132,6 +132,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
     TArray<class UAnimMontage*> AttackMontages;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Animation")
+    TArray<class UAnimMontage*> DamagedMontages;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
     class UAnimMontage* AMT_Dodge;
 
@@ -164,6 +167,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float LockOnBreakDistance = 1500.f;
+
+    UPROPERTY(VisibleAnywhere, Category = "SweepComponent")
+    class UWeaponSweepComponent* SweepCom = nullptr;
 
     float LockOnBreakDistanceSq;
 

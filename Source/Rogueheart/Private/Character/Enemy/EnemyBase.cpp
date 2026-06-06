@@ -8,6 +8,7 @@
 #include "BrainComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/EnemyHPBarWidget.h"
+#include "WeaponSweepComponent.h"
 
 
 AEnemyBase::AEnemyBase()
@@ -30,6 +31,8 @@ AEnemyBase::AEnemyBase()
     HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
     HPBarWidget->SetVisibility(false);
     HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 45.f)); // 후에 에디터에서 수정 이후 확정지을 것.
+
+    SweepCom = CreateDefaultSubobject<UWeaponSweepComponent>(TEXT("SweepComponent"));
 }
 
 void AEnemyBase::BeginPlay()

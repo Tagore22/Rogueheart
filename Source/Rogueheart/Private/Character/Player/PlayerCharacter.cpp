@@ -16,6 +16,7 @@
 #include "Character/Player/RogueheartPlayerController.h"
 #include "Rogueheart.h" 
 #include "WeaponBase.h"
+#include "WeaponSweepComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -40,6 +41,8 @@ APlayerCharacter::APlayerCharacter()
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
+
+    SweepCom = CreateDefaultSubobject<UWeaponSweepComponent>(TEXT("SweepComponent"));
 }
 
 void APlayerCharacter::BeginPlay()
@@ -793,13 +796,27 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-    CurHP -= ActualDamage;
-    // 만약 체력이 0보다 작다면 사망.
+    CurHP = FMath::Max(CurHP - ActualDamage, 0.f);
 
-    // 여기서 그 이후 행동들을 실행함.
-    // 피격 애니메이션 실행.
-    // 스턴에 빠짐으로 인한 스테이터스 변화.
-    // 스턴이 끝나면 스테이터스는 idle로 되돌아간다.
+    if (CurHP <= 0.f)
+    {
+        // 사망 애니메이션 및 후속 처리.
+    }
+    else
+    {
+        // 현재 체력이 ActualDamage만큼 줄어든다.
+        // 만약 체력이 0보다 작다면 사망.
+        // 피격 애니메이션 실행.
+        UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+        if (!Anim || DamagedMontages.Num() == 0)
+            return ActualDamage;
+
+        UE_LOG(LogTemp, Warning, TEXT("Player Take %f Damage!"), ActualDamage);
+
+        //
+        int32 DamagedIndex = FMath::RandRange(0, DamagedMontages.Num() - 1);
+        Anim->Montage_Play(DamagedMontages[DamagedIndex]);
+    }
 
     return ActualDamage;
 }

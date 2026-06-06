@@ -12,7 +12,6 @@ class ROGUEHEART_API AEnemyBase : public ACharacter
 public:
     AEnemyBase();
 
-    /** 공격 시도 (비헤이비어 트리에서 호출) */
     UFUNCTION(BlueprintCallable, Category = "Combat")
     virtual void TryAttack();
 
@@ -25,11 +24,9 @@ public:
 
     void SetIsTargeted(bool bTargeted);
 
-    /** 공격 쿨다운 체크 */
     UFUNCTION(BlueprintCallable, Category = "Combat")
     bool CanAttack() const;
 
-    /** 마지막 공격 시간 리셋 */
     void ResetAttackCooldown();
 
     UFUNCTION(BlueprintCallable)
@@ -60,7 +57,6 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
     class UAnimMontage* AMT_Die;
 
-
     UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true), Category = "HP")
     float MaxHP = 100.f;
 
@@ -73,26 +69,28 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "HPBarEndTime")
     float HPBarEndTime = 3.f;
 
+    UPROPERTY(EditDefaultsOnly, Category = "AttackCooldown")
+    float AttackCooldown = 3.f;
+
     UPROPERTY(VisibleAnywhere, Category = "UI")
     class UWidgetComponent* HPBarWidget = nullptr;
 
     UPROPERTY(VisibleAnywhere, Category = "UI")
     class UWidgetComponent* TargetWidget = nullptr;
 
+    UPROPERTY(VisibleAnywhere, Category = "SweepComponent")
+    class UWeaponSweepComponent* SweepCom = nullptr;
+
 public:
-    /** 공격 범위 */
-    UPROPERTY(EditDefaultsOnly, Category = "Combat")
+    /*UPROPERTY(EditDefaultsOnly, Category = "Combat")
     float AttackRange = 150.f;
 
-    /** 공격 쿨타임 */
     UPROPERTY(EditDefaultsOnly, Category = "Combat")
-    float AttackCooldown = 2.f;
+    float AttackCooldown = 2.f;*/
 
-    /** 순찰 포인트들 */
-    UPROPERTY(EditInstanceOnly, Category = "AI|Patrol")
-    TArray<AActor*> PatrolPoints;
-
-    /** 현재 순찰 인덱스 */
     UPROPERTY(VisibleAnywhere, Category = "AI|Patrol")
     int32 CurrentPatrolIndex = 0;
+
+    UPROPERTY(EditInstanceOnly, Category = "AI|Patrol")
+    TArray<AActor*> PatrolPoints;
 };
