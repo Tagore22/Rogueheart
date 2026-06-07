@@ -16,7 +16,7 @@ enum class EPlayerState : uint8
     Attacking,
     LockedOn,
     Dodging,
-    Stunned,
+    Damaged,
     Dead
 };
 
@@ -205,4 +205,6 @@ protected:
     class ARogueheartPlayerController* CachedController = nullptr;
     UPROPERTY()
     class AWeaponBase* EquippedWeapon = nullptr;
+
+    const ECollisionChannel TraceChannel = ECC_GameTraceChannel1;
 };

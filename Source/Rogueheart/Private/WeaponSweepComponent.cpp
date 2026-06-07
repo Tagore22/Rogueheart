@@ -1,5 +1,4 @@
 #include "WeaponSweepComponent.h"
-#include "Rogueheart.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -19,6 +18,17 @@ void UWeaponSweepComponent::BeginPlay()
 	if (!MeshComp)
 		return;
 	PrevSocketLocation = MeshComp->GetSocketLocation(TEXT("Weapon_Socket"));
+
+	switch (TraceType)
+	{
+	case ETraceChannel::Player:
+		Channel = ECC_GameTraceChannel1;
+		break;
+
+	case ETraceChannel::Enemy:
+		Channel = ECC_GameTraceChannel2;
+		break;
+	}
 }
 
 // Tick()이 필요한가 마지막까지 확인할 것. 필요없다면 생성자에 false로 바꿔라.
@@ -60,7 +70,7 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location)
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(GetOwner());
 
-	bool bHit = GetWorld()->SweepMultiByChannel(OutHits, PrevSocketLocation, CurSocketLocation, FQuat::Identity, TraceChannel::Enemy, FCollisionShape::MakeSphere(SweepLength), Params);
+	bool bHit = GetWorld()->SweepMultiByChannel(OutHits, PrevSocketLocation, CurSocketLocation, FQuat::Identity, Channel, FCollisionShape::MakeSphere(SweepLength), Params);
 	if (!bHit)
 		return;
 

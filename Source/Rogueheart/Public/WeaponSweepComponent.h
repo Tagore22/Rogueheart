@@ -4,6 +4,12 @@
 #include "Components/ActorComponent.h"
 #include "WeaponSweepComponent.generated.h"
 
+UENUM(BlueprintType)
+enum class ETraceChannel : uint8
+{
+	Player,
+	Enemy
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ROGUEHEART_API UWeaponSweepComponent : public UActorComponent
@@ -37,8 +43,13 @@ private:
 	FVector CurSocketLocation = FVector(0.f, 0.f, 0.f);;
 
 	UPROPERTY(EditDefaultsOnly, Category = "SweepLength")
-
 	float SweepLength = 20.f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "SweepDamage")
 	float SweepDamage = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TraceChannel")
+	ETraceChannel TraceType;
+
+	ECollisionChannel Channel;
 };

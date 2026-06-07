@@ -274,7 +274,7 @@ bool APlayerCharacter::CanAct(EActionType DesiredAction) const
             return false;
         }
         case EPlayerState::Dodging:
-        case EPlayerState::Stunned:
+        case EPlayerState::Damaged:
         case EPlayerState::Dead:
             return false;
     }
@@ -400,7 +400,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         OverlapResults,
         CameraLocation,
         FQuat::Identity,
-        TraceChannel::Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
+        TraceChannel, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
                              // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
         FCollisionShape::MakeSphere(LockOnRange),
         QueryParams
@@ -501,7 +501,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
         OverlapResults,
         GetActorLocation(),
         FQuat::Identity,
-        TraceChannel::Enemy, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
+        TraceChannel, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
                              // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
         FCollisionShape::MakeSphere(LockOnRange),
         QueryParams
@@ -795,7 +795,6 @@ void APlayerCharacter::SetWeaponVisible(bool IsVisible)
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
     CurHP = FMath::Max(CurHP - ActualDamage, 0.f);
 
     if (CurHP <= 0.f)
@@ -807,6 +806,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
         // 현재 체력이 ActualDamage만큼 줄어든다.
         // 만약 체력이 0보다 작다면 사망.
         // 피격 애니메이션 실행.
+        CurrentState = EPlayerState::Damaged;
         UAnimInstance* Anim = GetMesh()->GetAnimInstance();
         if (!Anim || DamagedMontages.Num() == 0)
             return ActualDamage;

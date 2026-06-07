@@ -110,3 +110,11 @@ void UPlayerAnimInstance::AnimNotify_EndDodge()
         Player->SetWeaponVisible(false);
     }
 }
+
+void UPlayerAnimInstance::AnimNotify_EndDamaged()
+{
+    if (IsValid(Player))
+    {
+        Player->SetPlayerState(EPlayerState::Idle);
+    }
+}

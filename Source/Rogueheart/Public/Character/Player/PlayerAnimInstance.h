@@ -28,6 +28,9 @@ protected:
     UFUNCTION()
     void AnimNotify_EndDodge();
 
+    UFUNCTION()
+    void AnimNotify_EndDamaged();
+
 private:
     // 이동 관련
     UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
