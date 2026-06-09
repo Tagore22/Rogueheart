@@ -57,6 +57,7 @@ public:
     bool HasLockTarget() const;
     void SetCanNextComboTrue();
     void ClearLockOn();
+    void OnActStart();
 
 protected:
     virtual void PossessedBy(AController* NewController) override;
@@ -171,7 +172,7 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "SweepComponent")
     class UWeaponSweepComponent* SweepCom = nullptr;
 
-    float LockOnBreakDistanceSq;
+    float LockOnBreakDistanceSq = 0.f;
 
     bool bWasLockedOnWhenDodged = false;
 
@@ -186,6 +187,10 @@ protected:
 
     void SetLockOnState(bool bIsLockOn);
 
+    void ConsumeStamina(const float Cost);
+
+    bool CanPlusStamina() const;
+
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float TargetingAngle = 0.5f;
     // StatSubsystem으로 옮겨야 하는 변수들.
@@ -197,6 +202,10 @@ protected:
     float MaxStamina = 100.f;
     UPROPERTY(EditDefaultsOnly, Category = "Stamina")
     float CurStamina = 100.f;
+    UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+    float StaminaCost = 10.f;
+    UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+    float PlusStamina = 2.f;
 
     UPROPERTY(BlueprintAssignable, Category = "Events", meta = (AllowPrivateAccess = "true"))
     FOnHPChanged OnHPChanged;

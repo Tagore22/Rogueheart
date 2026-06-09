@@ -129,10 +129,10 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 
     ShowHPBarWidget(true);
     CurHP = FMath::Max(CurHP - ActualDamage, 0.f);
-    UEnemyHPBarWidget* HealthBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-    if (!HealthBar)
+    UEnemyHPBarWidget* HPBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+    if (!HPBar)
         return ActualDamage;
-    HealthBar->HPBar->SetPercent(CurHP / MaxHP);
+    HPBar->SetHPPercent(CurHP / MaxHP);
 
     if (CurHP <= 0.f)
     {

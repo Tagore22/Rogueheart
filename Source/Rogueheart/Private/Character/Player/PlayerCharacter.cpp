@@ -76,13 +76,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    /*if (IsValid(LockOnTarget))
-    {
-        LockOnTarget->ResetHPBarTimer();
-        UpdateLockOnRotation(DeltaTime);
-        CheckLockOnDistance();
-    }*/
-    if (!IsValid(LockOnTarget))
+    /*if (!IsValid(LockOnTarget))
         return;
     
     if (LockOnTarget->GetCurHP() <= 0.f)
@@ -92,7 +86,25 @@ void APlayerCharacter::Tick(float DeltaTime)
     }
 
     UpdateLockOnRotation(DeltaTime);
-    CheckLockOnDistance();
+    CheckLockOnDistance();*/
+
+    if (IsValid(LockOnTarget))
+    {
+        if (LockOnTarget->GetCurHP() <= 0.f)
+        {
+            ClearLockOn();
+        }
+        else
+        {
+            UpdateLockOnRotation(DeltaTime);
+            CheckLockOnDistance();
+        }
+    }
+
+    if (CanPlusStamina())
+    {
+        ConsumeStamina(-PlusStamina);
+    }
 }
 
 void APlayerCharacter::PossessedBy(AController* NewController)
@@ -141,7 +153,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
-    if (!CanAct(EActionType::Attack))
+    if (!CanAct(EActionType::Attack) || CurStamina <= 0.f)
         return;
 
     if (CurrentState != EPlayerState::Attacking)
@@ -209,7 +221,9 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
 
 void APlayerCharacter::Dodge(const FInputActionValue& Value)
 {
-    if (LastMoveInput.IsNearlyZero() || !CanAct(EActionType::Dodge))
+    // if문의 첫번째는 현재 방향키를 눌렀느냐이다. 사실 이 부분은 뒤로 물러나는 행동이 발동하여야 한다.
+    // 구현할 것인가...
+    if (LastMoveInput.IsNearlyZero() || !CanAct(EActionType::Dodge) || CurStamina <= 0.f)
         return;
 
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
@@ -796,6 +810,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
     CurHP = FMath::Max(CurHP - ActualDamage, 0.f);
+    CachedController->SetHPPercent(CurHP / MaxHP);
 
     if (CurHP <= 0.f)
     {
@@ -829,4 +844,35 @@ bool APlayerCharacter::HasLockTarget() const
 void APlayerCharacter::SetCanNextComboTrue()
 {
     bCanNextCombo = true;
+}
+
+void APlayerCharacter::ConsumeStamina(const float Cost)
+{
+    CurStamina = FMath::Clamp(CurStamina - Cost, 0.f, MaxStamina);
+
+    CachedController->SetStaminaPercent(CurStamina / MaxStamina);
+}
+
+bool APlayerCharacter::CanPlusStamina() const
+{
+    if (CurStamina >= MaxStamina)
+        return false;
+
+    switch (CurrentState)
+    {
+    case EPlayerState::Idle:
+    case EPlayerState::Moving:
+    case EPlayerState::Damaged:
+        return true;
+    case EPlayerState::Attacking:
+    case EPlayerState::Dodging:
+    case EPlayerState::Dead:
+        return false;
+    }
+    return false;
+}
+
+void APlayerCharacter::OnActStart()
+{
+    ConsumeStamina(StaminaCost);
 }

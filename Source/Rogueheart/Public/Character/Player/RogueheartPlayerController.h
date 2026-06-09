@@ -14,6 +14,10 @@ public:
     ARogueheartPlayerController();
 
     void ToggleInventory();
+
+    void SetHPPercent(const float Percent);
+
+    void SetStaminaPercent(const float Percent);
 protected:
     /** BP_UIManager 서브클래스를 여기에 저장 */
     UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -30,10 +34,10 @@ protected:
     class UUserWidget* InventoryWidget = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<class UUserWidget> WBP_HPBar;
+    TSubclassOf<class UPlayerHPBarWidget> WBP_HPBar;
 
     UPROPERTY()
-    class UUserWidget* HPBarWidget = nullptr;
+    class UPlayerHPBarWidget* HPBarWidget = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputMappingContext* DefaultMappingContext;

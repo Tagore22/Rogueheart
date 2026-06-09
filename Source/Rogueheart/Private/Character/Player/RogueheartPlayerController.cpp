@@ -1,9 +1,10 @@
 #include "Character/Player/RogueheartPlayerController.h"
 #include "UI/UIManager.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Blueprint/UserWidget.h"
+//#include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "UI/PlayerHPBarWidget.h"
 
 ARogueheartPlayerController::ARogueheartPlayerController()
 {
@@ -31,7 +32,7 @@ void ARogueheartPlayerController::BeginPlay()
     }
     if (WBP_HPBar)
     {
-        HPBarWidget = CreateWidget<UUserWidget>(GetWorld(), WBP_HPBar);
+        HPBarWidget = CreateWidget<UPlayerHPBarWidget>(GetWorld(), WBP_HPBar);
         HPBarWidget->AddToViewport(); 
     }
 }
@@ -81,4 +82,24 @@ void ARogueheartPlayerController::ToggleInventory()
         SetShowMouseCursor(true);
         SetPause(true);
     }
+}
+
+void ARogueheartPlayerController::SetHPPercent(const float Percent)
+{
+    if (!HPBarWidget)
+    {
+        return;
+    }
+
+    HPBarWidget->SetHPPercent(Percent);
+}
+
+void ARogueheartPlayerController::SetStaminaPercent(const float Percent)
+{
+    if (!HPBarWidget)
+    {
+        return;
+    }
+
+    HPBarWidget->SetStaminaPercent(Percent);
 }

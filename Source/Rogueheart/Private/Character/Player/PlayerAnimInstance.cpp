@@ -82,6 +82,14 @@ void UPlayerAnimInstance::NativeInitializeAnimation()
 
 // 노티파이 연동시키는거 잊어버렸다. 여기부터 볼 것.
 
+void UPlayerAnimInstance::AnimNotify_StartAct()
+{
+    if (IsValid(Player))
+    {
+        Player->OnActStart();
+    }
+}
+
 // 몽타주에 노티파이를 만들어놓고 이곳에서 AnimNotify_뒤에 그 노티파이명으로
 // 함수를 만들어놓으면 델리게이트에 의해 연동되어 알아서 호출됨.
 void UPlayerAnimInstance::AnimNotify_EndAttack()

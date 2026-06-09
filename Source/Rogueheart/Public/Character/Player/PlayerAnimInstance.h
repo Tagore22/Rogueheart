@@ -20,6 +20,9 @@ protected:
     virtual void NativeInitializeAnimation() override;
 
     UFUNCTION()
+    void AnimNotify_StartAct();
+
+    UFUNCTION()
     void AnimNotify_EndAttack();
 
     UFUNCTION()
