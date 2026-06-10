@@ -414,7 +414,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
         OverlapResults,
         CameraLocation,
         FQuat::Identity,
-        TraceChannel, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
+        TraceChannel::ECC_Player, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
                              // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
         FCollisionShape::MakeSphere(LockOnRange),
         QueryParams
@@ -515,7 +515,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
         OverlapResults,
         GetActorLocation(),
         FQuat::Identity,
-        TraceChannel, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
+        TraceChannel::ECC_Player, // 적의 콜리전 채널에 맞게 변경 가능. 다만 충돌 반응을 반드시 block으로 할 것.
                              // OnComponentBeginOverlap()과 같이 무조건 overlap이 아닌 경우에는 block을 쓸 것.
         FCollisionShape::MakeSphere(LockOnRange),
         QueryParams
@@ -809,12 +809,22 @@ void APlayerCharacter::SetWeaponVisible(bool IsVisible)
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+    if (!Anim)
+        return ActualDamage;
+
     CurHP = FMath::Max(CurHP - ActualDamage, 0.f);
     CachedController->SetHPPercent(CurHP / MaxHP);
 
     if (CurHP <= 0.f)
     {
         // 사망 애니메이션 및 후속 처리.
+        if (DieMontages.Num() == 0)
+            return ActualDamage;
+
+        int32 DieIndex = FMath::RandRange(0, DamagedMontages.Num() - 1);
+        Anim->Montage_Play(DieMontages[DieIndex]);
     }
     else
     {
@@ -822,8 +832,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
         // 만약 체력이 0보다 작다면 사망.
         // 피격 애니메이션 실행.
         CurrentState = EPlayerState::Damaged;
-        UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-        if (!Anim || DamagedMontages.Num() == 0)
+        if (DamagedMontages.Num() == 0)
             return ActualDamage;
 
         UE_LOG(LogTemp, Warning, TEXT("Player Take %f Damage!"), ActualDamage);

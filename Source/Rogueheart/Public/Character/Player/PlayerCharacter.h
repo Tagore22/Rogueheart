@@ -136,6 +136,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
     TArray<class UAnimMontage*> DamagedMontages;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Animation")
+    TArray<class UAnimMontage*> DieMontages;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
     class UAnimMontage* AMT_Dodge;
 
@@ -214,6 +217,4 @@ protected:
     class ARogueheartPlayerController* CachedController = nullptr;
     UPROPERTY()
     class AWeaponBase* EquippedWeapon = nullptr;
-
-    const ECollisionChannel TraceChannel = ECC_GameTraceChannel1;
 };

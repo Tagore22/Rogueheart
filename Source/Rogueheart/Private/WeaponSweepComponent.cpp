@@ -1,6 +1,7 @@
 #include "WeaponSweepComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "Rogueheart.h"
 
 UWeaponSweepComponent::UWeaponSweepComponent()
 {
@@ -22,12 +23,24 @@ void UWeaponSweepComponent::BeginPlay()
 	switch (TraceType)
 	{
 	case ETraceChannel::Player:
-		Channel = ECC_GameTraceChannel1;
+		Channel = TraceChannel::ECC_Player;
 		break;
 
 	case ETraceChannel::Enemy:
-		Channel = ECC_GameTraceChannel2;
+		Channel = TraceChannel::ECC_Enemy;
 		break;
+	}
+	if (Channel == TraceChannel::ECC_Player)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s : Player"), *Owner->GetName());
+	}
+	else if (Channel == TraceChannel::ECC_Enemy)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s : Enemy"), *Owner->GetName());
+	}
+	else
+	{
+
 	}
 }
 
