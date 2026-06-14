@@ -809,12 +809,14 @@ void APlayerCharacter::SetWeaponVisible(bool IsVisible)
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+    if (CurHP <= 0.f || CurrentState == EPlayerState::Dodging)
+        return ActualDamage;
 
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
     if (!Anim)
         return ActualDamage;
 
-    CurHP = FMath::Max(CurHP - ActualDamage, 0.f);
+    CurHP = FMath::Clamp(CurHP - ActualDamage, 0.f, MaxHP);
     CachedController->SetHPPercent(CurHP / MaxHP);
 
     if (CurHP <= 0.f)

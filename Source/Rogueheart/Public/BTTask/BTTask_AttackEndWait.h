@@ -13,7 +13,7 @@ public:
     UBTTask_AttackEndWait();
 
     UPROPERTY(EditDefaultsOnly, Category = "Wait Time")
-    float WaitTime = 3.f;
+    float WaitTime = 3.5f;
 
 protected:
     virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

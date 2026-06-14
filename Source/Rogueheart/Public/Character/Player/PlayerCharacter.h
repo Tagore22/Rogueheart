@@ -45,7 +45,7 @@ public:
 
     void SetPlayerState(EPlayerState NewState);
     bool CanAct(EActionType DesiredAction) const;
-    bool IsDodging() const { return CurrentState == EPlayerState::Dodging; }
+    // bool IsDodging() const { return CurrentState == EPlayerState::Dodging; }
     bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; }
 
     void PlayComboMontage();

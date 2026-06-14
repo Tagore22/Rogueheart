@@ -47,12 +47,12 @@ void AEnemyBase::Tick(float DeltaTime)
     // 공격 쿨다운만 업데이트
     TimeSinceLastAttack += DeltaTime;
 
-    if (bIsTargeted)
-        return;
+    //if (bIsTargeted)
+    //    return;
 
-    if (HPBarTimer < 0.f)
+    if (bIsTargeted || HPBarTimer < 0.f)
     {
-        return;
+
     }
     else if (HPBarTimer < HPBarEndTime)
     {
@@ -62,6 +62,20 @@ void AEnemyBase::Tick(float DeltaTime)
     {
         HPBarTimer = -1.f;
         ShowHPBarWidget(false);
+    }
+   
+    if (DamageTimer < 0.f)
+    {
+
+    }
+    else if (DamageTimer < DamageEndTime)
+    {
+        DamageTimer += DeltaTime;
+    }
+    else if (DamageTimer >= DamageEndTime)
+    {
+        DamageTimer = -1.f;
+        ResetDamageSum();
     }
 }
 
@@ -108,6 +122,24 @@ void AEnemyBase::ResetHPBarTimer()
     HPBarTimer = 0.f;
 }
 
+void AEnemyBase::ResetDamageTimer()
+{
+    DamageTimer = 0.f;
+}
+
+void AEnemyBase::ResetDamageSum()
+{
+    UE_LOG(LogTemp, Warning, TEXT("DamageTEXT Hidden1"));
+    if (!HPBarWidget)
+        return;
+    UE_LOG(LogTemp, Warning, TEXT("DamageTEXT Hidden2"));
+    UEnemyHPBarWidget* HPBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+    if (!HPBar)
+        return;
+    UE_LOG(LogTemp, Warning, TEXT("DamageTEXT Hidden3"));
+    HPBar->ResetDamageSum();
+}
+
 void AEnemyBase::SetIsTargeted(bool bTargeted)
 {
     if (bTargeted)
@@ -128,11 +160,13 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
         return ActualDamage;
 
     ShowHPBarWidget(true);
-    CurHP = FMath::Max(CurHP - ActualDamage, 0.f);
+    CurHP = FMath::Clamp(CurHP - ActualDamage, 0.f, MaxHP);
     UEnemyHPBarWidget* HPBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
     if (!HPBar)
         return ActualDamage;
     HPBar->SetHPPercent(CurHP / MaxHP);
+    DamageTimer = 0.f;
+    HPBar->SetDamageSum(ActualDamage);
 
     if (CurHP <= 0.f)
     {

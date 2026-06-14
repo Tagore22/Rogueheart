@@ -22,6 +22,10 @@ public:
 
     void ResetHPBarTimer();
 
+    void ResetDamageTimer();
+
+    void ResetDamageSum();
+
     void SetIsTargeted(bool bTargeted);
 
     UFUNCTION(BlueprintCallable, Category = "Combat")
@@ -48,6 +52,8 @@ protected:
 
     float HPBarTimer = -1.f;
 
+    float DamageTimer = -1.f;
+
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
     TArray<class UAnimMontage*> AttackMontages;
 
@@ -68,6 +74,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "HPBarEndTime")
     float HPBarEndTime = 3.f;
+
+    UPROPERTY(EditDefaultsOnly, Category = "HPBarEndTime")
+    float DamageEndTime = 3.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "AttackCooldown")
     float AttackCooldown = 3.f;
