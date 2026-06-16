@@ -40,6 +40,7 @@ protected:
     void Explode();
 
     // 스킬별 구현 함수 
+    // 여기 이 부분을 자식 클래스로 만들어야 한다. Activate는 부모클래스에서 하나로 만들어놓고 자식 클래스에서 오버라이드한다.
     void Activate_Fireball();
     void Activate_IceNova();
     void Activate_ThunderStrike();
