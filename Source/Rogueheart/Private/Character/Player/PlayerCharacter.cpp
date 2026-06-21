@@ -17,6 +17,7 @@
 #include "Rogueheart.h" 
 #include "WeaponBase.h"
 #include "WeaponSweepComponent.h"
+#include "Skill/SkillBaseComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -43,6 +44,8 @@ APlayerCharacter::APlayerCharacter()
     SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
 
     SweepCom = CreateDefaultSubobject<UWeaponSweepComponent>(TEXT("SweepComponent"));
+
+    SkillBaseCom = CreateDefaultSubobject<USkillBaseComponent>(TEXT("SKillBaseComponent"));
 }
 
 void APlayerCharacter::BeginPlay()

@@ -20,11 +20,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	// 후에 매개변수 추가할 것.
-	void Activate();
+	void UseSkill(FName SkillName);
 
 private:
-	TArray<class SkillBase*> SkillSlot;
+	TMap<FName, class ASkillBase*> SkillSlot;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* DataTable;
 };

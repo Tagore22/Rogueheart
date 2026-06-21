@@ -215,6 +215,10 @@ protected:
 
     UPROPERTY()
     class ARogueheartPlayerController* CachedController = nullptr;
+
     UPROPERTY()
     class AWeaponBase* EquippedWeapon = nullptr;
+
+    UPROPERTY(VisibleAnywhere, Category = "SkillComponent")
+    class USkillBaseComponent* SkillBaseCom = nullptr;
 };

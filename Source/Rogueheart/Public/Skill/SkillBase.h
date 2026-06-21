@@ -19,9 +19,9 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Initialize(AActor* InitOwn, const FSkillData InitData);
+	virtual void InitializeSkillData(AActor* InitOwn, const FSkillData InitData);
 
-	virtual void Activate();
+	virtual void UseSkill();
 protected:
 	UPROPERTY()
 	class AActor* OwnActor = nullptr;

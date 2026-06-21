@@ -18,13 +18,13 @@ void ASkillBase::Tick(float DeltaTime)
 
 }
 
-void ASkillBase::Initialize(AActor* InitOwn, const FSkillData InitData)
+void ASkillBase::InitializeSkillData(AActor* InitOwn, const FSkillData InitData)
 {
 	OwnActor = InitOwn;
 	Data = InitData;
 }
 
-void ASkillBase::Activate()
+void ASkillBase::UseSkill()
 {
 	// 여기서 스킬을 실행한다. 이후 오버라이드시 반드시 Super::Activate()를 호출할 것.
 }
