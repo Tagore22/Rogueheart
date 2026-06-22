@@ -58,6 +58,7 @@ public:
     void SetCanNextComboTrue();
     void ClearLockOn();
     void OnActStart();
+    void UseSkill(const struct FInputActionInstance& Instance);
 
 protected:
     virtual void PossessedBy(AController* NewController) override;
@@ -129,6 +130,15 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputAction* IA_InventoryOnOff;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    class UInputAction* IA_Skill_Q;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    class UInputAction* IA_Skill_E;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    class UInputAction* IA_Skill_R;
  
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
     TArray<class UAnimMontage*> AttackMontages;

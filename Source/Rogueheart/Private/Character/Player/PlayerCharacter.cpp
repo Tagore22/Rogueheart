@@ -72,6 +72,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         EnhancedInput->BindAction(IA_SwitchTargetLeft, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetLeft);
         EnhancedInput->BindAction(IA_SwitchTargetRight, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetRight);
         EnhancedInput->BindAction(IA_InventoryOnOff, ETriggerEvent::Started, this, &APlayerCharacter::ToggleInventory);
+        EnhancedInput->BindAction(IA_Skill_Q, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
+        EnhancedInput->BindAction(IA_Skill_E, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
+        EnhancedInput->BindAction(IA_Skill_R, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
     }
 }
 
@@ -889,4 +892,12 @@ bool APlayerCharacter::CanPlusStamina() const
 void APlayerCharacter::OnActStart()
 {
     ConsumeStamina(StaminaCost);
+}
+
+void APlayerCharacter::UseSkill(const FInputActionInstance& Instance)
+{
+    FName SkillID = Instance.GetSourceAction()->GetFName();
+    UE_LOG(LogTemp, Warning, TEXT("%s"), *SkillID.ToString());
+
+    SkillBaseCom->UseSkill(SkillID);
 }

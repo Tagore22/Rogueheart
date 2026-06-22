@@ -10,7 +10,10 @@ struct FSkillData : public FTableRowBase
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly)
-    FName Name;
+    FName SkillName;
+
+    UPROPERTY(EditDefaultsOnly)
+    FName SkillID;
 
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<class ASkillBase> Type;

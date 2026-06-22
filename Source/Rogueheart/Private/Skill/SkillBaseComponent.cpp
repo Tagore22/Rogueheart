@@ -18,7 +18,7 @@ void USkillBaseComponent::BeginPlay()
 	{
 		ASkillBase* NewSkill = NewObject<ASkillBase>(this, List->Type);
 		NewSkill->InitializeSkillData(GetOwner(), *List);
-		SkillSlot.Add(List->Name, NewSkill);
+		SkillSlot.Add(List->SkillID, NewSkill);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Skill Nums : %d"), SkillSlot.Num());
@@ -30,10 +30,11 @@ void USkillBaseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 }
 
 // 후에 매개변수 추가할 것.
-void USkillBaseComponent::UseSkill(FName SkillName)
+void USkillBaseComponent::UseSkill(FName SkillID)
 {
-	if (ASkillBase** Skill = SkillSlot.Find(SkillName))
+	if (ASkillBase** Skill = SkillSlot.Find(SkillID))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UseSkill!"));
 		(*Skill)->UseSkill();
 	}
 }
