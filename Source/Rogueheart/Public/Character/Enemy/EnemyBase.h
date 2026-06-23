@@ -43,6 +43,8 @@ protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
     virtual void EnemyDie();
+    virtual void HPBarTickTimer(float DeltaTime);
+    virtual void DamageTickTimer(float DeltaTime);
 
 protected:
     bool bIsTargeted = false;

@@ -47,10 +47,7 @@ void AEnemyBase::Tick(float DeltaTime)
     // 공격 쿨다운만 업데이트
     TimeSinceLastAttack += DeltaTime;
 
-    //if (bIsTargeted)
-    //    return;
-
-    if (bIsTargeted || HPBarTimer < 0.f)
+    /*if (bIsTargeted || HPBarTimer < 0.f)
     {
 
     }
@@ -76,7 +73,9 @@ void AEnemyBase::Tick(float DeltaTime)
     {
         DamageTimer = -1.f;
         ResetDamageSum();
-    }
+    }*/
+    HPBarTickTimer(DeltaTime);
+    DamageTickTimer(DeltaTime);
 }
 
 void AEnemyBase::TryAttack()
@@ -214,6 +213,40 @@ void AEnemyBase::EnemyDie()
         {
             Destroy();
         }, DyingTime, false);
+}
+
+void AEnemyBase::HPBarTickTimer(float DeltaTime)
+{
+    if (bIsTargeted || HPBarTimer < 0.f)
+    {
+        return;
+    }
+    else if (HPBarTimer < HPBarEndTime)
+    {
+        HPBarTimer += DeltaTime;
+    }
+    else if (HPBarTimer >= HPBarEndTime)
+    {
+        HPBarTimer = -1.f;
+        ShowHPBarWidget(false);
+    }
+}
+
+void AEnemyBase::DamageTickTimer(float DeltaTime)
+{
+    if (DamageTimer < 0.f)
+    {
+        return;
+    }
+    else if (DamageTimer < DamageEndTime)
+    {
+        DamageTimer += DeltaTime;
+    }
+    else if (DamageTimer >= DamageEndTime)
+    {
+        DamageTimer = -1.f;
+        ResetDamageSum();
+    }
 }
 
 float AEnemyBase::GetCurHP() const

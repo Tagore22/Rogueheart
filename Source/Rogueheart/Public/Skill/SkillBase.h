@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Skill/SkillData.h"
+#include "TimerManager.h"
 #include "SkillBase.generated.h"
 
 UCLASS()
@@ -27,4 +28,8 @@ protected:
 	class AActor* OwnActor = nullptr;
 
 	FSkillData Data;
+
+	FTimerHandle SkillTimer;
+
+	virtual void RestoreSkill();
 };
