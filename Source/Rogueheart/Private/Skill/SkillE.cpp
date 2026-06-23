@@ -9,5 +9,7 @@ void ASkillE::UseSkill()
 
 void ASkillE::RestoreSkill()
 {
+	Super::RestoreSkill();
+
 	UE_LOG(LogTemp, Warning, TEXT("SkillE Restored!"));
 }

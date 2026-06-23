@@ -9,6 +9,8 @@ void ASkillQ::UseSkill()
 
 void ASkillQ::RestoreSkill()
 {
+	Super::RestoreSkill();
+
 	UE_LOG(LogTemp, Warning, TEXT("SkillQ Restored!"));
 }
 
