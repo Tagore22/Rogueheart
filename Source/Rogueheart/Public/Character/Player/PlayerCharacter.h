@@ -17,6 +17,7 @@ enum class EPlayerState : uint8
     LockedOn,
     Dodging,
     Damaged,
+    Parrying,
     Dead
 };
 
@@ -27,6 +28,7 @@ enum class EActionType : uint8
     Attack,
     LockOn,
     Dodge,
+    Parry,
     UseSkill
 };
 
