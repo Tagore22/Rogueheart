@@ -45,6 +45,7 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+    // 플레이어의 상태에 관한 것은 그대로 남겨둔다.
     void SetPlayerState(EPlayerState NewState);
     bool CanAct(EActionType DesiredAction) const;
     // bool IsDodging() const { return CurrentState == EPlayerState::Dodging; }
@@ -172,9 +173,11 @@ protected:
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
     bool bCanNextCombo = false;
 
-    UPROPERTY(VisibleAnywhere, Category = "Targeting")
+    // PlayerBaseComponent으로 옮겨짐.
+    UPROPERTY(VisibleAnywhere, Category = "Targeting")  
     class AEnemyBase* LockOnTarget = nullptr;
 
+    // PlayerBaseComponent으로 옮겨질 예정?
     UPROPERTY(VisibleAnywhere, Category = "Targeting")
     class AEnemyBase* PrevLockOnTarget = nullptr;
 

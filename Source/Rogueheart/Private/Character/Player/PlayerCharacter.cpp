@@ -62,6 +62,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
     if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
     {
+        // 여기서 각 컴포넌트들의 SetupInputBinding()을 호출한다.
         EnhancedInput->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
         EnhancedInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
         EnhancedInput->BindAction(IA_Attack, ETriggerEvent::Started, this, &APlayerCharacter::Attack);
@@ -94,11 +95,13 @@ void APlayerCharacter::Tick(float DeltaTime)
     UpdateLockOnRotation(DeltaTime);
     CheckLockOnDistance();*/
 
-    if (IsValid(LockOnTarget))
+    // 타겟팅 컴포넌트쪽으로. 그 안에 타겟팅 된 적의 포인터를 가지고 있으며 지금 이 검사 역시
+    // 타겟팅 컴포넌트의 Tick에서 실행하여 플레이어의 움직임을 조작한다.
+    if (IsValid(LockOnTarget))                          
     {
         if (LockOnTarget->GetCurHP() <= 0.f)
         {
-            ClearLockOn();
+            ClearLockOn(); // 타겟팅으로.
         }
         else
         {
@@ -146,7 +149,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
-    if (IsValid(LockOnTarget))
+    if (IsValid(LockOnTarget)) // bool을 반환하는 public 함수로 변경.
         return;
 
     const FVector2D LookAxis = Value.Get<FVector2D>();
@@ -159,7 +162,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
-    if (!CanAct(EActionType::Attack) || CurStamina <= 0.f)
+    if (!CanAct(EActionType::Attack) || CurStamina <= 0.f) // 스테미나 값을 반환하는 public 함수를 사용.
         return;
 
     if (CurrentState != EPlayerState::Attacking)
@@ -676,7 +679,8 @@ FGenericTeamId APlayerCharacter::GetGenericTeamId() const
     return FGenericTeamId(TeamID);
 }
 
-void APlayerCharacter::ClearLockOn()
+// 타겟팅 컴포넌트로 옮길 것.
+void APlayerCharacter::ClearLockOn() 
 {
     if (!IsValid(LockOnTarget))
         return;
@@ -690,6 +694,8 @@ void APlayerCharacter::ClearLockOn()
     SetLockOnState(false);
 }
 
+// 타겟팅 컴포넌트로 옮길 것.
+// 앞에 owner-> 이런 형식으로 컴포넌트에서 플레이어를 조작.
 void APlayerCharacter::SetLockOnState(bool bIsLockOn)
 {
     if (bIsLockOn)
