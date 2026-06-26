@@ -2,6 +2,7 @@
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Animation/AnimInstance.h"
 
 void UMoveComponent::SetupInputBinding(UEnhancedInputComponent* EnhancedInput)
 {
@@ -9,6 +10,7 @@ void UMoveComponent::SetupInputBinding(UEnhancedInputComponent* EnhancedInput)
 
     EnhancedInput->BindAction(IA_Move, ETriggerEvent::Triggered, this, &UMoveComponent::Move);
     EnhancedInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &UMoveComponent::Look);
+    EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &UMoveComponent::Dodge);
 }
 
 void UMoveComponent::Move(const FInputActionValue& Value)
@@ -46,4 +48,36 @@ void UMoveComponent::Look(const FInputActionValue& Value)
 
     Player->AddControllerYawInput(LookAxis.X);
     Player->AddControllerPitchInput(LookAxis.Y);
+}
+
+void UMoveComponent::Dodge(const FInputActionValue& Value)
+{
+    // if문의 첫번째는 현재 방향키를 눌렀느냐이다. 사실 이 부분은 뒤로 물러나는 행동이 발동하여야 한다.
+    // 구현할 것인가...
+    if (LastMoveInput.IsNearlyZero() || !Player->CanAct(EActionType::Dodge) || Player->GetCurStamina() <= 0.f)
+        return;
+
+    UAnimInstance* Anim = Player->GetMesh()->GetAnimInstance();
+    if (!AMT_Dodge || !Anim) 
+        return;
+
+    Player->SetWeaponVisible(true);
+    // 구르기 이전 해당 방향으로 액터를 회전. 후에 부자연스럽다면 삭제할 것.
+    if (!LastMoveInput.IsNearlyZero())
+    {
+        FRotator ControlRot = FRotator(0.f, Player->GetControlRotation().Yaw, 0.f);
+        FQuat ControlQuat = ControlRot.Quaternion();
+        FVector DodgeDir = ControlQuat.RotateVector(LastMoveInput);
+        Player->SetActorRotation(DodgeDir.Rotation());
+    }
+
+    Player->SetPlayerState(EPlayerState::Dodging);
+    Anim->Montage_Play(AMT_Dodge);
+
+    if (IsValid(LockOnTarget))
+    {
+        PrevLockOnTarget = LockOnTarget;
+        LockOnTarget = nullptr;
+        SetLockOnState(false);
+    }
 }

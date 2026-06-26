@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "Character/Player/PlayerCharacter.h"
 #include "Character/Enemy/EnemyBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerBaseComponent.generated.h"
 
 
@@ -18,6 +19,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void SetLockOnState(bool bIsLockOn);
+
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -29,4 +32,7 @@ protected:
 
 	UPROPERTY()
 	class AEnemyBase* LockOnTarget = nullptr;
+
+	UPROPERTY()
+	class AEnemyBase* PrevLockOnTarget = nullptr;
 };

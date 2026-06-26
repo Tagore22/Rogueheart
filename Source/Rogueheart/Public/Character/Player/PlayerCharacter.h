@@ -63,6 +63,15 @@ public:
     void OnActStart();
     void UseSkill(const struct FInputActionInstance& Instance);
 
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    float GetMaxHP() const;
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    float GetCurHP() const;
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    float GetMaxStamina() const;
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    float GetCurStamina() const;
+
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -85,15 +94,6 @@ protected:
     void UpdateLockOnRotation(float DeltaTime);
     class AEnemyBase* SwitchTarget(bool bLeft);
     void CheckLockOnDistance();
-
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetMaxHP() const;
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetCurHP() const;
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetMaxStamina() const;
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetCurStamina() const;
 
 protected:
     // 잘 정리해서 public이 아니라 private쪽으로 넘길 것. meta = AllowPrivateAccess는 BP에서 접근하는 게 아니면 쓸모가 없다.
