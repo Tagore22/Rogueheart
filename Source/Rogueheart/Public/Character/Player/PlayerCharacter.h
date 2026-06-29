@@ -40,6 +40,7 @@ class ROGUEHEART_API APlayerCharacter : public ACharacter, public IGenericTeamAg
 public:
     APlayerCharacter();
 
+    virtual class UCameraComponent* GetCameraComponent() const { return FollowCamera; }
     virtual FGenericTeamId GetGenericTeamId() const override;
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
@@ -59,7 +60,7 @@ public:
     void SetWeaponVisible(bool IsVisible);
     bool HasLockTarget() const;
     void SetCanNextComboTrue();
-    void ClearLockOn();
+    void ClearLockOn(); //
     void OnActStart();
     void UseSkill(const struct FInputActionInstance& Instance);
 
@@ -91,7 +92,7 @@ protected:
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
     class AEnemyBase* FindNearestTarget();
-    void UpdateLockOnRotation(float DeltaTime);
+    void UpdateLockOnRotation(float DeltaTime); // 
     class AEnemyBase* SwitchTarget(bool bLeft);
     void CheckLockOnDistance();
 
@@ -229,7 +230,7 @@ protected:
     FOnHPChanged OnHPChanged;
 
     UPROPERTY()
-    class ARogueheartPlayerController* CachedController = nullptr;
+    class ARogueheartPlayerController* CachedController = nullptr; // 
 
     UPROPERTY()
     class AWeaponBase* EquippedWeapon = nullptr;

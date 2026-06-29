@@ -5,6 +5,13 @@
 #include "Character/Player/PlayerCharacter.h"
 #include "Character/Enemy/EnemyBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Character/Player/RogueheartPlayerController.h"
+#include "Rogueheart.h" 
+#include "InputActionValue.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "Animation/AnimInstance.h"
+#include "Camera/CameraComponent.h"
 #include "PlayerBaseComponent.generated.h"
 
 
@@ -26,9 +33,13 @@ public:
 
 	virtual void SetupInputBinding(class UEnhancedInputComponent* EnhancedInput);
 
+	virtual void RestoreLockOnIfNeeded();
 protected:
 	UPROPERTY()
 	class APlayerCharacter* Player = nullptr; 
+
+	UPROPERTY()
+	class ARogueheartPlayerController* CachedController = nullptr;
 
 	UPROPERTY()
 	class AEnemyBase* LockOnTarget = nullptr;

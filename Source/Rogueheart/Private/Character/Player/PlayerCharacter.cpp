@@ -215,9 +215,8 @@ void APlayerCharacter::OnAttackEnd()
     bCanNextCombo = false;
 }
 
-// Dodge 애니메이션의 재생이 끝나면 호출되는 노티파이인
-// UPlayerAnimInstance::AnimNotify_EndDodge()에서 이 함수를 호출한다.
-// 락온 상태에서 구르기 행동시에만 발동하여 PrevLockOnTarget의 처리를 담당한다.
+// PlayerBaseComponent로 옮겨졌다. PlayerBaseComponent의 RestoreLockOnIfNeeded()를 
+// 호출하는 래핑 함수로 변하였다. 애니메이션의 노티파이에서 호출하게 된다.
 void APlayerCharacter::RestoreLockOnIfNeeded()
 {
     if (!IsValid(PrevLockOnTarget))
@@ -489,7 +488,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget()
     return nullptr;
 }
 
-void APlayerCharacter::UpdateLockOnRotation(float DeltaTime)
+void APlayerCharacter::UpdateLockOnRotation(float DeltaTime) // 
 {
     if (!IsValid(LockOnTarget)) 
         return;
@@ -680,7 +679,7 @@ FGenericTeamId APlayerCharacter::GetGenericTeamId() const
 }
 
 // 타겟팅 컴포넌트로 옮길 것.
-void APlayerCharacter::ClearLockOn() 
+void APlayerCharacter::ClearLockOn() //
 {
     if (!IsValid(LockOnTarget))
         return;
