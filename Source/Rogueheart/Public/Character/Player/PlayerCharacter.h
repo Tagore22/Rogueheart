@@ -52,9 +52,9 @@ public:
     // bool IsDodging() const { return CurrentState == EPlayerState::Dodging; }
     bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; }
 
-    void PlayComboMontage();
+    void PlayComboMontage(); //
     void OnAttackEnd();
-    void RestoreLockOnIfNeeded();
+    void RestoreLockOnIfNeeded(); //
     void HealPlayer(float PlusHP);
     void SetEquippedWeapon(class AWeaponBase* CurWeapon);
     void SetWeaponVisible(bool IsVisible);
@@ -76,25 +76,25 @@ public:
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
-    void Move(const struct FInputActionValue& Value);
-    void Look(const struct FInputActionValue& Value);
-    void Attack(const struct FInputActionValue& Value);
-    void Dodge(const struct FInputActionValue& Value);
+    void Move(const struct FInputActionValue& Value); //
+    void Look(const struct FInputActionValue& Value); //
+    void Attack(const struct FInputActionValue& Value); //
+    void Dodge(const struct FInputActionValue& Value); //
     UFUNCTION()
     void UseFireball(const struct FInputActionValue& Value);
     UFUNCTION()
     void UseIceBlast(const struct FInputActionValue& Value);
-    void ToggleLockOn(const struct FInputActionValue& Value);
-    void SwitchTargetLeft(const struct FInputActionValue& Value);
-    void SwitchTargetRight(const struct FInputActionValue& Value);
+    void ToggleLockOn(const struct FInputActionValue& Value); // 
+    void SwitchTargetLeft(const struct FInputActionValue& Value); // 
+    void SwitchTargetRight(const struct FInputActionValue& Value); //
     void ToggleInventory(const struct FInputActionValue& Value);
-    void SetLockOnTarget(class AEnemyBase* NewTarget);
+    void SetLockOnTarget(class AEnemyBase* NewTarget); //
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-    class AEnemyBase* FindNearestTarget();
+    class AEnemyBase* FindNearestTarget(); //
     void UpdateLockOnRotation(float DeltaTime); // 
-    class AEnemyBase* SwitchTarget(bool bLeft);
-    void CheckLockOnDistance();
+    class AEnemyBase* SwitchTarget(bool bLeft); // 
+    void CheckLockOnDistance(); //
 
 protected:
     // 잘 정리해서 public이 아니라 private쪽으로 넘길 것. meta = AllowPrivateAccess는 BP에서 접근하는 게 아니면 쓸모가 없다.
@@ -106,16 +106,16 @@ protected:
     class UCameraComponent* FollowCamera;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_Move;
+    class UInputAction* IA_Move; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_Look;
+    class UInputAction* IA_Look; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_Attack;
+    class UInputAction* IA_Attack; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_Dodge;
+    class UInputAction* IA_Dodge; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputAction* IA_Skill1;
@@ -124,13 +124,13 @@ protected:
     class UInputAction* IA_Skill2;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_LockOn;
+    class UInputAction* IA_LockOn; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_SwitchTargetLeft;
+    class UInputAction* IA_SwitchTargetLeft; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_SwitchTargetRight;
+    class UInputAction* IA_SwitchTargetRight; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputAction* IA_InventoryOnOff;
@@ -145,7 +145,7 @@ protected:
     class UInputAction* IA_Skill_R;
  
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
-    TArray<class UAnimMontage*> AttackMontages;
+    TArray<class UAnimMontage*> AttackMontages; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
     TArray<class UAnimMontage*> DamagedMontages;
@@ -154,36 +154,36 @@ protected:
     TArray<class UAnimMontage*> DieMontages;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
-    class UAnimMontage* AMT_Dodge;
+    class UAnimMontage* AMT_Dodge; //
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     class USkillComponent* SkillComponent;
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
-    int32 CurrentCombo = 0;
+    int32 CurrentCombo = 0; //
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
     int32 MaxCombo = 3;
 
     UPROPERTY(EditDefaultsOnly, Category = "Combat")
-    int32 InterpSpeed = 5;
+    int32 InterpSpeed = 5; // 
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
-    bool bInputCombo = false;
+    bool bInputCombo = false; //
 
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
-    bool bCanNextCombo = false;
+    bool bCanNextCombo = false; //
 
     // PlayerBaseComponent으로 옮겨짐.
     UPROPERTY(VisibleAnywhere, Category = "Targeting")  
-    class AEnemyBase* LockOnTarget = nullptr;
+    class AEnemyBase* LockOnTarget = nullptr; //
 
     // PlayerBaseComponent으로 옮겨질 예정?
     UPROPERTY(VisibleAnywhere, Category = "Targeting")
-    class AEnemyBase* PrevLockOnTarget = nullptr;
+    class AEnemyBase* PrevLockOnTarget = nullptr; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-    float LockOnRange = 1200.f;
+    float LockOnRange = 1200.f; // 
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     float LockOnBreakDistance = 1500.f;
@@ -191,7 +191,7 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "SweepComponent")
     class UWeaponSweepComponent* SweepCom = nullptr;
 
-    float LockOnBreakDistanceSq = 0.f;
+    float LockOnBreakDistanceSq = 0.f; //
 
     bool bWasLockedOnWhenDodged = false;
 
@@ -199,19 +199,19 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
     EPlayerState CurrentState = EPlayerState::Idle;
 
-    FVector LastMoveInput = FVector::ZeroVector;
+    FVector LastMoveInput = FVector::ZeroVector; //
 
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     uint8 TeamID = 1;
 
-    void SetLockOnState(bool bIsLockOn);
+    void SetLockOnState(bool bIsLockOn); //
 
     void ConsumeStamina(const float Cost);
 
     bool CanPlusStamina() const;
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-    float TargetingAngle = 0.5f;
+    float TargetingAngle = 0.5f; //
     // StatSubsystem으로 옮겨야 하는 변수들.
     UPROPERTY(EditDefaultsOnly, Category = "HP")
     float MaxHP = 100.f;

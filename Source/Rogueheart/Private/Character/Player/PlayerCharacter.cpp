@@ -123,7 +123,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
     CachedController = Cast<ARogueheartPlayerController>(NewController);
 }
 
-void APlayerCharacter::Move(const FInputActionValue& Value)
+void APlayerCharacter::Move(const FInputActionValue& Value) //
 {
     if (!CanAct(EActionType::Move))
         return;
@@ -147,7 +147,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     AddMovementInput(RightDirection, MovementVector2D.Y);
 }
 
-void APlayerCharacter::Look(const FInputActionValue& Value)
+void APlayerCharacter::Look(const FInputActionValue& Value) //
 {
     if (IsValid(LockOnTarget)) // bool을 반환하는 public 함수로 변경.
         return;
@@ -160,7 +160,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(LookAxis.Y);
 }
 
-void APlayerCharacter::Attack(const FInputActionValue& Value)
+void APlayerCharacter::Attack(const FInputActionValue& Value) //
 {
     if (!CanAct(EActionType::Attack) || CurStamina <= 0.f) // 스테미나 값을 반환하는 public 함수를 사용.
         return;
@@ -181,7 +181,7 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
     }
 } 
 
-void APlayerCharacter::PlayComboMontage()
+void APlayerCharacter::PlayComboMontage() //
 {
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
     /*if (!Anim || !AMT_Attack)
@@ -199,6 +199,8 @@ void APlayerCharacter::PlayComboMontage()
 
 // 공격 애니메이션의 재생이 끝나면 호출되는 노티파이인
 // UPlayerAnimInstance::AnimNotify_EndAttack()에서 이 함수를 호출한다.
+
+// ------------------------------------------------------------- 컴포넌트 옮기기. 여기부터.
 void APlayerCharacter::OnAttackEnd()
 {
     if (bInputCombo && CurrentCombo < MaxCombo)
@@ -227,7 +229,7 @@ void APlayerCharacter::RestoreLockOnIfNeeded()
     PrevLockOnTarget = nullptr;
 }
 
-void APlayerCharacter::Dodge(const FInputActionValue& Value)
+void APlayerCharacter::Dodge(const FInputActionValue& Value) //
 {
     // if문의 첫번째는 현재 방향키를 눌렀느냐이다. 사실 이 부분은 뒤로 물러나는 행동이 발동하여야 한다.
     // 구현할 것인가...
@@ -508,7 +510,7 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime) //
     CachedController->SetControlRotation(NewCameraRot);
 }
 
-AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
+AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft) //
 {
     if (!IsValid(LockOnTarget)) 
         return nullptr;
@@ -610,7 +612,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft)
     }
 }*/
 
-void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value)
+void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value) //
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -639,7 +641,7 @@ void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value)
     }
 }*/
 
-void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value)
+void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value) //
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -652,7 +654,7 @@ void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value)
     SetLockOnTarget(NewTarget);
 }
 
-void APlayerCharacter::CheckLockOnDistance()
+void APlayerCharacter::CheckLockOnDistance() //
 {
     if (!IsValid(LockOnTarget))
         return;
@@ -695,7 +697,7 @@ void APlayerCharacter::ClearLockOn() //
 
 // 타겟팅 컴포넌트로 옮길 것.
 // 앞에 owner-> 이런 형식으로 컴포넌트에서 플레이어를 조작.
-void APlayerCharacter::SetLockOnState(bool bIsLockOn)
+void APlayerCharacter::SetLockOnState(bool bIsLockOn) //
 {
     if (bIsLockOn)
     {
@@ -785,7 +787,7 @@ void APlayerCharacter::HealPlayer(float PlusHP)
     UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
 }
 
-void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget)
+void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) //
 {
     if (!IsValid(NewTarget))
         return;

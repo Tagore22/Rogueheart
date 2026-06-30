@@ -4,9 +4,19 @@ void UTargetComponent::SetupInputBinding(UEnhancedInputComponent* EnhancedInput)
 {
     Super::SetupInputBinding(EnhancedInput);
 
+    PrimaryComponentTick.bCanEverTick = true;
+    PrimaryComponentTick.bStartWithTickEnabled = true;
+
     EnhancedInput->BindAction(IA_LockOn, ETriggerEvent::Started, this, &UTargetComponent::ToggleLockOn);
     EnhancedInput->BindAction(IA_SwitchTargetLeft, ETriggerEvent::Started, this, &UTargetComponent::SwitchTargetLeft);
     EnhancedInput->BindAction(IA_SwitchTargetRight, ETriggerEvent::Started, this, &UTargetComponent::SwitchTargetRight);
+}
+
+void UTargetComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+    TargetConditionCheck(DeltaTime);
 }
 
 void UTargetComponent::UpdateLockOnRotation(float DeltaTime)
@@ -194,6 +204,22 @@ AEnemyBase* UTargetComponent::SwitchTarget(bool bLeft)
     return nullptr;
 }
 
+void UTargetComponent::TargetConditionCheck(float DeltaTime)
+{
+    if (IsValid(LockOnTarget))
+    {
+        if (LockOnTarget->GetCurHP() <= 0.f)
+        {
+            ClearLockOn(); // 타겟팅으로.
+        }
+        else
+        {
+            UpdateLockOnRotation(DeltaTime);
+            CheckLockOnDistance();
+        }
+    }
+}
+
 void UTargetComponent::ToggleLockOn(const FInputActionValue& Value)
 {
     if (!Player->CanAct(EActionType::LockOn))
@@ -250,4 +276,25 @@ void UTargetComponent::SetLockOnTarget(AEnemyBase* NewTarget)
     LockOnTarget->ShowHPBarWidget(true);
     LockOnTarget->SetIsTargeted(true);
     SetLockOnState(true);
+}
+
+void UTargetComponent::CheckLockOnDistance() //
+{
+    if (!IsValid(LockOnTarget))
+        return;
+
+    float Dist = FVector::DistSquared(Player->GetActorLocation(), LockOnTarget->GetActorLocation());
+    if (Dist > LockOnBreakDistanceSq)
+    {
+        ClearLockOn();
+    }
+    // 2. (추가 제안) 적이 죽었는지도 여기서 같이 체크하면 좋습니다.
+    // 만약 Enemy 클래스에 IsDead() 같은 함수가 있다면:
+    /*
+    if (LockOnTarget->IsDead())
+    {
+        ClearLockOn();
+    }
+    */
+    // 위 코드를 추가할 시 따로 if문을 만들지 말고 or 연산으로 위 if문에 추가할 것.
 }

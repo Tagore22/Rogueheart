@@ -10,41 +10,49 @@ class ROGUEHEART_API UTargetComponent : public UPlayerBaseComponent
 	GENERATED_BODY()
 	
 public:
-	virtual void SetupInputBinding(class UEnhancedInputComponent* EnhancedInput);
+	virtual void SetupInputBinding(class UEnhancedInputComponent* EnhancedInput); //
 
-	void UpdateLockOnRotation(float DeltaTime);
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void ClearLockOn();
+	void UpdateLockOnRotation(float DeltaTime); //
 
-	class AEnemyBase* FindNearestTarget();
+	void ClearLockOn(); //
 
-	class AEnemyBase* SwitchTarget(bool bLeft);
+	class AEnemyBase* FindNearestTarget(); //
+
+	class AEnemyBase* SwitchTarget(bool bLeft); //
 
 protected:
-	void ToggleLockOn(const struct FInputActionValue& Value);
+	void TargetConditionCheck(float DeltaTime); // 
 
-	void SwitchTargetLeft(const struct FInputActionValue& Value);
+	void ToggleLockOn(const struct FInputActionValue& Value); //
 
-	void SwitchTargetRight(const struct FInputActionValue& Value);
+	void SwitchTargetLeft(const struct FInputActionValue& Value); //
 
-	void SetLockOnTarget(class AEnemyBase* NewTarget);
+	void SwitchTargetRight(const struct FInputActionValue& Value); //
+
+	void SetLockOnTarget(class AEnemyBase* NewTarget); //
+
+	void CheckLockOnDistance(); //
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-	int32 InterpSpeed = 5;
+	int32 InterpSpeed = 5; //
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-	float LockOnRange = 1200.f;
+	float LockOnRange = 1200.f; //
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-	float TargetingAngle = 0.5f;
+	float TargetingAngle = 0.5f; //
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* IA_LockOn;
+	class UInputAction* IA_LockOn; //
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* IA_SwitchTargetLeft;
+	class UInputAction* IA_SwitchTargetLeft; //
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* IA_SwitchTargetRight;
+	class UInputAction* IA_SwitchTargetRight; //
+
+	float LockOnBreakDistanceSq = 0.f; //
 };

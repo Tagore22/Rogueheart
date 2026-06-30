@@ -12,6 +12,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
+#include "Character/Player/PlayerAnimInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerBaseComponent.generated.h"
 
 
@@ -26,24 +28,24 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void SetLockOnState(bool bIsLockOn);
+	virtual void SetLockOnState(bool bIsLockOn); //
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	virtual void SetupInputBinding(class UEnhancedInputComponent* EnhancedInput);
+	virtual void SetupInputBinding(class UEnhancedInputComponent* EnhancedInput); // 자체 함수.
 
-	virtual void RestoreLockOnIfNeeded();
+	virtual void RestoreLockOnIfNeeded(); //
 protected:
 	UPROPERTY()
-	class APlayerCharacter* Player = nullptr; 
+	class APlayerCharacter* Player = nullptr; //
 
 	UPROPERTY()
-	class ARogueheartPlayerController* CachedController = nullptr;
+	class ARogueheartPlayerController* CachedController = nullptr; //
 
 	UPROPERTY()
-	class AEnemyBase* LockOnTarget = nullptr;
+	class AEnemyBase* LockOnTarget = nullptr; // 
 
 	UPROPERTY()
-	class AEnemyBase* PrevLockOnTarget = nullptr;
+	class AEnemyBase* PrevLockOnTarget = nullptr; //
 };

@@ -9,7 +9,7 @@ void UMoveComponent::SetupInputBinding(UEnhancedInputComponent* EnhancedInput)
     EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &UMoveComponent::Dodge);
 }
 
-void UMoveComponent::Move(const FInputActionValue& Value)
+void UMoveComponent::Move(const FInputActionValue& Value) //
 {
     if (!Player->CanAct(EActionType::Move))
         return;
@@ -33,7 +33,7 @@ void UMoveComponent::Move(const FInputActionValue& Value)
     Player->AddMovementInput(RightDirection, MovementVector2D.Y);
 }
 
-void UMoveComponent::Look(const FInputActionValue& Value)
+void UMoveComponent::Look(const FInputActionValue& Value) //
 {
     if (IsValid(LockOnTarget)) // LockOnTarget을 PlayerBaseComponent로 옮김.
         return;
@@ -46,7 +46,7 @@ void UMoveComponent::Look(const FInputActionValue& Value)
     Player->AddControllerPitchInput(LookAxis.Y);
 }
 
-void UMoveComponent::Dodge(const FInputActionValue& Value)
+void UMoveComponent::Dodge(const FInputActionValue& Value) //
 {
     // if문의 첫번째는 현재 방향키를 눌렀느냐이다. 사실 이 부분은 뒤로 물러나는 행동이 발동하여야 한다.
     // 구현할 것인가...
