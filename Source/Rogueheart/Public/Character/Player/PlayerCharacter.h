@@ -53,13 +53,13 @@ public:
     bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; }
 
     void PlayComboMontage(); //
-    void OnAttackEnd();
+    void OnAttackEnd(); //
     void RestoreLockOnIfNeeded(); //
     void HealPlayer(float PlusHP);
     void SetEquippedWeapon(class AWeaponBase* CurWeapon);
     void SetWeaponVisible(bool IsVisible);
-    bool HasLockTarget() const;
-    void SetCanNextComboTrue();
+    bool HasLockTarget() const; //
+    void SetCanNextComboTrue(); //
     void ClearLockOn(); //
     void OnActStart();
     void UseSkill(const struct FInputActionInstance& Instance);
@@ -163,7 +163,7 @@ protected:
     int32 CurrentCombo = 0; //
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
-    int32 MaxCombo = 3;
+    int32 MaxCombo = 3; //
 
     UPROPERTY(EditDefaultsOnly, Category = "Combat")
     int32 InterpSpeed = 5; // 
@@ -174,11 +174,9 @@ protected:
     UPROPERTY(BlueprintReadWrite, Category = "Combat")
     bool bCanNextCombo = false; //
 
-    // PlayerBaseComponent으로 옮겨짐.
     UPROPERTY(VisibleAnywhere, Category = "Targeting")  
     class AEnemyBase* LockOnTarget = nullptr; //
 
-    // PlayerBaseComponent으로 옮겨질 예정?
     UPROPERTY(VisibleAnywhere, Category = "Targeting")
     class AEnemyBase* PrevLockOnTarget = nullptr; //
 
@@ -186,14 +184,12 @@ protected:
     float LockOnRange = 1200.f; // 
 
     UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-    float LockOnBreakDistance = 1500.f;
+    float LockOnBreakDistance = 1500.f; //
 
     UPROPERTY(VisibleAnywhere, Category = "SweepComponent")
     class UWeaponSweepComponent* SweepCom = nullptr;
 
     float LockOnBreakDistanceSq = 0.f; //
-
-    bool bWasLockedOnWhenDodged = false;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))

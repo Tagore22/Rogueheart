@@ -23,6 +23,8 @@ public:
 	class AEnemyBase* SwitchTarget(bool bLeft); //
 
 protected:
+	virtual void BeginPlay() override;
+
 	void TargetConditionCheck(float DeltaTime); // 
 
 	void ToggleLockOn(const struct FInputActionValue& Value); //
@@ -45,6 +47,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 	float TargetingAngle = 0.5f; //
 
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	float LockOnBreakDistance = 1500.f; //
+
+	float LockOnBreakDistanceSq = 0.f; //
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* IA_LockOn; //
 
@@ -53,6 +60,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* IA_SwitchTargetRight; //
-
-	float LockOnBreakDistanceSq = 0.f; //
 };

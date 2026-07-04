@@ -23,6 +23,27 @@ void UAttackComponent::PlayComboMontage() //
     Anim->Montage_Play(AttackMontages[CurrentCombo - 1]);
 }
 
+void UAttackComponent::OnAttackEnd()
+{
+    if (bInputCombo && CurrentCombo < MaxCombo)
+    {
+        ++CurrentCombo;
+        PlayComboMontage();
+    }
+    else
+    {
+        CurrentCombo = 0;
+        Player->SetPlayerState(EPlayerState::Idle);
+    }
+    bInputCombo = false;
+    bCanNextCombo = false;
+}
+
+void UAttackComponent::SetCanNextComboTrue() //
+{
+    bCanNextCombo = true;
+}
+
 void UAttackComponent::Attack(const FInputActionValue& Value) //
 {
     if (!Player->CanAct(EActionType::Attack) || Player->GetCurStamina() <= 0.f) // 스테미나 값을 반환하는 public 함수를 사용.

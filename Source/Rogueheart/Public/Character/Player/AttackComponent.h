@@ -13,6 +13,10 @@ public:
 	virtual void SetupInputBinding(UEnhancedInputComponent* EnhancedInput) override;
 
 	void PlayComboMontage(); //
+
+	void OnAttackEnd(); //
+
+	void SetCanNextComboTrue(); //
 protected:
 	void Attack(const struct FInputActionValue& Value);
 
@@ -31,4 +35,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	TArray<class UAnimMontage*> AttackMontages; //
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	int32 MaxCombo = 3; //
 };

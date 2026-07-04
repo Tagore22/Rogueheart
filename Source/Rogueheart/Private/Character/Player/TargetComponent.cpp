@@ -54,7 +54,7 @@ void UTargetComponent::ClearLockOn()
     SetLockOnState(false);
 }
 
-AEnemyBase* UTargetComponent::FindNearestTarget()
+AEnemyBase* UTargetComponent::FindNearestTarget() 
 {
     // 1단계: 주변 적들 긁어모으기 (Wide Overlap)
     FVector CameraLocation = Player->GetCameraComponent()->GetComponentLocation();
@@ -202,6 +202,13 @@ AEnemyBase* UTargetComponent::SwitchTarget(bool bLeft)
         return BestTarget; // 리턴 후 호출한 곳에서 LockOnTarget = NewTarget; 을 해주겠죠?
     }
     return nullptr;
+}
+
+void UTargetComponent::BeginPlay()
+{
+    Super::BeginPlay();
+
+    LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance);
 }
 
 void UTargetComponent::TargetConditionCheck(float DeltaTime)

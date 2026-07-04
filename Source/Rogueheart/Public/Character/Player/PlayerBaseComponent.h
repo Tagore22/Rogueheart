@@ -36,6 +36,8 @@ public:
 	virtual void SetupInputBinding(class UEnhancedInputComponent* EnhancedInput); // 자체 함수.
 
 	virtual void RestoreLockOnIfNeeded(); //
+	 
+	virtual bool HasLockTarget() const; //
 protected:
 	UPROPERTY()
 	class APlayerCharacter* Player = nullptr; //
