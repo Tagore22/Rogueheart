@@ -18,6 +18,9 @@
 #include "WeaponBase.h"
 #include "WeaponSweepComponent.h"
 #include "Skill/SkillBaseComponent.h"
+#include "Character/Player/MoveComponent.h"
+#include "Character/Player/AttackComponent.h"
+#include "Character/Player/TargetComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -46,13 +49,19 @@ APlayerCharacter::APlayerCharacter()
     SweepCom = CreateDefaultSubobject<UWeaponSweepComponent>(TEXT("SweepComponent"));
 
     SkillBaseCom = CreateDefaultSubobject<USkillBaseComponent>(TEXT("SKillBaseComponent"));
+
+    MoveCom = CreateDefaultSubobject<UMoveComponent>(TEXT("MoveComponent"));
+
+    AttackCom = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComponent"));
+
+    TargetCom = CreateDefaultSubobject<UTargetComponent>(TEXT("TargetComponent"));
 }
 
 void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-    LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance);
+    LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance); // t
     SetGenericTeamId(FGenericTeamId(TeamID));
 }
 
@@ -62,11 +71,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
     if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
     {
-        // 여기서 각 컴포넌트들의 SetupInputBinding()을 호출한다.
-        EnhancedInput->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-        EnhancedInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+        //EnhancedInput->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move); // m
+        //EnhancedInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Look); // m
         EnhancedInput->BindAction(IA_Attack, ETriggerEvent::Started, this, &APlayerCharacter::Attack);
-        EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &APlayerCharacter::Dodge);
+        //EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &APlayerCharacter::Dodge); // m
         EnhancedInput->BindAction(IA_Skill1, ETriggerEvent::Started, this, &APlayerCharacter::UseFireball);
         EnhancedInput->BindAction(IA_Skill2, ETriggerEvent::Started, this, &APlayerCharacter::UseIceBlast);
         EnhancedInput->BindAction(IA_LockOn, ETriggerEvent::Started, this, &APlayerCharacter::ToggleLockOn);
@@ -76,6 +84,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         EnhancedInput->BindAction(IA_Skill_Q, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
         EnhancedInput->BindAction(IA_Skill_E, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
         EnhancedInput->BindAction(IA_Skill_R, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
+
+        // 여기서 각 컴포넌트들의 SetupInputBinding()을 호출한다.
+        MoveCom->SetupInputBinding(EnhancedInput);
+        AttackCom->SetupInputBinding(EnhancedInput);
+        TargetCom->SetupInputBinding(EnhancedInput);
     }
 }
 
@@ -123,7 +136,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
     CachedController = Cast<ARogueheartPlayerController>(NewController);
 }
 
-void APlayerCharacter::Move(const FInputActionValue& Value) //
+/*void APlayerCharacter::Move(const FInputActionValue& Value) // m
 {
     if (!CanAct(EActionType::Move))
         return;
@@ -145,9 +158,9 @@ void APlayerCharacter::Move(const FInputActionValue& Value) //
 
     AddMovementInput(ForwardDirection, MovementVector2D.X);
     AddMovementInput(RightDirection, MovementVector2D.Y);
-}
+}*/
 
-void APlayerCharacter::Look(const FInputActionValue& Value) //
+/*void APlayerCharacter::Look(const FInputActionValue& Value) // m
 {
     if (IsValid(LockOnTarget)) // bool을 반환하는 public 함수로 변경.
         return;
@@ -158,7 +171,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value) //
 
     AddControllerYawInput(LookAxis.X);
     AddControllerPitchInput(LookAxis.Y);
-}
+}*/
 
 void APlayerCharacter::Attack(const FInputActionValue& Value) //
 {
@@ -231,7 +244,7 @@ void APlayerCharacter::RestoreLockOnIfNeeded() //
     PrevLockOnTarget = nullptr;
 }
 
-void APlayerCharacter::Dodge(const FInputActionValue& Value) //
+/*void APlayerCharacter::Dodge(const FInputActionValue& Value) // m
 {
     // if문의 첫번째는 현재 방향키를 눌렀느냐이다. 사실 이 부분은 뒤로 물러나는 행동이 발동하여야 한다.
     // 구현할 것인가...
@@ -261,7 +274,7 @@ void APlayerCharacter::Dodge(const FInputActionValue& Value) //
         LockOnTarget = nullptr;
         SetLockOnState(false);
     }
-}
+}*/
 
 void APlayerCharacter::UseFireball(const FInputActionValue& Value)
 {

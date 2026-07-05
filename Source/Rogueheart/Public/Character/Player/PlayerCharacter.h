@@ -76,10 +76,10 @@ public:
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
-    void Move(const struct FInputActionValue& Value); //
-    void Look(const struct FInputActionValue& Value); //
+    //void Move(const struct FInputActionValue& Value); // m
+    //void Look(const struct FInputActionValue& Value); // m
     void Attack(const struct FInputActionValue& Value); //
-    void Dodge(const struct FInputActionValue& Value); //
+    //void Dodge(const struct FInputActionValue& Value); // m
     UFUNCTION()
     void UseFireball(const struct FInputActionValue& Value);
     UFUNCTION()
@@ -233,4 +233,13 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "SkillComponent")
     class USkillBaseComponent* SkillBaseCom = nullptr;
+
+    UPROPERTY(VisibleAnywhere, Category = "MoveComponent")
+    class UMoveComponent* MoveCom = nullptr;
+
+    UPROPERTY(VisibleAnywhere, Category = "AttackComponent")
+    class UAttackComponent* AttackCom = nullptr;
+
+    UPROPERTY(VisibleAnywhere, Category = "TargetComponent")
+    class UTargetComponent* TargetCom = nullptr;
 };
