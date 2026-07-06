@@ -49,7 +49,7 @@ void UPlayerBaseComponent::RestoreLockOnIfNeeded() //
     PrevLockOnTarget = nullptr;
 }
 
-bool UPlayerBaseComponent::HasLockTarget() const
+bool UPlayerBaseComponent::HasLockTarget() const //
 {
     return LockOnTarget == nullptr ? false : true;
 }

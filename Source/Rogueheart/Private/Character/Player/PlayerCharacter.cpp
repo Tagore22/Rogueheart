@@ -173,7 +173,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
     AddControllerPitchInput(LookAxis.Y);
 }*/
 
-void APlayerCharacter::Attack(const FInputActionValue& Value) //
+void APlayerCharacter::Attack(const FInputActionValue& Value) // a
 {
     if (!CanAct(EActionType::Attack) || CurStamina <= 0.f) // 스테미나 값을 반환하는 public 함수를 사용.
         return;
@@ -194,7 +194,7 @@ void APlayerCharacter::Attack(const FInputActionValue& Value) //
     }
 } 
 
-void APlayerCharacter::PlayComboMontage() //
+void APlayerCharacter::PlayComboMontage() // a
 {
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
     /*if (!Anim || !AMT_Attack)
@@ -212,9 +212,7 @@ void APlayerCharacter::PlayComboMontage() //
 
 // 공격 애니메이션의 재생이 끝나면 호출되는 노티파이인
 // UPlayerAnimInstance::AnimNotify_EndAttack()에서 이 함수를 호출한다.
-
-// ------------------------------------------------------------- 컴포넌트 옮기기. 여기부터.
-void APlayerCharacter::OnAttackEnd() //
+void APlayerCharacter::OnAttackEnd() // a
 {
     if (bInputCombo && CurrentCombo < MaxCombo)
     {
@@ -234,7 +232,7 @@ void APlayerCharacter::OnAttackEnd() //
 
 // PlayerBaseComponent로 옮겨졌다. PlayerBaseComponent의 RestoreLockOnIfNeeded()를 
 // 호출하는 래핑 함수로 변하였다. 애니메이션의 노티파이에서 호출하게 된다.
-void APlayerCharacter::RestoreLockOnIfNeeded() // 
+void APlayerCharacter::RestoreLockOnIfNeeded() // t
 {
     if (!IsValid(PrevLockOnTarget))
         return;
@@ -322,7 +320,7 @@ bool APlayerCharacter::CanAct(EActionType DesiredAction) const
     return false;
 }
 
-void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value) // 
+void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value) // t 
 {
     if (!CanAct(EActionType::LockOn))
         return;
@@ -428,7 +426,7 @@ void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value) //
     return nullptr;
 }*/
 
-AEnemyBase* APlayerCharacter::FindNearestTarget() //
+AEnemyBase* APlayerCharacter::FindNearestTarget() // t
 {
     // 1단계: 주변 적들 긁어모으기 (Wide Overlap)
     FVector CameraLocation = FollowCamera->GetComponentLocation();
@@ -507,7 +505,7 @@ AEnemyBase* APlayerCharacter::FindNearestTarget() //
     return nullptr;
 }
 
-void APlayerCharacter::UpdateLockOnRotation(float DeltaTime) // 
+void APlayerCharacter::UpdateLockOnRotation(float DeltaTime) // t
 {
     if (!IsValid(LockOnTarget)) 
         return;
@@ -527,7 +525,7 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime) //
     CachedController->SetControlRotation(NewCameraRot);
 }
 
-AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft) //
+AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft) // t
 {
     if (!IsValid(LockOnTarget)) 
         return nullptr;
@@ -629,7 +627,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft) //
     }
 }*/
 
-void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value) //
+void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value) // t
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -658,7 +656,7 @@ void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value) //
     }
 }*/
 
-void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value) //
+void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value) // t
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -671,7 +669,7 @@ void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value) //
     SetLockOnTarget(NewTarget);
 }
 
-void APlayerCharacter::CheckLockOnDistance() //
+void APlayerCharacter::CheckLockOnDistance() // t
 {
     if (!IsValid(LockOnTarget))
         return;
@@ -699,7 +697,7 @@ FGenericTeamId APlayerCharacter::GetGenericTeamId() const
 }
 
 // 타겟팅 컴포넌트로 옮길 것.
-void APlayerCharacter::ClearLockOn() //
+void APlayerCharacter::ClearLockOn() // t
 {
     if (!IsValid(LockOnTarget))
         return;
@@ -715,7 +713,7 @@ void APlayerCharacter::ClearLockOn() //
 
 // 타겟팅 컴포넌트로 옮길 것.
 // 앞에 owner-> 이런 형식으로 컴포넌트에서 플레이어를 조작.
-void APlayerCharacter::SetLockOnState(bool bIsLockOn) //
+void APlayerCharacter::SetLockOnState(bool bIsLockOn) // p
 {
     if (bIsLockOn)
     {
@@ -780,22 +778,22 @@ void APlayerCharacter::ToggleInventory(const FInputActionValue& Value)
 }
 
 // 체력, 스테미나 등은 상태와 마찬가지로 이곳에서 관리한다.
-float APlayerCharacter::GetMaxHP() const
+float APlayerCharacter::GetMaxHP() const // s
 {
     return MaxHP;
 }
 
-float APlayerCharacter::GetCurHP() const
+float APlayerCharacter::GetCurHP() const // s
 {
     return CurHP;
 }
 
-float APlayerCharacter::GetMaxStamina() const
+float APlayerCharacter::GetMaxStamina() const // s
 {
     return MaxStamina;
 }
 
-float APlayerCharacter::GetCurStamina() const
+float APlayerCharacter::GetCurStamina() const // s
 {
     return CurStamina;
 }
@@ -807,7 +805,7 @@ void APlayerCharacter::HealPlayer(float PlusHP)
     UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
 }
 
-void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) //
+void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) // t
 {
     if (!IsValid(NewTarget))
         return;
@@ -880,14 +878,14 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
     return ActualDamage;
 }
 
-bool APlayerCharacter::HasLockTarget() const
+bool APlayerCharacter::HasLockTarget() const // p
 {
     return LockOnTarget == nullptr ? false : true;
 
     // PlayerBaseComponent의 래핑함수.
 }
 
-void APlayerCharacter::SetCanNextComboTrue() //
+void APlayerCharacter::SetCanNextComboTrue() // a
 {
     bCanNextCombo = true;
 
