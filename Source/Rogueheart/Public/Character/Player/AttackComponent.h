@@ -18,24 +18,22 @@ public:
 
 	void SetCanNextComboTrue(); //
 protected:
-	void Attack(const struct FInputActionValue& Value);
+	virtual void BeginPlay() override;
+
+	void Attack(const struct FInputActionValue& Value); // 
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* IA_Attack; //
 
-	UPROPERTY(BlueprintReadWrite, Category = "Combat")
-	int32 CurrentCombo = 0; //
-
-	UPROPERTY(BlueprintReadWrite, Category = "Combat")
-	bool bInputCombo = false; //
-
-	UPROPERTY(BlueprintReadWrite, Category = "Combat")
-	bool bCanNextCombo = false; //
-
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	TArray<class UAnimMontage*> AttackMontages; //
 
-	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-	int32 MaxCombo = 3; //
+	int32 CurrentCombo = 0; //
+
+	bool bInputCombo = false; //
+
+	bool bCanNextCombo = false; //
+
+	int32 MaxCombo; //
 };

@@ -25,7 +25,7 @@ void UAttackComponent::PlayComboMontage() //
 
 void UAttackComponent::OnAttackEnd()
 {
-    if (bInputCombo && CurrentCombo < MaxCombo)
+    if (bInputCombo && CurrentCombo <= MaxCombo)
     {
         ++CurrentCombo;
         PlayComboMontage();
@@ -42,6 +42,13 @@ void UAttackComponent::OnAttackEnd()
 void UAttackComponent::SetCanNextComboTrue() //
 {
     bCanNextCombo = true;
+}
+
+void UAttackComponent::BeginPlay() //
+{
+    Super::BeginPlay();
+
+    MaxCombo = AttackMontages.Num();
 }
 
 void UAttackComponent::Attack(const FInputActionValue& Value) //

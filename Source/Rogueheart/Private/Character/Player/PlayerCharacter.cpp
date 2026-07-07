@@ -73,13 +73,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     {
         //EnhancedInput->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move); // m
         //EnhancedInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Look); // m
-        EnhancedInput->BindAction(IA_Attack, ETriggerEvent::Started, this, &APlayerCharacter::Attack);
+        //EnhancedInput->BindAction(IA_Attack, ETriggerEvent::Started, this, &APlayerCharacter::Attack); // a
         //EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &APlayerCharacter::Dodge); // m
         EnhancedInput->BindAction(IA_Skill1, ETriggerEvent::Started, this, &APlayerCharacter::UseFireball);
         EnhancedInput->BindAction(IA_Skill2, ETriggerEvent::Started, this, &APlayerCharacter::UseIceBlast);
-        EnhancedInput->BindAction(IA_LockOn, ETriggerEvent::Started, this, &APlayerCharacter::ToggleLockOn);
-        EnhancedInput->BindAction(IA_SwitchTargetLeft, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetLeft);
-        EnhancedInput->BindAction(IA_SwitchTargetRight, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetRight);
+        EnhancedInput->BindAction(IA_LockOn, ETriggerEvent::Started, this, &APlayerCharacter::ToggleLockOn); // t
+        EnhancedInput->BindAction(IA_SwitchTargetLeft, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetLeft); // t
+        EnhancedInput->BindAction(IA_SwitchTargetRight, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetRight); // t
         EnhancedInput->BindAction(IA_InventoryOnOff, ETriggerEvent::Started, this, &APlayerCharacter::ToggleInventory);
         EnhancedInput->BindAction(IA_Skill_Q, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
         EnhancedInput->BindAction(IA_Skill_E, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
@@ -173,7 +173,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
     AddControllerPitchInput(LookAxis.Y);
 }*/
 
-void APlayerCharacter::Attack(const FInputActionValue& Value) // a
+/*void APlayerCharacter::Attack(const FInputActionValue& Value) // a
 {
     if (!CanAct(EActionType::Attack) || CurStamina <= 0.f) // 스테미나 값을 반환하는 public 함수를 사용.
         return;
@@ -192,29 +192,23 @@ void APlayerCharacter::Attack(const FInputActionValue& Value) // a
     {
         bInputCombo = true;
     }
-} 
+}*/ 
 
-void APlayerCharacter::PlayComboMontage() // a
+/*void APlayerCharacter::PlayComboMontage() // a
 {
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-    /*if (!Anim || !AMT_Attack)
-        return;
 
-    Anim->Montage_Play(AMT_Attack);
-    Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Combo%d"), CurrentCombo)), AMT_Attack);*/
-
-    //
     if (!Anim || AttackMontages.Num() == 0)
         return;
 
     Anim->Montage_Play(AttackMontages[CurrentCombo - 1]);
-}
+}*/
 
 // 공격 애니메이션의 재생이 끝나면 호출되는 노티파이인
 // UPlayerAnimInstance::AnimNotify_EndAttack()에서 이 함수를 호출한다.
 void APlayerCharacter::OnAttackEnd() // a
 {
-    if (bInputCombo && CurrentCombo < MaxCombo)
+    /*if (bInputCombo && CurrentCombo < MaxCombo)
     {
         ++CurrentCombo;
         PlayComboMontage();
@@ -226,8 +220,9 @@ void APlayerCharacter::OnAttackEnd() // a
     }
     bInputCombo = false;
     bCanNextCombo = false;
-
+    */
     // AttackComponent의 함수를 호출하는 래핑함수로 변환.
+    AttackCom->OnAttackEnd();
 }
 
 // PlayerBaseComponent로 옮겨졌다. PlayerBaseComponent의 RestoreLockOnIfNeeded()를 
@@ -887,9 +882,10 @@ bool APlayerCharacter::HasLockTarget() const // p
 
 void APlayerCharacter::SetCanNextComboTrue() // a
 {
-    bCanNextCombo = true;
+    //bCanNextCombo = true;
 
     // AttackComponent의 래핑함수.
+    AttackCom->SetCanNextComboTrue();
 }
 
 void APlayerCharacter::ConsumeStamina(const float Cost)
