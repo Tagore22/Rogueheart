@@ -51,16 +51,17 @@ public:
     bool CanAct(EActionType DesiredAction) const;
     // bool IsDodging() const { return CurrentState == EPlayerState::Dodging; }
     bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; }
+    class ARogueheartPlayerController* GetCachedController() const { return CachedController; }
 
     //void PlayComboMontage(); // a
     void OnAttackEnd(); // a. 래핑함수.
-    void RestoreLockOnIfNeeded(); // t
+    void RestoreLockOnIfNeeded(); // t. 래핑함수.
     void HealPlayer(float PlusHP); // s
     void SetEquippedWeapon(class AWeaponBase* CurWeapon);
     void SetWeaponVisible(bool IsVisible);
-    bool HasLockTarget() const; // p
+    bool HasLockTarget() const; // p. 래핑함수.
     void SetCanNextComboTrue(); // a. 래핑함수.
-    void ClearLockOn(); // t
+    //void ClearLockOn(); // t
     void OnActStart();
     void UseSkill(const struct FInputActionInstance& Instance);
 
@@ -84,17 +85,17 @@ protected:
     void UseFireball(const struct FInputActionValue& Value);
     UFUNCTION()
     void UseIceBlast(const struct FInputActionValue& Value);
-    void ToggleLockOn(const struct FInputActionValue& Value); // t
-    void SwitchTargetLeft(const struct FInputActionValue& Value); // t
-    void SwitchTargetRight(const struct FInputActionValue& Value); // t
+    //void ToggleLockOn(const struct FInputActionValue& Value); // t
+    //void SwitchTargetLeft(const struct FInputActionValue& Value); // t
+    //void SwitchTargetRight(const struct FInputActionValue& Value); // t
     void ToggleInventory(const struct FInputActionValue& Value);
-    void SetLockOnTarget(class AEnemyBase* NewTarget); // t
+    //void SetLockOnTarget(class AEnemyBase* NewTarget); // t
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-    class AEnemyBase* FindNearestTarget(); // t
-    void UpdateLockOnRotation(float DeltaTime); // t
-    class AEnemyBase* SwitchTarget(bool bLeft); // t
-    void CheckLockOnDistance(); // t
+    //class AEnemyBase* FindNearestTarget(); // t
+    //void UpdateLockOnRotation(float DeltaTime); // t
+    //class AEnemyBase* SwitchTarget(bool bLeft); // t
+    //void CheckLockOnDistance(); // t
 
 protected:
     // 잘 정리해서 public이 아니라 private쪽으로 넘길 것. meta = AllowPrivateAccess는 BP에서 접근하는 게 아니면 쓸모가 없다.
@@ -123,14 +124,14 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputAction* IA_Skill2;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_LockOn; // t
+    //UPROPERTY(EditDefaultsOnly, Category = "Input")
+    //class UInputAction* IA_LockOn; // t
 
-    UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_SwitchTargetLeft; // t
+    //UPROPERTY(EditDefaultsOnly, Category = "Input")
+    //class UInputAction* IA_SwitchTargetLeft; // t
 
-    UPROPERTY(EditDefaultsOnly, Category = "Input")
-    class UInputAction* IA_SwitchTargetRight; // t
+    //UPROPERTY(EditDefaultsOnly, Category = "Input")
+    //class UInputAction* IA_SwitchTargetRight; // t
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputAction* IA_InventoryOnOff;
@@ -165,8 +166,8 @@ protected:
     //UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
     //int32 MaxCombo = 3; // a
 
-    UPROPERTY(EditDefaultsOnly, Category = "Combat")
-    int32 InterpSpeed = 5; // t
+    //UPROPERTY(EditDefaultsOnly, Category = "Combat")
+    //int32 InterpSpeed = 5; // t
 
     //UPROPERTY(BlueprintReadWrite, Category = "Combat")
     //bool bInputCombo = false; // a
@@ -174,22 +175,22 @@ protected:
     //UPROPERTY(BlueprintReadWrite, Category = "Combat")
     //bool bCanNextCombo = false; // a
 
-    UPROPERTY(VisibleAnywhere, Category = "Targeting")  
-    class AEnemyBase* LockOnTarget = nullptr; // p
+    //UPROPERTY(VisibleAnywhere, Category = "Targeting")  
+    //class AEnemyBase* LockOnTarget = nullptr; // p
 
-    UPROPERTY(VisibleAnywhere, Category = "Targeting")
-    class AEnemyBase* PrevLockOnTarget = nullptr; // p
+    //UPROPERTY(VisibleAnywhere, Category = "Targeting")
+    //class AEnemyBase* PrevLockOnTarget = nullptr; // p
 
-    UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-    float LockOnRange = 1200.f; // t
+    //UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+    //float LockOnRange = 1200.f; // t
 
-    UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-    float LockOnBreakDistance = 1500.f; // t
+    //UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+    //float LockOnBreakDistance = 1500.f; // t
 
     UPROPERTY(VisibleAnywhere, Category = "SweepComponent")
     class UWeaponSweepComponent* SweepCom = nullptr;
 
-    float LockOnBreakDistanceSq = 0.f; // t
+    //float LockOnBreakDistanceSq = 0.f; // t
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
@@ -200,14 +201,14 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     uint8 TeamID = 1;
 
-    void SetLockOnState(bool bIsLockOn); // p
+    //void SetLockOnState(bool bIsLockOn); // p
 
     void ConsumeStamina(const float Cost);
 
     bool CanPlusStamina() const;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-    float TargetingAngle = 0.5f; // t
+    //UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+    //float TargetingAngle = 0.5f; // t
     // StatSubsystem으로 옮겨야 하는 변수들.
     UPROPERTY(EditDefaultsOnly, Category = "HP")
     float MaxHP = 100.f; // s
@@ -226,7 +227,7 @@ protected:
     FOnHPChanged OnHPChanged;
 
     UPROPERTY()
-    class ARogueheartPlayerController* CachedController = nullptr; // 
+    class ARogueheartPlayerController* CachedController = nullptr; // p
 
     UPROPERTY()
     class AWeaponBase* EquippedWeapon = nullptr;

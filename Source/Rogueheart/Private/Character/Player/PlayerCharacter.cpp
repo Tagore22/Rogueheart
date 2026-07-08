@@ -39,7 +39,7 @@ APlayerCharacter::APlayerCharacter()
     bUseControllerRotationYaw = false;
     bUseControllerRotationRoll = false;
 
-    SetLockOnState(false);
+    //SetLockOnState(false);
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -61,7 +61,7 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-    LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance); // t
+    // LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance); // t
     SetGenericTeamId(FGenericTeamId(TeamID));
 }
 
@@ -77,9 +77,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         //EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &APlayerCharacter::Dodge); // m
         EnhancedInput->BindAction(IA_Skill1, ETriggerEvent::Started, this, &APlayerCharacter::UseFireball);
         EnhancedInput->BindAction(IA_Skill2, ETriggerEvent::Started, this, &APlayerCharacter::UseIceBlast);
-        EnhancedInput->BindAction(IA_LockOn, ETriggerEvent::Started, this, &APlayerCharacter::ToggleLockOn); // t
-        EnhancedInput->BindAction(IA_SwitchTargetLeft, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetLeft); // t
-        EnhancedInput->BindAction(IA_SwitchTargetRight, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetRight); // t
+        //EnhancedInput->BindAction(IA_LockOn, ETriggerEvent::Started, this, &APlayerCharacter::ToggleLockOn); // t
+        //EnhancedInput->BindAction(IA_SwitchTargetLeft, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetLeft); // t
+        //EnhancedInput->BindAction(IA_SwitchTargetRight, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTargetRight); // t
         EnhancedInput->BindAction(IA_InventoryOnOff, ETriggerEvent::Started, this, &APlayerCharacter::ToggleInventory);
         EnhancedInput->BindAction(IA_Skill_Q, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
         EnhancedInput->BindAction(IA_Skill_E, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
@@ -110,7 +110,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
     // 타겟팅 컴포넌트쪽으로. 그 안에 타겟팅 된 적의 포인터를 가지고 있으며 지금 이 검사 역시
     // 타겟팅 컴포넌트의 Tick에서 실행하여 플레이어의 움직임을 조작한다.
-    if (IsValid(LockOnTarget))                          
+    /*if (IsValid(LockOnTarget))
     {
         if (LockOnTarget->GetCurHP() <= 0.f)
         {
@@ -121,9 +121,9 @@ void APlayerCharacter::Tick(float DeltaTime)
             UpdateLockOnRotation(DeltaTime);
             CheckLockOnDistance();
         }
-    }
+    }*/
 
-    if (CanPlusStamina())
+    if (CanPlusStamina()) // StatComponent에서 처리할 부분.
     {
         ConsumeStamina(-PlusStamina);
     }
@@ -229,12 +229,14 @@ void APlayerCharacter::OnAttackEnd() // a
 // 호출하는 래핑 함수로 변하였다. 애니메이션의 노티파이에서 호출하게 된다.
 void APlayerCharacter::RestoreLockOnIfNeeded() // t
 {
-    if (!IsValid(PrevLockOnTarget))
+    /*if (!IsValid(PrevLockOnTarget))
         return;
     
     LockOnTarget = PrevLockOnTarget;
     SetLockOnState(true);
-    PrevLockOnTarget = nullptr;
+    PrevLockOnTarget = nullptr;*/
+
+    TargetCom->RestoreLockOnIfNeeded();
 }
 
 /*void APlayerCharacter::Dodge(const FInputActionValue& Value) // m
@@ -315,7 +317,7 @@ bool APlayerCharacter::CanAct(EActionType DesiredAction) const
     return false;
 }
 
-void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value) // t 
+/*void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value) // t 
 {
     if (!CanAct(EActionType::LockOn))
         return;
@@ -333,7 +335,7 @@ void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value) // t
             SetLockOnTarget(NewTarget);
         }
     }
-}
+}*/
 
 /*AEnemyBase* APlayerCharacter::FindNearestTarget()
 {
@@ -421,7 +423,7 @@ void APlayerCharacter::ToggleLockOn(const FInputActionValue& Value) // t
     return nullptr;
 }*/
 
-AEnemyBase* APlayerCharacter::FindNearestTarget() // t
+/*AEnemyBase* APlayerCharacter::FindNearestTarget() // t
 {
     // 1단계: 주변 적들 긁어모으기 (Wide Overlap)
     FVector CameraLocation = FollowCamera->GetComponentLocation();
@@ -498,9 +500,9 @@ AEnemyBase* APlayerCharacter::FindNearestTarget() // t
         }
     }
     return nullptr;
-}
+}*/
 
-void APlayerCharacter::UpdateLockOnRotation(float DeltaTime) // t
+/*void APlayerCharacter::UpdateLockOnRotation(float DeltaTime) // t
 {
     if (!IsValid(LockOnTarget)) 
         return;
@@ -518,9 +520,9 @@ void APlayerCharacter::UpdateLockOnRotation(float DeltaTime) // t
 
     FRotator NewCameraRot = FMath::RInterpTo(GetControlRotation(), CameraDir.Rotation(), DeltaTime, InterpSpeed);
     CachedController->SetControlRotation(NewCameraRot);
-}
+}*/
 
-AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft) // t
+/*AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft) // t
 {
     if (!IsValid(LockOnTarget)) 
         return nullptr;
@@ -589,7 +591,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft) // t
         return BestTarget; // 리턴 후 호출한 곳에서 LockOnTarget = NewTarget; 을 해주겠죠?
     }
     return nullptr;
-}
+}*/
 
 
 /*void APlayerCharacter::SwitchTargetLeft()
@@ -622,7 +624,7 @@ AEnemyBase* APlayerCharacter::SwitchTarget(bool bLeft) // t
     }
 }*/
 
-void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value) // t
+/*void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value) // t
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -633,7 +635,7 @@ void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value) // t
 
     ClearLockOn();
     SetLockOnTarget(Newtarget);
-}
+}*/
 
 /*void APlayerCharacter::SwitchTargetRight()
 {
@@ -651,7 +653,7 @@ void APlayerCharacter::SwitchTargetLeft(const FInputActionValue& Value) // t
     }
 }*/
 
-void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value) // t
+/*void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value) // t
 {
     if (!CanAct(EActionType::LockOn) || !IsValid(LockOnTarget))
         return;
@@ -662,9 +664,9 @@ void APlayerCharacter::SwitchTargetRight(const FInputActionValue& Value) // t
 
     ClearLockOn();
     SetLockOnTarget(NewTarget);
-}
+}*/
 
-void APlayerCharacter::CheckLockOnDistance() // t
+/*void APlayerCharacter::CheckLockOnDistance() // t
 {
     if (!IsValid(LockOnTarget))
         return;
@@ -676,14 +678,13 @@ void APlayerCharacter::CheckLockOnDistance() // t
     }
     // 2. (추가 제안) 적이 죽었는지도 여기서 같이 체크하면 좋습니다.
     // 만약 Enemy 클래스에 IsDead() 같은 함수가 있다면:
-    /*
-    if (LockOnTarget->IsDead())
-    {
-        ClearLockOn();
-    }
-    */
+    
+    //if (LockOnTarget->IsDead())
+    //{
+    //    ClearLockOn();
+    //}
     // 위 코드를 추가할 시 따로 if문을 만들지 말고 or 연산으로 위 if문에 추가할 것.
-}
+}*/
 
 // 아마 안쓸듯.
 FGenericTeamId APlayerCharacter::GetGenericTeamId() const
@@ -691,8 +692,7 @@ FGenericTeamId APlayerCharacter::GetGenericTeamId() const
     return FGenericTeamId(TeamID);
 }
 
-// 타겟팅 컴포넌트로 옮길 것.
-void APlayerCharacter::ClearLockOn() // t
+/*void APlayerCharacter::ClearLockOn() // t
 {
     if (!IsValid(LockOnTarget))
         return;
@@ -720,7 +720,7 @@ void APlayerCharacter::SetLockOnState(bool bIsLockOn) // p
         GetCharacterMovement()->bOrientRotationToMovement = true;
         bUseControllerRotationYaw = false;
     }
-}
+}*/
 
 /*void APlayerCharacter::ToggleInventory(const struct FInputActionValue& Value)
 {
@@ -800,7 +800,7 @@ void APlayerCharacter::HealPlayer(float PlusHP)
     UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
 }
 
-void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) // t
+/*void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) // t
 {
     if (!IsValid(NewTarget))
         return;
@@ -810,7 +810,7 @@ void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) // t
     LockOnTarget->ShowHPBarWidget(true);
     LockOnTarget->SetIsTargeted(true);
     SetLockOnState(true);
-}
+}*/
 
 void APlayerCharacter::SetEquippedWeapon(AWeaponBase* CurWeapon)
 {
@@ -875,9 +875,10 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 bool APlayerCharacter::HasLockTarget() const // p
 {
-    return LockOnTarget == nullptr ? false : true;
+    //return LockOnTarget == nullptr ? false : true;
 
     // PlayerBaseComponent의 래핑함수.
+    return TargetCom->HasLockTarget();
 }
 
 void APlayerCharacter::SetCanNextComboTrue() // a

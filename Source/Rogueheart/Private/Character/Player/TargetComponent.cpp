@@ -32,6 +32,7 @@ void UTargetComponent::UpdateLockOnRotation(float DeltaTime)
     FRotator NewActorRot = FMath::RInterpTo(Player->GetActorRotation(), TargetDir.Rotation(), DeltaTime, InterpSpeed);
     Player->SetActorRotation(NewActorRot);
 
+    ARogueheartPlayerController* CachedController = Player->GetCachedController();
     if (!CachedController)
         return;
 
@@ -208,7 +209,7 @@ void UTargetComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance);
+    LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance); //
 }
 
 void UTargetComponent::TargetConditionCheck(float DeltaTime)

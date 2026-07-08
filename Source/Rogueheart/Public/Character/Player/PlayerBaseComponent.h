@@ -43,9 +43,6 @@ protected:
 	class APlayerCharacter* Player = nullptr; //
 
 	UPROPERTY()
-	class ARogueheartPlayerController* CachedController = nullptr; //
-
-	UPROPERTY()
 	class AEnemyBase* LockOnTarget = nullptr; // 
 
 	UPROPERTY()

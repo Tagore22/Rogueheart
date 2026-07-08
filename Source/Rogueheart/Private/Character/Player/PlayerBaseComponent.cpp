@@ -10,6 +10,8 @@ void UPlayerBaseComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Player = Cast<APlayerCharacter>(GetOwner());
+
+    SetLockOnState(false);
 }
 
 void UPlayerBaseComponent::SetLockOnState(bool bIsLockOn)
