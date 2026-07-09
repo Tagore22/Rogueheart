@@ -355,7 +355,7 @@ void UTargetComponent::Dodge(const FInputActionValue& Value) //
 
     Player->SetWeaponVisible(true);
 
-    const FVector2D MovementVector2D = Value.Get<FVector2D>();
+    /*const FVector2D MovementVector2D = Value.Get<FVector2D>();
     FVector LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
     // 구르기 이전 해당 방향으로 액터를 회전. 후에 부자연스럽다면 삭제할 것.
     if (!LastMoveInput.IsNearlyZero())
@@ -364,10 +364,7 @@ void UTargetComponent::Dodge(const FInputActionValue& Value) //
         FQuat ControlQuat = ControlRot.Quaternion();
         FVector DodgeDir = ControlQuat.RotateVector(LastMoveInput);
         Player->SetActorRotation(DodgeDir.Rotation());
-    }
-
-    Player->SetPlayerState(EPlayerState::Dodging);
-    Anim->Montage_Play(AMT_Dodge);
+    }*/
 
     if (IsValid(LockOnTarget))
     {
@@ -375,6 +372,9 @@ void UTargetComponent::Dodge(const FInputActionValue& Value) //
         LockOnTarget = nullptr;
         SetLockOnState(false);
     }
+
+    Player->SetPlayerState(EPlayerState::Dodging);
+    Anim->Montage_Play(AMT_Dodge);
 }
 
 void UTargetComponent::SetLockOnState(bool bIsLockOn)
