@@ -27,24 +27,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	virtual void SetLockOnState(bool bIsLockOn); //
-
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void SetupInputBinding(class UEnhancedInputComponent* EnhancedInput); // 자체 함수.
-
-	virtual void RestoreLockOnIfNeeded(); //
-	 
-	virtual bool HasLockTarget() const; //
 protected:
 	UPROPERTY()
 	class APlayerCharacter* Player = nullptr; //
-
-	UPROPERTY()
-	class AEnemyBase* LockOnTarget = nullptr; // 
-
-	UPROPERTY()
-	class AEnemyBase* PrevLockOnTarget = nullptr; //
 };

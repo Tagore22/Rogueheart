@@ -800,7 +800,7 @@ void APlayerCharacter::HealPlayer(float PlusHP)
     UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
 }
 
-/*void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) // t
+/*void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) // t 
 {
     if (!IsValid(NewTarget))
         return;
@@ -809,7 +809,7 @@ void APlayerCharacter::HealPlayer(float PlusHP)
     LockOnTarget->ShowTargetWidget(true);
     LockOnTarget->ShowHPBarWidget(true);
     LockOnTarget->SetIsTargeted(true);
-    SetLockOnState(true);
+    SetLockOnState(true); 
 }*/
 
 void APlayerCharacter::SetEquippedWeapon(AWeaponBase* CurWeapon)

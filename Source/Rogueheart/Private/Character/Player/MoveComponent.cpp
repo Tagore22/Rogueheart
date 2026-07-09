@@ -5,8 +5,8 @@ void UMoveComponent::SetupInputBinding(UEnhancedInputComponent* EnhancedInput)
 	Super::SetupInputBinding(EnhancedInput);
 
     EnhancedInput->BindAction(IA_Move, ETriggerEvent::Triggered, this, &UMoveComponent::Move);
-    EnhancedInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &UMoveComponent::Look);
-    EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &UMoveComponent::Dodge);
+    //EnhancedInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &UMoveComponent::Look);
+    //EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &UMoveComponent::Dodge);
 }
 
 void UMoveComponent::Move(const FInputActionValue& Value) //
@@ -21,7 +21,7 @@ void UMoveComponent::Move(const FInputActionValue& Value) //
     if (MovementVector2D.IsNearlyZero())
         return;
 
-    LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
+    //LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
 
     const FRotator Rotation = Player->GetControlRotation();
     const FRotationMatrix YawMatrix = FRotator(0.f, Rotation.Yaw, 0.f);
@@ -33,7 +33,7 @@ void UMoveComponent::Move(const FInputActionValue& Value) //
     Player->AddMovementInput(RightDirection, MovementVector2D.Y);
 }
 
-void UMoveComponent::Look(const FInputActionValue& Value) //
+/*void UMoveComponent::Look(const FInputActionValue& Value) //
 {
     if (IsValid(LockOnTarget)) // LockOnTarget¿ª PlayerBaseComponent∑Œ ø≈±Ë.
         return;
@@ -76,4 +76,4 @@ void UMoveComponent::Dodge(const FInputActionValue& Value) //
         LockOnTarget = nullptr;
         SetLockOnState(false);
     }
-}
+}*/

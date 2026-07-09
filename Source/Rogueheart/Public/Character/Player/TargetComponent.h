@@ -22,6 +22,10 @@ public:
 
 	class AEnemyBase* SwitchTarget(bool bLeft); //
 
+	virtual void RestoreLockOnIfNeeded(); //
+
+	virtual bool HasLockTarget() const; //
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -37,6 +41,11 @@ protected:
 
 	void CheckLockOnDistance(); //
 
+	void Look(const struct FInputActionValue& Value); //
+
+	void Dodge(const struct FInputActionValue& Value); //
+
+	virtual void SetLockOnState(bool bIsLockOn); //
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	int32 InterpSpeed = 5; //
@@ -52,6 +61,12 @@ protected:
 
 	float LockOnBreakDistanceSq = 0.f; //
 
+	UPROPERTY()
+	class AEnemyBase* LockOnTarget = nullptr; // 
+
+	UPROPERTY()
+	class AEnemyBase* PrevLockOnTarget = nullptr; //
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* IA_LockOn; //
 
@@ -60,4 +75,13 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* IA_SwitchTargetRight; //
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* IA_Look; //
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* IA_Dodge; //
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
+	class UAnimMontage* AMT_Dodge; //
 };

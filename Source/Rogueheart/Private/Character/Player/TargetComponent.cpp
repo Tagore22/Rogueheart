@@ -10,6 +10,8 @@ void UTargetComponent::SetupInputBinding(UEnhancedInputComponent* EnhancedInput)
     EnhancedInput->BindAction(IA_LockOn, ETriggerEvent::Started, this, &UTargetComponent::ToggleLockOn);
     EnhancedInput->BindAction(IA_SwitchTargetLeft, ETriggerEvent::Started, this, &UTargetComponent::SwitchTargetLeft);
     EnhancedInput->BindAction(IA_SwitchTargetRight, ETriggerEvent::Started, this, &UTargetComponent::SwitchTargetRight);
+    EnhancedInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &UTargetComponent::Look);
+    EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &UTargetComponent::Dodge);
 }
 
 void UTargetComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -205,11 +207,31 @@ AEnemyBase* UTargetComponent::SwitchTarget(bool bLeft)
     return nullptr;
 }
 
+// Dodge 애니메이션의 재생이 끝나면 호출되는 노티파이인
+// UPlayerAnimInstance::AnimNotify_EndDodge()에서 이 함수를 호출한다.
+// 락온 상태에서 구르기 행동시에만 발동하여 PrevLockOnTarget의 처리를 담당한다.
+void UTargetComponent::RestoreLockOnIfNeeded() //
+{
+    if (!IsValid(PrevLockOnTarget))
+        return;
+
+    LockOnTarget = PrevLockOnTarget;
+    SetLockOnState(true);
+    PrevLockOnTarget = nullptr;
+}
+
+bool UTargetComponent::HasLockTarget() const //
+{
+    return LockOnTarget == nullptr ? false : true;
+}
+
 void UTargetComponent::BeginPlay()
 {
     Super::BeginPlay();
 
     LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance); //
+
+    SetLockOnState(false);
 }
 
 void UTargetComponent::TargetConditionCheck(float DeltaTime)
@@ -243,7 +265,7 @@ void UTargetComponent::ToggleLockOn(const FInputActionValue& Value)
         AEnemyBase* NewTarget = FindNearestTarget();
         if (IsValid(NewTarget))
         {
-            SetLockOnTarget(NewTarget);
+            SetLockOnTarget(NewTarget); 
         }
     }
 }
@@ -305,4 +327,68 @@ void UTargetComponent::CheckLockOnDistance() //
     }
     */
     // 위 코드를 추가할 시 따로 if문을 만들지 말고 or 연산으로 위 if문에 추가할 것.
+}
+
+void UTargetComponent::Look(const FInputActionValue& Value) //
+{
+    if (IsValid(LockOnTarget)) // LockOnTarget을 PlayerBaseComponent로 옮김.
+        return;
+
+    const FVector2D LookAxis = Value.Get<FVector2D>();
+    if (LookAxis.IsNearlyZero())
+        return;
+
+    Player->AddControllerYawInput(LookAxis.X);
+    Player->AddControllerPitchInput(LookAxis.Y);
+}
+
+void UTargetComponent::Dodge(const FInputActionValue& Value) //
+{
+    // if문의 첫번째는 현재 방향키를 눌렀느냐이다. 사실 이 부분은 뒤로 물러나는 행동이 발동하여야 한다.
+    // 구현할 것인가...
+    if (/*LastMoveInput.IsNearlyZero() || */!Player->CanAct(EActionType::Dodge) || Player->GetCurStamina() <= 0.f)
+        return;
+
+    UAnimInstance* Anim = Player->GetMesh()->GetAnimInstance();
+    if (!AMT_Dodge || !Anim)
+        return;
+
+    Player->SetWeaponVisible(true);
+
+    const FVector2D MovementVector2D = Value.Get<FVector2D>();
+    FVector LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
+    // 구르기 이전 해당 방향으로 액터를 회전. 후에 부자연스럽다면 삭제할 것.
+    if (!LastMoveInput.IsNearlyZero())
+    {
+        FRotator ControlRot = FRotator(0.f, Player->GetControlRotation().Yaw, 0.f);
+        FQuat ControlQuat = ControlRot.Quaternion();
+        FVector DodgeDir = ControlQuat.RotateVector(LastMoveInput);
+        Player->SetActorRotation(DodgeDir.Rotation());
+    }
+
+    Player->SetPlayerState(EPlayerState::Dodging);
+    Anim->Montage_Play(AMT_Dodge);
+
+    if (IsValid(LockOnTarget))
+    {
+        PrevLockOnTarget = LockOnTarget;
+        LockOnTarget = nullptr;
+        SetLockOnState(false);
+    }
+}
+
+void UTargetComponent::SetLockOnState(bool bIsLockOn)
+{
+    if (bIsLockOn)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Target Exist"));
+        Player->GetCharacterMovement()->bOrientRotationToMovement = false;
+        Player->bUseControllerRotationYaw = true;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Target No Exist"));
+        Player->GetCharacterMovement()->bOrientRotationToMovement = true;
+        Player->bUseControllerRotationYaw = false;
+    }
 }

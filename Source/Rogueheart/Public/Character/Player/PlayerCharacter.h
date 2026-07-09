@@ -64,6 +64,7 @@ public:
     //void ClearLockOn(); // t
     void OnActStart();
     void UseSkill(const struct FInputActionInstance& Instance);
+    // void SetLockOnTarget(class AEnemyBase* NewTarget);
 
     UFUNCTION(BlueprintCallable, BlueprintPure)
     float GetMaxHP() const; // s
@@ -89,7 +90,6 @@ protected:
     //void SwitchTargetLeft(const struct FInputActionValue& Value); // t
     //void SwitchTargetRight(const struct FInputActionValue& Value); // t
     void ToggleInventory(const struct FInputActionValue& Value);
-    //void SetLockOnTarget(class AEnemyBase* NewTarget); // t
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
     //class AEnemyBase* FindNearestTarget(); // t
@@ -176,10 +176,10 @@ protected:
     //bool bCanNextCombo = false; // a
 
     //UPROPERTY(VisibleAnywhere, Category = "Targeting")  
-    //class AEnemyBase* LockOnTarget = nullptr; // p
+    //class AEnemyBase* LockOnTarget = nullptr; // t
 
     //UPROPERTY(VisibleAnywhere, Category = "Targeting")
-    //class AEnemyBase* PrevLockOnTarget = nullptr; // p
+    //class AEnemyBase* PrevLockOnTarget = nullptr; // t
 
     //UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     //float LockOnRange = 1200.f; // t
