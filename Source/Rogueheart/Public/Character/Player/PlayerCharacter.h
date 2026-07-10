@@ -64,7 +64,7 @@ public:
     //void ClearLockOn(); // t
     void OnActStart();
     void UseSkill(const struct FInputActionInstance& Instance);
-    // void SetLockOnTarget(class AEnemyBase* NewTarget);
+    class UMoveComponent* GetMoveCom() const { return MoveCom; }
 
     UFUNCTION(BlueprintCallable, BlueprintPure)
     float GetMaxHP() const; // s

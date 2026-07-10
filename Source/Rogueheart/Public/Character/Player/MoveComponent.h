@@ -12,6 +12,7 @@ class ROGUEHEART_API UMoveComponent : public UPlayerBaseComponent
 public:
 	virtual void SetupInputBinding(UEnhancedInputComponent* EnhancedInput) override;
 	
+	FVector GetLastMoveInput() const { return LastMoveInput; }
 protected:
 	void Move(const struct FInputActionValue& Value); //
 
@@ -20,4 +21,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* IA_Move; //
+
+	FVector LastMoveInput;
 };

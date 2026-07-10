@@ -21,7 +21,7 @@ void UMoveComponent::Move(const FInputActionValue& Value) //
     if (MovementVector2D.IsNearlyZero())
         return;
 
-    //LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
+    LastMoveInput = FVector(MovementVector2D.X, MovementVector2D.Y, 0.f);
 
     const FRotator Rotation = Player->GetControlRotation();
     const FRotationMatrix YawMatrix = FRotator(0.f, Rotation.Yaw, 0.f);
