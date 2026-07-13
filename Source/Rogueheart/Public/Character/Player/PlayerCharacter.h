@@ -9,7 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaChanged);
 
 UENUM(BlueprintType)
-enum class EPlayerState : uint8
+enum class EPlayerState : uint8 // s
 {
     Idle,
     Moving,
@@ -22,7 +22,7 @@ enum class EPlayerState : uint8
 };
 
 UENUM(BlueprintType)
-enum class EActionType : uint8
+enum class EActionType : uint8 // s
 {
     Move,
     Attack,
@@ -47,10 +47,10 @@ public:
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     // 플레이어의 상태에 관한 것은 그대로 남겨둔다.
-    void SetPlayerState(EPlayerState NewState);
-    bool CanAct(EActionType DesiredAction) const;
+    void SetPlayerState(EPlayerState NewState); // s
+    bool CanAct(EActionType DesiredAction) const; // s
     // bool IsDodging() const { return CurrentState == EPlayerState::Dodging; }
-    bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; }
+    bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; } // a에서 씀.
     class ARogueheartPlayerController* GetCachedController() const { return CachedController; }
 
     //void PlayComboMontage(); // a
@@ -62,18 +62,21 @@ public:
     bool HasLockTarget() const; // p. 래핑함수.
     void SetCanNextComboTrue(); // a. 래핑함수.
     //void ClearLockOn(); // t
-    void OnActStart();
+    void OnActStart(); // s
     void UseSkill(const struct FInputActionInstance& Instance);
     class UMoveComponent* GetMoveCom() const { return MoveCom; }
 
     UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetMaxHP() const; // s
+    float GetMaxHP() const { return MaxHP; } // s
+
     UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetCurHP() const; // s
+    float GetCurHP() const { return CurHP; }// s
+
     UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetMaxStamina() const; // s
+    float GetMaxStamina() const { return MaxStamina; }// s
+
     UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetCurStamina() const; // s
+    float GetCurStamina() const { return CurStamina; }// s
 
 protected:
     virtual void PossessedBy(AController* NewController) override;
@@ -194,7 +197,7 @@ protected:
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
-    EPlayerState CurrentState = EPlayerState::Idle;
+    EPlayerState CurrentState = EPlayerState::Idle; // s
 
     //FVector LastMoveInput = FVector::ZeroVector; // m
 
@@ -203,9 +206,9 @@ protected:
 
     //void SetLockOnState(bool bIsLockOn); // p
 
-    void ConsumeStamina(const float Cost);
+    void ConsumeStamina(float Cost); // s
 
-    bool CanPlusStamina() const;
+    bool CanPlusStamina() const; // s
 
     //UPROPERTY(EditDefaultsOnly, Category = "Targeting")
     //float TargetingAngle = 0.5f; // t

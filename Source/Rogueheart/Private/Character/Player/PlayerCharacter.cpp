@@ -288,13 +288,13 @@ void APlayerCharacter::UseIceBlast(const FInputActionValue& Value)
 }
 
 // 플레이어의 상태는 바로 이곳에서 관리해야하기에 옮기지 아니한다.
-void APlayerCharacter::SetPlayerState(EPlayerState NewState)
+void APlayerCharacter::SetPlayerState(EPlayerState NewState) // s
 {
     CurrentState = NewState;
 }
 
 // 플레이어의 상태는 바로 이곳에서 관리해야하기에 옮기지 아니한다.
-bool APlayerCharacter::CanAct(EActionType DesiredAction) const
+bool APlayerCharacter::CanAct(EActionType DesiredAction) const // s
 {
     switch (CurrentState)
     {
@@ -772,28 +772,7 @@ void APlayerCharacter::ToggleInventory(const FInputActionValue& Value)
     CachedController->ToggleInventory();
 }
 
-// 체력, 스테미나 등은 상태와 마찬가지로 이곳에서 관리한다.
-float APlayerCharacter::GetMaxHP() const // s
-{
-    return MaxHP;
-}
-
-float APlayerCharacter::GetCurHP() const // s
-{
-    return CurHP;
-}
-
-float APlayerCharacter::GetMaxStamina() const // s
-{
-    return MaxStamina;
-}
-
-float APlayerCharacter::GetCurStamina() const // s
-{
-    return CurStamina;
-}
-
-void APlayerCharacter::HealPlayer(float PlusHP)
+void APlayerCharacter::HealPlayer(float PlusHP) // s
 {
     UE_LOG(LogTemp, Warning, TEXT("PrevHP : %f"), CurHP);
     CurHP = FMath::Min(CurHP + PlusHP, MaxHP);
@@ -889,7 +868,7 @@ void APlayerCharacter::SetCanNextComboTrue() // a
     AttackCom->SetCanNextComboTrue();
 }
 
-void APlayerCharacter::ConsumeStamina(const float Cost)
+void APlayerCharacter::ConsumeStamina(float Cost)
 {
     CurStamina = FMath::Clamp(CurStamina - Cost, 0.f, MaxStamina);
 
