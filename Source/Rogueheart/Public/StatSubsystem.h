@@ -10,24 +10,33 @@ class ROGUEHEART_API UStatSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-	void HealPlayer(float PlusHP);
+	//void HealPlayer(float PlusHP);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetMaxHP() const;
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetCurHP() const;
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetMaxStamina() const;
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetCurStamina() const;
+	float GetMaxHP() const { return MaxHP; }
+
+	float GetCurHP() const { return CurHP; }
+
+	float GetMaxStamina() const { return MaxStamina; }
+
+	float GetCurStamina() const { return CurStamina; }
+
+	void SetMaxHP(float NewMaxHP);
+
+	void SetCurHP(float NewCurHP);
+
+	void SetMaxStamina(float NewMaxStamina);
+
+	void SetCurStamina(float NewCurStamina);
 
 private:
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"), Category = "HP")
+	bool CheckStatValue(float Value) const { return Value <= 0; }
+
+private:
 	float MaxHP = 100.f;
-	UPROPERTY(VisibleAnywhere, Category = "HP")
-	float CurHP = 50.f;
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"), Category = "Stamina")
+
+	float CurHP = 100.f;
+
 	float MaxStamina = 100.f;
-	UPROPERTY(VisibleAnywhere, Category = "Stamina")
+
 	float CurStamina = 100.f;
 };

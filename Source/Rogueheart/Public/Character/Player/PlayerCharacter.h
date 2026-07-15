@@ -94,6 +94,7 @@ protected:
     //void SwitchTargetRight(const struct FInputActionValue& Value); // t
     void ToggleInventory(const struct FInputActionValue& Value);
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+    void InitializeStat();
 
     //class AEnemyBase* FindNearestTarget(); // t
     //void UpdateLockOnRotation(float DeltaTime); // t

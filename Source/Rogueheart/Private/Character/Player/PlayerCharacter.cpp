@@ -21,6 +21,7 @@
 #include "Character/Player/MoveComponent.h"
 #include "Character/Player/AttackComponent.h"
 #include "Character/Player/TargetComponent.h"
+#include "StatSubsystem.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -63,6 +64,10 @@ void APlayerCharacter::BeginPlay()
 
     // LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance); // t
     SetGenericTeamId(FGenericTeamId(TeamID));
+
+    // 레벨 이동시 이 GameInstanceSubsystem에서 기존 스탯값들을 불러들인다.
+
+    InitializeStat();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -850,6 +855,16 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
     }
 
     return ActualDamage;
+}
+
+void APlayerCharacter::InitializeStat()
+{
+    UStatSubsystem* StatData = GetGameInstance()->GetSubsystem<UStatSubsystem>();
+
+    MaxHP = StatData->GetMaxHP();
+    CurHP = StatData->GetCurHP();
+    MaxStamina = StatData->GetMaxStamina();
+    CurStamina = StatData->GetCurStamina();
 }
 
 bool APlayerCharacter::HasLockTarget() const // p

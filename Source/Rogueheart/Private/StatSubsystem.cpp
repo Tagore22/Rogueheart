@@ -1,29 +1,49 @@
 #include "StatSubsystem.h"
 
-void UStatSubsystem::HealPlayer(float PlusHP) //
+/*void UStatSubsystem::HealPlayer(float PlusHP) //
 {
     UE_LOG(LogTemp, Warning, TEXT("PrevHP : %f"), CurHP);
     CurHP = FMath::Min(CurHP + PlusHP, MaxHP);
     UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
+}*/
+
+void UStatSubsystem::SetMaxHP(float NewMaxHP) 
+{
+    if (!CheckStatValue(NewMaxHP))
+    {
+        return;
+    }
+
+    MaxHP = NewMaxHP;
 }
 
-float UStatSubsystem::GetMaxHP() const // 
+void UStatSubsystem::SetCurHP(float NewCurHP) 
 {
-    return MaxHP;
+    if (!CheckStatValue(NewCurHP))
+    {
+        return;
+    }
+
+    CurHP = NewCurHP;
 }
 
-float UStatSubsystem::GetCurHP() const // 
+void UStatSubsystem::SetMaxStamina(float NewMaxStamina) 
 {
-    return CurHP;
+    if (!CheckStatValue(NewMaxStamina))
+    {
+        return;
+    }
+
+    MaxStamina = NewMaxStamina;
 }
 
-float UStatSubsystem::GetMaxStamina() const //
+void UStatSubsystem::SetCurStamina(float NewCurStamina)
 {
-    return MaxStamina;
-}
+    if (!CheckStatValue(NewCurStamina))
+    {
+        return;
+    }
 
-float UStatSubsystem::GetCurStamina() const // 
-{
-    return CurStamina;
+    CurStamina = NewCurStamina;
 }
 

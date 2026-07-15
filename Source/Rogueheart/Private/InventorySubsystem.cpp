@@ -5,9 +5,9 @@
 #include "Character/Player/PlayerCharacter.h"
 #include "StatSubsystem.h"
 #include "WeaponBase.h"
-#include "Character/Player/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "WeaponBase.h"
+#include "Item/ItemData.h"
 
 
 bool UInventorySubsystem::AddItem(FName ItemID, int32 Count)
@@ -128,21 +128,21 @@ bool UInventorySubsystem::UseItem(FName ItemID)
 
         // 효과 적용 로직 (예: HealPlayer(ItemData->EffectValue))을 여기에 추가
         // 2. 게임 인스턴스를 통해 컨트롤러 획득
-        /*if (APlayerController* PC = GI->GetFirstLocalPlayerController())
+        if (APlayerController* PC = GI->GetFirstLocalPlayerController())
         {
             if (APlayerCharacter* Player = Cast<APlayerCharacter>(PC->GetCharacter()))
             {
                 Player->HealPlayer(ItemData->EffectValue);
             }
-        }*/
+        }
         // Player가 직접 스탯들을 가지고 있는게 아닌 UGameInstanceSubsystem을 상속한 
         // StatSubsystem으로 넘긴 리팩토링.
-        UStatSubsystem* StatSub = GetGameInstance()->GetSubsystem<UStatSubsystem>();
+        /*UStatSubsystem* StatSub = GetGameInstance()->GetSubsystem<UStatSubsystem>();
         ensureMsgf(StatSub, TEXT("StatSubsystem is nullptr!"));
         if (StatSub)
         {
             StatSub->HealPlayer(ItemData->EffectValue);
-        }
+        }*/
         // 수량이 다 떨어졌을 때 처리
         if (*CurrentCount <= 0)
         {
