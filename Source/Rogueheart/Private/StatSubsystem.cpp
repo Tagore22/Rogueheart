@@ -9,41 +9,45 @@
 
 void UStatSubsystem::SetMaxHP(float NewMaxHP) 
 {
-    if (!CheckStatValue(NewMaxHP))
+    if (CheckStatValue(NewMaxHP))
     {
         return;
     }
 
     MaxHP = NewMaxHP;
+    UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), NewMaxHP);
 }
 
 void UStatSubsystem::SetCurHP(float NewCurHP) 
 {
-    if (!CheckStatValue(NewCurHP))
+    if (CheckStatValue(NewCurHP))
     {
         return;
     }
 
     CurHP = NewCurHP;
+    UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
 }
 
 void UStatSubsystem::SetMaxStamina(float NewMaxStamina) 
 {
-    if (!CheckStatValue(NewMaxStamina))
+    if (CheckStatValue(NewMaxStamina))
     {
         return;
     }
 
     MaxStamina = NewMaxStamina;
+    UE_LOG(LogTemp, Warning, TEXT("MaxStamina : %f"), MaxStamina);
 }
 
 void UStatSubsystem::SetCurStamina(float NewCurStamina)
 {
-    if (!CheckStatValue(NewCurStamina))
+    if (CheckStatValue(NewCurStamina))
     {
         return;
     }
 
     CurStamina = NewCurStamina;
+    UE_LOG(LogTemp, Warning, TEXT("CurStamina : %f"), CurStamina);
 }
 

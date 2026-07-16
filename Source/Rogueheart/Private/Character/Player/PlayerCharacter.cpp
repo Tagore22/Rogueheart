@@ -782,6 +782,7 @@ void APlayerCharacter::HealPlayer(float PlusHP) // s
     UE_LOG(LogTemp, Warning, TEXT("PrevHP : %f"), CurHP);
     CurHP = FMath::Min(CurHP + PlusHP, MaxHP);
     UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
+    CachedController->SetHPPercent(CurHP / MaxHP);
 }
 
 /*void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) // t 
@@ -861,10 +862,23 @@ void APlayerCharacter::InitializeStat()
 {
     UStatSubsystem* StatData = GetGameInstance()->GetSubsystem<UStatSubsystem>();
 
+    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+
+    if (!StatData || !Anim)
+    {
+        return;
+    }
+
     MaxHP = StatData->GetMaxHP();
+    UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
     CurHP = StatData->GetCurHP();
+    UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
     MaxStamina = StatData->GetMaxStamina();
+    UE_LOG(LogTemp, Warning, TEXT("MaxStamina : %f"), MaxStamina);
     CurStamina = StatData->GetCurStamina();
+    UE_LOG(LogTemp, Warning, TEXT("CurStamina : %f"), CurStamina);
+
+    CachedController->SetHPPercent(CurHP / MaxHP);
 }
 
 bool APlayerCharacter::HasLockTarget() const // p
