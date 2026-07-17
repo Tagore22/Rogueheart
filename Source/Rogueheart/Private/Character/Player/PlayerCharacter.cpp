@@ -930,8 +930,26 @@ void APlayerCharacter::OnActStart()
 
 void APlayerCharacter::UseSkill(const FInputActionInstance& Instance)
 {
+    if (!CanAct(EActionType::UseSkill))
+        return;
     FName SkillID = Instance.GetSourceAction()->GetFName();
     UE_LOG(LogTemp, Warning, TEXT("%s"), *SkillID.ToString());
 
-    SkillBaseCom->UseSkill(SkillID);
+    if (SkillID == TEXT("IA_Skill_Q"))
+    {
+        AEnemyBase* Target = TargetCom->GetLockOnTarget();
+        if (!IsValid(Target))
+        {
+            return;
+        }
+        SkillBaseCom->UseSkill(SkillID, Target);
+    }
+    else if (SkillID == TEXT("IA_Skill_E"))
+    {
+        SkillBaseCom->UseSkill(SkillID, nullptr);
+    }
+    else if (SkillID == TEXT("IA_Skill_R"))
+    {
+        SkillBaseCom->UseSkill(SkillID, nullptr);
+    }
 }

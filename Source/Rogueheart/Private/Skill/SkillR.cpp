@@ -1,8 +1,8 @@
 #include "Skill/SkillR.h"
 
-void ASkillR::UseSkill()
+void ASkillR::UseSkill(AActor* Target)
 {
-	Super::UseSkill();
+	Super::UseSkill(Target);
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillR!"));
 }

@@ -26,6 +26,8 @@ public:
 
 	virtual bool HasLockTarget() const; //
 
+	class AEnemyBase* GetLockOnTarget() const { return LockOnTarget; }
+
 protected:
 	virtual void BeginPlay() override;
 

@@ -1,8 +1,8 @@
 #include "Skill/SkillE.h"
 
-void ASkillE::UseSkill()
+void ASkillE::UseSkill(AActor* Target)
 {
-	Super::UseSkill();
+	Super::UseSkill(Target);
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillE!"));
 }

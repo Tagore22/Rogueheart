@@ -10,7 +10,7 @@ class ROGUEHEART_API ASkillR : public ASkillBase
 	GENERATED_BODY()
 	
 public:
-	virtual void UseSkill() override;
+	virtual void UseSkill(class AActor* Target) override;
 
 protected:
 	virtual void RestoreSkill() override;
