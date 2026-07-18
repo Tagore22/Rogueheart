@@ -1,5 +1,4 @@
 #include "Skill/SkillQ.h"
-#include "AIController.h"
 
 void ASkillQ::UseSkill(AActor* Target)
 {
@@ -21,27 +20,21 @@ void ASkillQ::UseSkill(AActor* Target)
 	{
 		return;
 	}
-	//OwnActor
 
 	// Enemy의 후측 벡터를 찾아낸다.
-	AAIController* AICon = Enemy->GetController<AAIController>();
-	FRotator AIRotator = FRotator(0.f, AICon->GetControlRotation().Yaw, 0.f);
-	FVector BackVec = AIRotator.Vector() * - 1;
+	FVector BackVec = Enemy->GetActorForwardVector() * -1;
 	// 그 벡터의 정면으로 50만큼 이동한 위치를 알아낸다.
 	FVector MovePosition = Enemy->GetActorLocation() + BackVec * 50.f;
-	// OwnActor의 방향을 Enemy의 방향으로 돌려 마치 그림자 밟기처럼 구현한다.
-	// 하지만 이미 타겟팅된 적쪽을 계속 바라보기 때문에 필요없을 수도 있다.
-	//FRotator EnemyRotator = Enemy->GetActorRotation();
-	//OwnActor->SetActorRotation(EnemyRotator);
-	// OwnActor를 그 위치로 이동시키되 SetActorLocation()을 쓰고 두번째 매개변수를 쓴다.
-	bool bIsMoved = OwnActor->SetActorLocation(MovePosition, true);
-	if (bIsMoved)
+	// 만약 적이 벽을 등지고 있다던가로 이동하려는 위치의 공간이 없을 수도 있기에 검사해본다.
+	bool bCanTeleport = GetWorld()->FindTeleportSpot(OwnActor, MovePosition, OwnActor->GetActorRotation());
+	// 반환값이 true라면 상황은 다음과 같은 2가지이다.
+	// 1. 기존의 MovePosition에 순간이동이 가능함.
+	// 2. 기존의 MovePosition에 순간이동은 불가능하지만 주위에 가능한 공간이 있으며 알아서 MovePosition의 값을 수정해줌.
+	// FindTeleportSpot의 위치를 입력받는 2번째 매개변수의 타입명이 벡터의 참조자이기 때문.
+	// 따라서 반환값이 true라면 MovePosition으로 이동하면 된다.
+	if (bCanTeleport)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Move Success"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Move fail"));
+		OwnActor->SetActorLocation(MovePosition);
 	}
 }
 
