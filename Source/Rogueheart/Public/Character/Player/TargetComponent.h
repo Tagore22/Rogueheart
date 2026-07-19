@@ -61,6 +61,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 	float LockOnBreakDistance = 1500.f; //
 
+	UPROPERTY(EditDefaultsOnly, Category = "MoveSpeed")
+	float DefaultMoveSpeed = 600.f; //
+
+	UPROPERTY(EditDefaultsOnly, Category = "MoveSpeed")
+	float TargetMoveSpeed = 300.f; //
+
 	float LockOnBreakDistanceSq = 0.f; //
 
 	UPROPERTY()

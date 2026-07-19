@@ -1,5 +1,6 @@
 #include "Character/Player/TargetComponent.h"
 #include "Character/Player/MoveComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UTargetComponent::SetupInputBinding(UEnhancedInputComponent* EnhancedInput)
 {
@@ -384,11 +385,13 @@ void UTargetComponent::SetLockOnState(bool bIsLockOn)
         UE_LOG(LogTemp, Warning, TEXT("Target Exist"));
         Player->GetCharacterMovement()->bOrientRotationToMovement = false;
         Player->bUseControllerRotationYaw = true;
+        Player->GetCharacterMovement()->MaxWalkSpeed = TargetMoveSpeed;
     }
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("Target No Exist"));
         Player->GetCharacterMovement()->bOrientRotationToMovement = true;
         Player->bUseControllerRotationYaw = false;
+        Player->GetCharacterMovement()->MaxWalkSpeed = DefaultMoveSpeed;
     }
 }

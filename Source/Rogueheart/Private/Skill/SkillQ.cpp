@@ -15,16 +15,10 @@ void ASkillQ::UseSkill(AActor* Target)
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillQ!"));
 
-	ACharacter* Enemy = Cast<ACharacter>(Target);
-	if (!IsValid(Enemy))
-	{
-		return;
-	}
-
 	// Enemy의 후측 벡터를 찾아낸다.
-	FVector BackVec = Enemy->GetActorForwardVector() * -1;
+	FVector BackVec = Target->GetActorForwardVector() * -1;
 	// 그 벡터의 정면으로 50만큼 이동한 위치를 알아낸다.
-	FVector MovePosition = Enemy->GetActorLocation() + BackVec * 50.f;
+	FVector MovePosition = Target->GetActorLocation() + BackVec * 50.f;
 	// 만약 적이 벽을 등지고 있다던가로 이동하려는 위치의 공간이 없을 수도 있기에 검사해본다.
 	bool bCanTeleport = GetWorld()->FindTeleportSpot(OwnActor, MovePosition, OwnActor->GetActorRotation());
 	// 반환값이 true라면 상황은 다음과 같은 2가지이다.

@@ -14,4 +14,7 @@ public:
 
 protected:
 	virtual void RestoreSkill() override;
+
+protected:
+	float DefaultSpeed; 
 };

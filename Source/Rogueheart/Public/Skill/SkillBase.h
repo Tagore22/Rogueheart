@@ -15,19 +15,18 @@ class ROGUEHEART_API ASkillBase : public AActor
 public:	
 	ASkillBase();
 
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void InitializeSkillData(APlayerCharacter* InitOwn, const FSkillData InitData);
+
+	virtual void UseSkill(class AActor* Target);
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void RestoreSkill(); // 쿨타임 다 되었을 때 발동.
-public:	
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void InitializeSkillData(AActor* InitOwn, const FSkillData InitData);
-
-	virtual void UseSkill(class AActor* Target);
 protected:
 	UPROPERTY()
-	class AActor* OwnActor = nullptr;
+	class APlayerCharacter* OwnActor = nullptr;
 
 	FSkillData Data;
 
