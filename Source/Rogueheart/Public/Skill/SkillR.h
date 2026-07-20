@@ -14,4 +14,16 @@ public:
 
 protected:
 	virtual void RestoreSkill() override;
+
+	void SpawnDummy();
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	class UAnimMontage* BladeMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Timer")
+	float SpawnTime = 0.5f;
+
+	int32 SpawnNumber = 0;
+	
+	FTimerHandle SpawnTimer;
 };
