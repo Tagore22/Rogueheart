@@ -19,11 +19,20 @@ struct FSkillData : public FTableRowBase
     TSubclassOf<class ASkillBase> Type;
 
     UPROPERTY(EditDefaultsOnly)
+    class UAnimMontage* BladeMontages;
+
+    UPROPERTY(EditDefaultsOnly)
     float Damage;
 
     UPROPERTY(EditDefaultsOnly)
     float Cooldown;
 
     UPROPERTY(EditDefaultsOnly)
+    float SpawnTime;
+
+    UPROPERTY(EditDefaultsOnly)
     class UTexture2D* SkillIcon;
+
+    UPROPERTY(EditDefaultsOnly)
+    int32 MaxRepeatNum;
 };
