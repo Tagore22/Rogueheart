@@ -317,6 +317,7 @@ bool APlayerCharacter::CanAct(EActionType DesiredAction) const // s
         case EPlayerState::Dodging:
         case EPlayerState::Damaged:
         case EPlayerState::Dead:
+        case EPlayerState::CastSkill:
             return false;
     }
     return false;

@@ -19,7 +19,10 @@ struct FSkillData : public FTableRowBase
     TSubclassOf<class ASkillBase> Type;
 
     UPROPERTY(EditDefaultsOnly)
-    class UAnimMontage* BladeMontages;
+    TSubclassOf<class AActor> SpawnActor;
+
+    UPROPERTY(EditDefaultsOnly)
+    class UAnimMontage* SkillMontage;
 
     UPROPERTY(EditDefaultsOnly)
     float Damage;

@@ -3,6 +3,8 @@
 
 void UPlayerAttackANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
+	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
+
 	if (!IsValid(MeshComp))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Mesh is nullptr!"));
@@ -25,6 +27,8 @@ void UPlayerAttackANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 
 void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
+	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
+
 	if (!IsValid(MeshComp))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Mesh is nullptr!"));
@@ -47,5 +51,5 @@ void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 
 void UPlayerAttackANS::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-
+	Super::NotifyEnd(MeshComp, Animation, EventReference);
 }

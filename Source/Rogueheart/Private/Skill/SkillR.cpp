@@ -1,5 +1,4 @@
 #include "Skill/SkillR.h"
-#include "Character/Player/PlayerGhostTrail.h"
 
 void ASkillR::UseSkill(AActor* Target)
 {
@@ -14,15 +13,19 @@ void ASkillR::UseSkill(AActor* Target)
 		return;
 	}
 
+	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillR::RestoreSkill, Data.Cooldown, false);
+
 	UAnimInstance* Anim = OwnActor->GetMesh()->GetAnimInstance();
 	if (!Anim)
 	{
 		return;
 	}
 	// 플레이어가 검기를 날리는 애니메이션 실행.
-	Anim->Montage_Play(Data.BladeMontages);
+	Anim->Montage_Play(Data.SkillMontage);
 	// 더미를 스폰하는 횟수를 0으로 초기화시킨다.
 	SpawnNumber = 0;
+	// 플레이어의 상태를 CastSkill로 바꾼다.
+	OwnActor->SetPlayerState(EPlayerState::CastSkill);
 	// 타이머를 이용해서 n초동안 x초마다 검기를 날리는 잔상을 스폰.
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASkillR::SpawnDummy, Data.SpawnTime, true);
 }
@@ -49,5 +52,5 @@ void ASkillR::SpawnDummy()
 	// 잔상 스폰은 BeginPlay()에서 바로 검기를 날리는 몽타주를 실행한다.
 	// 이 때 노티파이 클래스를 이용하여 애니메이션 실행시 검기를 스폰하여 날리고
 	// 애니메이션이 끝나면 Destroy()를 이용하여 사라진다.
-	GetWorld()->SpawnActor<APlayerGhostTrail>(OwnActor->GetActorLocation(), OwnActor->GetActorRotation());
+	GetWorld()->SpawnActor<AActor>(Data.SpawnActor, OwnActor->GetActorLocation(), OwnActor->GetActorRotation());
 }

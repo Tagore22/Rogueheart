@@ -16,22 +16,11 @@ void APlayerGhostTrail::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Success!"));
-
-	UE_LOG(LogTemp, Warning, TEXT("GhostTrail Spawn Success!"));
-    UE_LOG(LogTemp, Warning, TEXT("Mesh Asset : %s"),
-        *GetNameSafe(Mesh->GetSkeletalMeshAsset()));
-    UE_LOG(LogTemp, Warning, TEXT("Location : %s"),
-        *GetActorLocation().ToString());
-    UE_LOG(LogTemp, Warning, TEXT("Visible : %d"),
-        Mesh->IsVisible());
-
-
-	/*for (int32 i = 0; i < Mesh->GetNumMaterials(); ++i)
+	for (int32 i = 0; i < Mesh->GetNumMaterials(); ++i)
 	{
 		Mesh->SetMaterial(i, Material);
-	}*/
-	UE_LOG(LogTemp, Warning, TEXT("metiarlai Success!"));
+	}
+
 	UAnimInstance* Anim = Mesh->GetAnimInstance();
 	if (!Anim || !BladeMontage)
 	{

@@ -17,7 +17,7 @@ enum class EPlayerState : uint8 // s
     LockedOn,
     Dodging,
     Damaged,
-    Parrying,
+    CastSkill,
     Dead
 };
 
