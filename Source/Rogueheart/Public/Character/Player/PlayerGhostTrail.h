@@ -13,9 +13,10 @@ public:
 	APlayerGhostTrail();
 
 	//virtual void Tick(float DeltaTime) override;
+
+	TSubclassOf<class AActor> GetBlade() const { return Blade; }
 protected:
 	virtual void BeginPlay() override;
-
 protected:
 	UPROPERTY(EditAnywhere, Category = "SkeletalMesh")
 	class USkeletalMeshComponent* Mesh;
@@ -28,4 +29,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	class UAnimMontage* BladeMontage = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "BladeGhostTrail")
+	TSubclassOf<class AActor> Blade;
 };
