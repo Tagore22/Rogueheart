@@ -27,7 +27,6 @@ void ABladeGhostTrail::BeginPlay()
 	Super::BeginPlay();
 
 	Collider->OnComponentBeginOverlap.AddDynamic(this, &ABladeGhostTrail::OnBladeOverlap);
-	UE_LOG(LogTemp, Warning, TEXT("Blade"));
 }
 
 /*void ABladeGhostTrail::Tick(float DeltaTime)
@@ -41,6 +40,7 @@ void ABladeGhostTrail::OnBladeOverlap(UPrimitiveComponent* OverlappedComponent, 
 {
 	AController* PC = GetWorld()->GetFirstPlayerController();
 	UGameplayStatics::ApplyDamage(OtherActor, BladeDamage, PC, PC->GetOwner(), nullptr);
+	UE_LOG(LogTemp, Warning, TEXT("Blade Attack!"));
 	Destroy();
 }
 
