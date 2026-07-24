@@ -13,10 +13,10 @@ ABladeGhostTrail::ABladeGhostTrail()
 	RootComponent = Collider;
 
 	ProjectCom = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile"));
-	ProjectCom->SetUpdatedComponent(RootComponent);
-	ProjectCom->InitialSpeed = 1500;
-	ProjectCom->MaxSpeed = 1500;
-	ProjectCom->Velocity = GetActorForwardVector() * 1500.f;
+	ProjectCom->SetUpdatedComponent(Collider);
+	ProjectCom->InitialSpeed = 500;
+	ProjectCom->MaxSpeed = 500;
+	ProjectCom->ProjectileGravityScale = 0.f;
 
 	BladeCom = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	BladeCom->SetupAttachment(RootComponent);
@@ -27,6 +27,13 @@ void ABladeGhostTrail::BeginPlay()
 	Super::BeginPlay();
 
 	Collider->OnComponentBeginOverlap.AddDynamic(this, &ABladeGhostTrail::OnBladeOverlap);
+
+	//ProjectCom->Velocity = GetActorForwardVector() * 500.f;
+
+	//ProjectCom->Activate();
+
+	FTimerHandle BladeTimer;
+	GetWorldTimerManager().SetTimer(BladeTimer, this, &ABladeGhostTrail::DestroyActor, DestroyTimer, false);
 }
 
 /*void ABladeGhostTrail::Tick(float DeltaTime)
@@ -41,6 +48,12 @@ void ABladeGhostTrail::OnBladeOverlap(UPrimitiveComponent* OverlappedComponent, 
 	AController* PC = GetWorld()->GetFirstPlayerController();
 	UGameplayStatics::ApplyDamage(OtherActor, BladeDamage, PC, PC->GetOwner(), nullptr);
 	UE_LOG(LogTemp, Warning, TEXT("Blade Attack!"));
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *OtherActor->GetName());
+	Destroy();
+}
+
+void ABladeGhostTrail::DestroyActor() 
+{
 	Destroy();
 }
 
