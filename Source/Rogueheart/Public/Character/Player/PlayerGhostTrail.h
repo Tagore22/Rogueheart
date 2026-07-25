@@ -15,11 +15,16 @@ public:
 	//virtual void Tick(float DeltaTime) override;
 
 	TSubclassOf<class AActor> GetBlade() const { return Blade; }
+
+	float GetPlusDistance() const { return PlusDistance; }
 protected:
 	virtual void BeginPlay() override;
 protected:
 	UPROPERTY(EditAnywhere, Category = "SkeletalMesh")
 	class USkeletalMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere, Category = "PlusDistance")
+	float PlusDistance = 100.f;
 
 	UPROPERTY(VisibleAnywhere, Category = "CapSuleCollider")
 	class UCapsuleComponent* Collider;

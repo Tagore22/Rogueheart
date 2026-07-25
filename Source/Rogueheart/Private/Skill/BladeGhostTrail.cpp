@@ -45,11 +45,23 @@ void ABladeGhostTrail::BeginPlay()
 void ABladeGhostTrail::OnBladeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Overlap!"));
 	AController* PC = GetWorld()->GetFirstPlayerController();
-	UGameplayStatics::ApplyDamage(OtherActor, BladeDamage, PC, PC->GetOwner(), nullptr);
-	UE_LOG(LogTemp, Warning, TEXT("Blade Attack!"));
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *OtherActor->GetName());
-	Destroy();
+	if (!PC || !IsValid(OtherActor) || OtherActor->ActorHasTag("Die"))
+	{
+		return;
+	}
+	else if (OtherActor->ActorHasTag("Enemy"))
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, BladeDamage, PC, PC->GetOwner(), nullptr);
+		UE_LOG(LogTemp, Warning, TEXT("Blade Attack!"));
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *OtherActor->GetName());
+		Destroy();
+	}
+	else
+	{
+		Destroy();
+	}
 }
 
 void ABladeGhostTrail::DestroyActor() 

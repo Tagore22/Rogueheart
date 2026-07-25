@@ -35,6 +35,10 @@ void USkillBaseComponent::UseSkill(FName SkillID, AActor* Target)
 {
 	if (ASkillBase** Skill = SkillSlot.Find(SkillID))
 	{
+		if (!IsValid(*Skill))
+		{
+			return;
+		}
 		UE_LOG(LogTemp, Warning, TEXT("UseSkill!"));
 		(*Skill)->UseSkill(Target);
 	}

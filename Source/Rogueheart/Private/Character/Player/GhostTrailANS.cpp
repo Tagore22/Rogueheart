@@ -13,7 +13,8 @@ void UGhostTrailANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequence
 		UE_LOG(LogTemp, Warning, TEXT("Cast Failed!"));
 		return;
 	}
-	MeshComp->GetWorld()->SpawnActor<AActor>(Act->GetBlade(), Act->GetActorLocation(), Act->GetActorRotation());
+	FVector ForwardVec = Act->GetActorForwardVector();
+	MeshComp->GetWorld()->SpawnActor<AActor>(Act->GetBlade(), Act->GetActorLocation() + ForwardVec * Act->GetPlusDistance(), Act->GetActorRotation());
 	UE_LOG(LogTemp, Warning, TEXT("Spawn Success"));
 }
 
@@ -26,5 +27,5 @@ void UGhostTrailANS::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBa
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	MeshComp->GetOwner()->Destroy();
+	MeshComp->GetOwner()->SetLifeSpan(0.01f);
 }
