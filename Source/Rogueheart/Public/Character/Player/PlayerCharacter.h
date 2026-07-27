@@ -78,6 +78,9 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     float GetCurStamina() const { return CurStamina; }// s
 
+    void SetEffectCom(class UNiagaraSystem* Asset);
+
+    void ActivateEffectCom(bool bIsOn);
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -247,4 +250,7 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "TargetComponent")
     class UTargetComponent* TargetCom = nullptr;
+
+    UPROPERTY(VisibleAnywhere, Category = "Effect")
+    class UNiagaraComponent* EffectCom = nullptr;
 };

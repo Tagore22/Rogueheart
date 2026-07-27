@@ -8,15 +8,19 @@ void ASkillE::UseSkill(AActor* Target)
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillE!"));
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
-	if (bCanUseSkill)
+	if (bCanUseSkill || !Data.Effect)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
 		return;
 	}
 	DefaultSpeed = OwnActor->GetCharacterMovement()->MaxWalkSpeed;
+	OwnActor->SetEffectCom(Data.Effect);
+
 	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillE::RestoreSkill, Data.Cooldown, false);
-	OwnActor->GetCharacterMovement()->MaxWalkSpeed *= 1.5f;
-	OwnActor->GetMesh()->GlobalAnimRateScale = 1.5f;
+
+	OwnActor->GetCharacterMovement()->MaxWalkSpeed *= 1.2f;
+	OwnActor->GetMesh()->GlobalAnimRateScale = 1.2f;
+	OwnActor->ActivateEffectCom(true);
 }
 
 void ASkillE::RestoreSkill()
@@ -27,4 +31,5 @@ void ASkillE::RestoreSkill()
 
 	OwnActor->GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed;
 	OwnActor->GetMesh()->GlobalAnimRateScale = 1.f;
+	OwnActor->ActivateEffectCom(false);
 }

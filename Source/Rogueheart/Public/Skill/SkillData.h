@@ -38,4 +38,7 @@ struct FSkillData : public FTableRowBase
 
     UPROPERTY(EditDefaultsOnly)
     int32 MaxRepeatNum;
+
+    UPROPERTY(EditDefaultsOnly)
+    class UNiagaraSystem* Effect;
 };

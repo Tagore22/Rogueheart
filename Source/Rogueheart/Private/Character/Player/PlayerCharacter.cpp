@@ -22,6 +22,7 @@
 #include "Character/Player/AttackComponent.h"
 #include "Character/Player/TargetComponent.h"
 #include "StatSubsystem.h"
+#include "NiagaraComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -56,6 +57,9 @@ APlayerCharacter::APlayerCharacter()
     AttackCom = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComponent"));
 
     TargetCom = CreateDefaultSubobject<UTargetComponent>(TEXT("TargetComponent"));
+
+    EffectCom = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
+    EffectCom->SetupAttachment(RootComponent);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -947,6 +951,7 @@ void APlayerCharacter::UseSkill(const FInputActionInstance& Instance)
     }
     else if (SkillID == TEXT("IA_Skill_E"))
     {
+        EffectCom->Activate();
         SkillBaseCom->UseSkill(SkillID, nullptr);
     }
     else if (SkillID == TEXT("IA_Skill_R"))
@@ -954,3 +959,21 @@ void APlayerCharacter::UseSkill(const FInputActionInstance& Instance)
         SkillBaseCom->UseSkill(SkillID, nullptr);
     }
 }
+
+void APlayerCharacter::SetEffectCom(class UNiagaraSystem* Asset)
+{
+    EffectCom->SetAsset(Asset);
+}
+
+void APlayerCharacter::ActivateEffectCom(bool bIsActivate)
+{
+    if (bIsActivate)
+    {
+        EffectCom->Activate();
+    }
+    else
+    {
+        EffectCom->Deactivate();
+    }
+}
+
