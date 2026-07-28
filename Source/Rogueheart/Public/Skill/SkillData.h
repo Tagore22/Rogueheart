@@ -41,4 +41,7 @@ struct FSkillData : public FTableRowBase
 
     UPROPERTY(EditDefaultsOnly)
     class UNiagaraSystem* Effect;
+
+    UPROPERTY(EditDefaultsOnly)
+    float Cost;
 };

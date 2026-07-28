@@ -7,7 +7,9 @@ void ASkillR::UseSkill(AActor* Target)
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillR!"));
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
-	if (bCanUseSkill)
+	UAnimInstance* Anim = OwnActor->GetMesh()->GetAnimInstance();
+	float Cost = OwnActor->GetCurMana();
+	if (bCanUseSkill || !Anim || Cost <= 0.f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
 		return;
@@ -15,11 +17,6 @@ void ASkillR::UseSkill(AActor* Target)
 
 	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillR::RestoreSkill, Data.Cooldown, false);
 
-	UAnimInstance* Anim = OwnActor->GetMesh()->GetAnimInstance();
-	if (!Anim)
-	{
-		return;
-	}
 	// 플레이어가 검기를 날리는 애니메이션 실행.
 	Anim->Montage_Play(Data.SkillMontage);
 	// 더미를 스폰하는 횟수를 0으로 초기화시킨다.
@@ -28,6 +25,7 @@ void ASkillR::UseSkill(AActor* Target)
 	OwnActor->SetPlayerState(EPlayerState::CastSkill);
 	// 타이머를 이용해서 n초동안 x초마다 검기를 날리는 잔상을 스폰.
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASkillR::SpawnDummy, Data.SpawnTime, true);
+	OwnActor->CostMana(Data.Cost);
 }
 
 void ASkillR::RestoreSkill()

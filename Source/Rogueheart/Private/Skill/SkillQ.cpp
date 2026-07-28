@@ -5,7 +5,8 @@ void ASkillQ::UseSkill(AActor* Target)
 	Super::UseSkill(Target);
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
-	if (bCanUseSkill)
+	float Cost = OwnActor->GetCurMana();
+	if (bCanUseSkill || Cost <= 0.f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
 		return;
@@ -29,6 +30,7 @@ void ASkillQ::UseSkill(AActor* Target)
 	if (bCanTeleport)
 	{
 		OwnActor->SetActorLocation(MovePosition);
+		OwnActor->CostMana(Data.Cost);
 	}
 }
 

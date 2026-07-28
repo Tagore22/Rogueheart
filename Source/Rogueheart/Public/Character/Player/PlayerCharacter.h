@@ -73,6 +73,12 @@ public:
     float GetCurHP() const { return CurHP; }// s
 
     UFUNCTION(BlueprintCallable, BlueprintPure)
+    float GetMaxMana() const { return MaxMana; }// s
+
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    float GetCurMana() const { return CurMana; }// s
+
+    UFUNCTION(BlueprintCallable, BlueprintPure)
     float GetMaxStamina() const { return MaxStamina; }// s
 
     UFUNCTION(BlueprintCallable, BlueprintPure)
@@ -81,6 +87,8 @@ public:
     void SetEffectCom(class UNiagaraSystem* Asset);
 
     void ActivateEffectCom(bool bIsOn);
+
+    void CostMana(float Cost) { CurMana -= FMath::Min(Cost, CurMana); }
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -220,7 +228,11 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "HP")
     float MaxHP = 100.f; // s
     UPROPERTY(EditDefaultsOnly, Category = "HP")
-    float CurHP = 50.f; // s
+    float CurHP = 100.f; // s
+    UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+    float MaxMana = 100.f; // s
+    UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+    float CurMana = 100.f; // s
     UPROPERTY(EditDefaultsOnly, Category = "Stamina")
     float MaxStamina = 100.f; // s
     UPROPERTY(EditDefaultsOnly, Category = "Stamina")

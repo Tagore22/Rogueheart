@@ -6,9 +6,11 @@ void ASkillE::UseSkill(AActor* Target)
 	Super::UseSkill(Target);
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillE!"));
+	UE_LOG(LogTemp, Warning, TEXT("Remain Mana is %f!"), OwnActor->GetCurMana());
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
-	if (bCanUseSkill || !Data.Effect)
+	float Cost = OwnActor->GetCurMana();
+	if (bCanUseSkill || !Data.Effect || Cost <= 0.f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
 		return;
@@ -21,6 +23,7 @@ void ASkillE::UseSkill(AActor* Target)
 	OwnActor->GetCharacterMovement()->MaxWalkSpeed *= 1.2f;
 	OwnActor->GetMesh()->GlobalAnimRateScale = 1.2f;
 	OwnActor->ActivateEffectCom(true);
+	OwnActor->CostMana(Data.Cost);
 }
 
 void ASkillE::RestoreSkill()
