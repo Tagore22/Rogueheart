@@ -88,7 +88,11 @@ public:
 
     void ActivateEffectCom(bool bIsOn);
 
-    void CostMana(float Cost) { CurMana -= FMath::Min(Cost, CurMana); }
+    void CostMana(float Cost);
+
+    int32 GetSoulSum() const { return SoulSum; }
+
+    void SetSoulSum(int32 Plus) { SoulSum += Plus; }
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -265,4 +269,6 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "Effect")
     class UNiagaraComponent* EffectCom = nullptr;
+
+    int32 SoulSum = 0;
 };

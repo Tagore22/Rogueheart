@@ -787,7 +787,11 @@ void APlayerCharacter::HealPlayer(float PlusHP) // s
     UE_LOG(LogTemp, Warning, TEXT("PrevHP : %f"), CurHP);
     CurHP = FMath::Min(CurHP + PlusHP, MaxHP);
     UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
+    UE_LOG(LogTemp, Warning, TEXT("PrevMana : %f"), CurMana);
+    CurMana = FMath::Min(CurMana + PlusHP, MaxMana);
+    UE_LOG(LogTemp, Warning, TEXT("CurMana : %f"), CurMana);
     CachedController->SetHPPercent(CurHP / MaxHP);
+    CachedController->SetManaPercent(CurMana / MaxMana);
 }
 
 /*void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) // t 
@@ -951,7 +955,6 @@ void APlayerCharacter::UseSkill(const FInputActionInstance& Instance)
     }
     else if (SkillID == TEXT("IA_Skill_E"))
     {
-        EffectCom->Activate();
         SkillBaseCom->UseSkill(SkillID, nullptr);
     }
     else if (SkillID == TEXT("IA_Skill_R"))
@@ -977,4 +980,8 @@ void APlayerCharacter::ActivateEffectCom(bool bIsActivate)
     }
 }
 
-
+void APlayerCharacter::CostMana(float Cost)
+{
+    CurMana = FMath::Clamp(CurMana - Cost, 0.f, MaxMana);
+    CachedController->SetManaPercent(CurMana / MaxMana);
+}

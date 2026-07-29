@@ -6,7 +6,6 @@ void ASkillE::UseSkill(AActor* Target)
 	Super::UseSkill(Target);
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillE!"));
-	UE_LOG(LogTemp, Warning, TEXT("Remain Mana is %f!"), OwnActor->GetCurMana());
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
 	float Cost = OwnActor->GetCurMana();

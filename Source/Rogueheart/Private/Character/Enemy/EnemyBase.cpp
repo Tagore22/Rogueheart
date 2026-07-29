@@ -9,6 +9,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/EnemyHPBarWidget.h"
 #include "WeaponSweepComponent.h"
+#include "Soul.h"
 
 
 AEnemyBase::AEnemyBase()
@@ -208,6 +209,7 @@ void AEnemyBase::EnemyDie()
     ShowTargetWidget(false);
     Tags.Empty();
     Tags.Add("Die");
+    GetWorld()->SpawnActor<AActor>(SoulAct, GetActorTransform());
 
     // 꼭 콜리전을 꺼야 하는가?
     FTimerHandle DestroyTimer;

@@ -15,9 +15,11 @@ public:
 
     void ToggleInventory();
 
-    void SetHPPercent(const float Percent);
+    void SetHPPercent(float Percent);
 
-    void SetStaminaPercent(const float Percent);
+    void SetManaPercent(float Percent);
+
+    void SetStaminaPercent(float Percent);
 protected:
     /** BP_UIManager 서브클래스를 여기에 저장 */
     UPROPERTY(EditDefaultsOnly, Category = "UI")

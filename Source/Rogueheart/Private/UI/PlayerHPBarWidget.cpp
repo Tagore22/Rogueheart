@@ -6,10 +6,10 @@ void UPlayerHPBarWidget::SetHPPercent(const float Percent)
 	HPBar->SetPercent(Percent);
 }
 
-/*void UPlayerHPBarWidget::SetMPPercent(const float Percent)
+void UPlayerHPBarWidget::SetMPPercent(const float Percent)
 {
 	MPBar->SetPercent(Percent);
-}*/
+}
 
 void UPlayerHPBarWidget::SetStaminaPercent(const float Percent)
 {

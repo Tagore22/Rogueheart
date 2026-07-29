@@ -35,6 +35,7 @@ public:
 
     UFUNCTION(BlueprintCallable)
     float GetCurHP() const;
+
     UFUNCTION(BlueprintCallable)
     float GetMaxHP() const;
 
@@ -45,7 +46,18 @@ protected:
     virtual void EnemyDie();
     virtual void HPBarTickTimer(float DeltaTime);
     virtual void DamageTickTimer(float DeltaTime);
+public:
+    /*UPROPERTY(EditDefaultsOnly, Category = "Combat")
+    float AttackRange = 150.f;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Combat")
+    float AttackCooldown = 2.f;*/
+
+    UPROPERTY(VisibleAnywhere, Category = "AI|Patrol")
+        int32 CurrentPatrolIndex = 0;
+
+    UPROPERTY(EditInstanceOnly, Category = "AI|Patrol")
+        TArray<AActor*> PatrolPoints;
 protected:
     bool bIsTargeted = false;
 
@@ -92,16 +104,6 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "SweepComponent")
     class UWeaponSweepComponent* SweepCom = nullptr;
 
-public:
-    /*UPROPERTY(EditDefaultsOnly, Category = "Combat")
-    float AttackRange = 150.f;
-
-    UPROPERTY(EditDefaultsOnly, Category = "Combat")
-    float AttackCooldown = 2.f;*/
-
-    UPROPERTY(VisibleAnywhere, Category = "AI|Patrol")
-    int32 CurrentPatrolIndex = 0;
-
-    UPROPERTY(EditInstanceOnly, Category = "AI|Patrol")
-    TArray<AActor*> PatrolPoints;
+    UPROPERTY(EditAnywhere, Category = "SoulActor")
+    TSubclassOf<class AActor> SoulAct;
 };

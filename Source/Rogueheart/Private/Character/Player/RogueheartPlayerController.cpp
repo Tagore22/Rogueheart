@@ -94,6 +94,16 @@ void ARogueheartPlayerController::SetHPPercent(const float Percent)
     HPBarWidget->SetHPPercent(Percent);
 }
 
+void ARogueheartPlayerController::SetManaPercent(const float Percent)
+{
+    if (!HPBarWidget)
+    {
+        return;
+    }
+
+    HPBarWidget->SetMPPercent(Percent);
+}
+
 void ARogueheartPlayerController::SetStaminaPercent(const float Percent)
 {
     if (!HPBarWidget)
