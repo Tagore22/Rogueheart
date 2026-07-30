@@ -17,9 +17,11 @@ public:
 
     void SetHPPercent(float Percent);
 
-    void SetManaPercent(float Percent);
+    void SetMPPercent(float Percent);
 
     void SetStaminaPercent(float Percent);
+
+    void SetTextBlock(int32 Num);
 protected:
     /** BP_UIManager 서브클래스를 여기에 저장 */
     UPROPERTY(EditDefaultsOnly, Category = "UI")

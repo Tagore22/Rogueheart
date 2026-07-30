@@ -70,7 +70,7 @@ void APlayerCharacter::BeginPlay()
     SetGenericTeamId(FGenericTeamId(TeamID));
 
     // 레벨 이동시 이 GameInstanceSubsystem에서 기존 스탯값들을 불러들인다.
-
+    UE_LOG(LogTemp, Warning, TEXT("Begin Play"));
     InitializeStat();
 }
 
@@ -791,7 +791,7 @@ void APlayerCharacter::HealPlayer(float PlusHP) // s
     CurMana = FMath::Min(CurMana + PlusHP, MaxMana);
     UE_LOG(LogTemp, Warning, TEXT("CurMana : %f"), CurMana);
     CachedController->SetHPPercent(CurHP / MaxHP);
-    CachedController->SetManaPercent(CurMana / MaxMana);
+    CachedController->SetMPPercent(CurMana / MaxMana);
 }
 
 /*void APlayerCharacter::SetLockOnTarget(AEnemyBase* NewTarget) // t 
@@ -871,23 +871,26 @@ void APlayerCharacter::InitializeStat()
 {
     UStatSubsystem* StatData = GetGameInstance()->GetSubsystem<UStatSubsystem>();
 
-    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-
-    if (!StatData || !Anim)
+    if (!StatData)
     {
         return;
     }
 
     MaxHP = StatData->GetMaxHP();
-    UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
     CurHP = StatData->GetCurHP();
-    UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
+
+    MaxMana = StatData->GetMaxMP();
+    CurMana = StatData->GetCurMP();
+
     MaxStamina = StatData->GetMaxStamina();
-    UE_LOG(LogTemp, Warning, TEXT("MaxStamina : %f"), MaxStamina);
     CurStamina = StatData->GetCurStamina();
-    UE_LOG(LogTemp, Warning, TEXT("CurStamina : %f"), CurStamina);
+
+    SoulSum = StatData->GetSoulSum();
 
     CachedController->SetHPPercent(CurHP / MaxHP);
+    CachedController->SetMPPercent(CurMana / MaxMana);
+    CachedController->SetStaminaPercent(CurStamina / MaxStamina);
+    CachedController->SetTextBlock(SoulSum);
 }
 
 bool APlayerCharacter::HasLockTarget() const // p
@@ -983,5 +986,11 @@ void APlayerCharacter::ActivateEffectCom(bool bIsActivate)
 void APlayerCharacter::CostMana(float Cost)
 {
     CurMana = FMath::Clamp(CurMana - Cost, 0.f, MaxMana);
-    CachedController->SetManaPercent(CurMana / MaxMana);
+    CachedController->SetMPPercent(CurMana / MaxMana);
+}
+
+void APlayerCharacter::SetSoulSum(int32 Plus)
+{
+    SoulSum += Plus;
+    CachedController->SetTextBlock(SoulSum);
 }

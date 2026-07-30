@@ -84,15 +84,16 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     float GetCurStamina() const { return CurStamina; }// s
 
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    int32 GetSoulSum() const { return SoulSum; }
+
     void SetEffectCom(class UNiagaraSystem* Asset);
 
     void ActivateEffectCom(bool bIsOn);
 
     void CostMana(float Cost);
 
-    int32 GetSoulSum() const { return SoulSum; }
-
-    void SetSoulSum(int32 Plus) { SoulSum += Plus; }
+    void SetSoulSum(int32 Plus);
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -233,10 +234,12 @@ protected:
     float MaxHP = 100.f; // s
     UPROPERTY(EditDefaultsOnly, Category = "HP")
     float CurHP = 100.f; // s
-    UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+
+    UPROPERTY(EditDefaultsOnly, Category = "MP")
     float MaxMana = 100.f; // s
-    UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+    UPROPERTY(EditDefaultsOnly, Category = "MP")
     float CurMana = 100.f; // s
+
     UPROPERTY(EditDefaultsOnly, Category = "Stamina")
     float MaxStamina = 100.f; // s
     UPROPERTY(EditDefaultsOnly, Category = "Stamina")
@@ -245,6 +248,9 @@ protected:
     float StaminaCost = 10.f; // s
     UPROPERTY(EditDefaultsOnly, Category = "Stamina")
     float PlusStamina = 2.f; // s
+
+    UPROPERTY(EditDefaultsOnly, Category = "Soul")
+    int32 SoulSum = 0;
 
     UPROPERTY(BlueprintAssignable, Category = "Events", meta = (AllowPrivateAccess = "true"))
     FOnHPChanged OnHPChanged;
@@ -269,6 +275,4 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "Effect")
     class UNiagaraComponent* EffectCom = nullptr;
-
-    int32 SoulSum = 0;
 };

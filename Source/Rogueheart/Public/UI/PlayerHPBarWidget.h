@@ -16,6 +16,7 @@ public:
 
 	void SetStaminaPercent(float Percent);
 
+	void SetTextBlock(int32 Num);
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* HPBar;
@@ -25,4 +26,10 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* StaminaBar;
+
+	UPROPERTY(meta = (BindWidget))
+	class UBorder* Border;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextBlock;
 };

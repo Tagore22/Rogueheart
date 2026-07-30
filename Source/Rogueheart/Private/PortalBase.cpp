@@ -34,12 +34,26 @@ void APortalBase::OnOverlapPortal(UPrimitiveComponent* OverlappedComp, AActor* O
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("Portal Overlap!"));
+
 	StatSub->SetMaxHP(Player->GetMaxHP());
 	StatSub->SetCurHP(Player->GetCurHP());
+
+	StatSub->SetMaxMP(Player->GetMaxMana());
+	StatSub->SetCurMP(Player->GetCurMana());
+
 	StatSub->SetMaxStamina(Player->GetMaxStamina());
 	StatSub->SetCurStamina(Player->GetCurStamina());
 
-	UE_LOG(LogTemp, Warning, TEXT("Portal Overlap!"));
+	StatSub->SetSoulSum(Player->GetSoulSum());
+
+	UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), Player->GetMaxHP());
+	UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), Player->GetCurHP());
+	UE_LOG(LogTemp, Warning, TEXT("MaxMP : %f"), Player->GetMaxMana());
+	UE_LOG(LogTemp, Warning, TEXT("CurMP : %f"), Player->GetCurMana());
+	UE_LOG(LogTemp, Warning, TEXT("MaxStamina : %f"), Player->GetMaxStamina());
+	UE_LOG(LogTemp, Warning, TEXT("CurStamina : %f"), Player->GetCurStamina());
+	UE_LOG(LogTemp, Warning, TEXT("SoulSum : %d"), Player->GetSoulSum());
 
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("PortalTestMap"));
 }

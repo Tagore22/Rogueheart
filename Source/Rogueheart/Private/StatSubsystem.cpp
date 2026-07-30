@@ -29,6 +29,28 @@ void UStatSubsystem::SetCurHP(float NewCurHP)
     UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), CurHP);
 }
 
+void UStatSubsystem::SetMaxMP(float NewMaxMP)
+{
+    if (CheckStatValue(NewMaxMP))
+    {
+        return;
+    }
+
+    MaxMP = NewMaxMP;
+    UE_LOG(LogTemp, Warning, TEXT("MaxMP : %f"), NewMaxMP);
+}
+
+void UStatSubsystem::SetCurMP(float NewCurMP)
+{
+    if (CheckStatValue(NewCurMP))
+    {
+        return;
+    }
+
+    CurMP = NewCurMP;
+    UE_LOG(LogTemp, Warning, TEXT("CurMP : %f"), CurMP);
+}
+
 void UStatSubsystem::SetMaxStamina(float NewMaxStamina) 
 {
     if (CheckStatValue(NewMaxStamina))
@@ -49,5 +71,15 @@ void UStatSubsystem::SetCurStamina(float NewCurStamina)
 
     CurStamina = NewCurStamina;
     UE_LOG(LogTemp, Warning, TEXT("CurStamina : %f"), CurStamina);
+}
+
+void UStatSubsystem::SetSoulSum(int32 NewSoul)
+{
+    if (NewSoul < 0)
+    {
+        return;
+    }
+    SoulSum = NewSoul;
+    UE_LOG(LogTemp, Warning, TEXT("SoulSum : %d"), SoulSum);
 }
 
