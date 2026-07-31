@@ -87,13 +87,26 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     int32 GetSoulSum() const { return SoulSum; }
 
+    void SetMaxHP(float NewMaxHP);
+
+    void SetCurHP(float NewCurHP);
+
+    void SetMaxMana(float NewMaxMana);
+
+    void SetCurMana(float NewCurMana);
+
+    void SetMaxStamina(float NewMaxStamina);
+
+    void SetCurStamina(float NewCurStamina);
+
+    void SetSoulSum(int32 Plus);
+
     void SetEffectCom(class UNiagaraSystem* Asset);
 
     void ActivateEffectCom(bool bIsOn);
 
     void CostMana(float Cost);
 
-    void SetSoulSum(int32 Plus);
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -110,7 +123,6 @@ protected:
     //void SwitchTargetRight(const struct FInputActionValue& Value); // t
     void ToggleInventory(const struct FInputActionValue& Value);
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-    void InitializeStat();
 
     //class AEnemyBase* FindNearestTarget(); // t
     //void UpdateLockOnRotation(float DeltaTime); // t
@@ -212,6 +224,7 @@ protected:
 
     //float LockOnBreakDistanceSq = 0.f; // t
 
+    bool CheckValue(float Value) { return Value <= 0.f; }
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
     EPlayerState CurrentState = EPlayerState::Idle; // s

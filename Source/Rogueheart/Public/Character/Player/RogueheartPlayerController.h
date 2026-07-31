@@ -22,6 +22,14 @@ public:
     void SetStaminaPercent(float Percent);
 
     void SetTextBlock(int32 Num);
+
+protected:
+    virtual void BeginPlay() override;
+
+    virtual void SetupInputComponent() override;
+
+    void InitializeStat();
+
 protected:
     /** BP_UIManager 서브클래스를 여기에 저장 */
     UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -45,8 +53,4 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputMappingContext* DefaultMappingContext;
-
-    virtual void BeginPlay() override;
-
-    virtual void SetupInputComponent() override;
 };

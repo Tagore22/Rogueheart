@@ -9,6 +9,7 @@
 #include "Character/Enemy/EnemyBase.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Skill/SkillComponent.h"
 #include "InputActionValue.h"
@@ -21,7 +22,6 @@
 #include "Character/Player/MoveComponent.h"
 #include "Character/Player/AttackComponent.h"
 #include "Character/Player/TargetComponent.h"
-#include "StatSubsystem.h"
 #include "NiagaraComponent.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -68,10 +68,6 @@ void APlayerCharacter::BeginPlay()
 
     // LockOnBreakDistanceSq = FMath::Square(LockOnBreakDistance); // t
     SetGenericTeamId(FGenericTeamId(TeamID));
-
-    // 레벨 이동시 이 GameInstanceSubsystem에서 기존 스탯값들을 불러들인다.
-    UE_LOG(LogTemp, Warning, TEXT("Begin Play"));
-    InitializeStat();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -867,32 +863,6 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
     return ActualDamage;
 }
 
-void APlayerCharacter::InitializeStat()
-{
-    UStatSubsystem* StatData = GetGameInstance()->GetSubsystem<UStatSubsystem>();
-
-    if (!StatData)
-    {
-        return;
-    }
-
-    MaxHP = StatData->GetMaxHP();
-    CurHP = StatData->GetCurHP();
-
-    MaxMana = StatData->GetMaxMP();
-    CurMana = StatData->GetCurMP();
-
-    MaxStamina = StatData->GetMaxStamina();
-    CurStamina = StatData->GetCurStamina();
-
-    SoulSum = StatData->GetSoulSum();
-
-    CachedController->SetHPPercent(CurHP / MaxHP);
-    CachedController->SetMPPercent(CurMana / MaxMana);
-    CachedController->SetStaminaPercent(CurStamina / MaxStamina);
-    CachedController->SetTextBlock(SoulSum);
-}
-
 bool APlayerCharacter::HasLockTarget() const // p
 {
     //return LockOnTarget == nullptr ? false : true;
@@ -988,6 +958,66 @@ void APlayerCharacter::CostMana(float Cost)
     CurMana = FMath::Clamp(CurMana - Cost, 0.f, MaxMana);
     CachedController->SetMPPercent(CurMana / MaxMana);
 }
+
+void APlayerCharacter::SetMaxHP(float NewMaxHP)
+{
+    if (CheckValue(NewMaxHP))
+    {
+        return;
+    }
+    MaxHP = NewMaxHP;
+}
+
+
+void APlayerCharacter::SetCurHP(float NewCurHP)
+{
+    if (CheckValue(NewCurHP))
+    {
+        return;
+    }
+    CurHP = NewCurHP;
+}
+
+
+void APlayerCharacter::SetMaxMana(float NewMaxMana)
+{
+    if (CheckValue(NewMaxMana))
+    {
+        return;
+    }
+    MaxMana = NewMaxMana;
+}
+
+
+void APlayerCharacter::SetCurMana(float NewCurMana)
+{
+    if (CheckValue(NewCurMana))
+    {
+        return;
+    }
+    CurMana = NewCurMana;
+}
+
+
+void APlayerCharacter::SetMaxStamina(float NewMaxStamina)
+{
+    if (CheckValue(NewMaxStamina))
+    {
+        return;
+    }
+    MaxStamina = NewMaxStamina;
+}
+
+
+void APlayerCharacter::SetCurStamina(float NewCurStamina)
+{
+    if (CheckValue(NewCurStamina))
+    {
+        return;
+    }
+    CurStamina = NewCurStamina;
+}
+
 
 void APlayerCharacter::SetSoulSum(int32 Plus)
 {

@@ -1,10 +1,11 @@
 #include "Character/Player/RogueheartPlayerController.h"
 #include "UI/UIManager.h"
 #include "UObject/ConstructorHelpers.h"
-//#include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "UI/PlayerHPBarWidget.h"
+#include "StatSubsystem.h"
+#include "Character/Player/PlayerCharacter.h"
 
 ARogueheartPlayerController::ARogueheartPlayerController()
 {
@@ -35,6 +36,7 @@ void ARogueheartPlayerController::BeginPlay()
         HPBarWidget = CreateWidget<UPlayerHPBarWidget>(GetWorld(), WBP_HPBar);
         HPBarWidget->AddToViewport(); 
     }
+    InitializeStat();
 }
 
 void ARogueheartPlayerController::SetupInputComponent()
@@ -122,4 +124,35 @@ void ARogueheartPlayerController::SetTextBlock(int32 Num)
     }
     UE_LOG(LogTemp, Warning, TEXT("Nullptr!"));
     HPBarWidget->SetTextBlock(Num);
+}
+
+void ARogueheartPlayerController::InitializeStat()
+{
+    APlayerCharacter* PlayerAct = Cast<APlayerCharacter>(GetCharacter());
+    UStatSubsystem* StatData = GetGameInstance()->GetSubsystem<UStatSubsystem>();
+    if (!IsValid(PlayerAct) || !StatData)
+    {
+        return;
+    }
+
+    float MaxHP = StatData->GetMaxHP();
+    float CurHP = StatData->GetCurHP();
+    PlayerAct->SetMaxHP(MaxHP);
+    PlayerAct->SetCurHP(CurHP);
+    SetHPPercent(CurHP / MaxHP);
+
+    float MaxMP = StatData->GetMaxMP();
+    float CurMP = StatData->GetCurMP();
+    PlayerAct->SetMaxMana(MaxMP);
+    PlayerAct->SetCurMana(CurMP);
+    SetMPPercent(CurMP / MaxMP);
+
+    float MaxStamina = StatData->GetMaxStamina();
+    float CurStamina = StatData->GetCurStamina();
+    PlayerAct->SetMaxStamina(MaxStamina);
+    PlayerAct->SetCurStamina(CurStamina);
+    SetStaminaPercent(CurStamina / MaxStamina);
+
+    PlayerAct->SetSoulSum(StatData->GetSoulSum());
+    SetTextBlock(PlayerAct->GetSoulSum());
 }
