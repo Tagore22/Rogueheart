@@ -27,4 +27,6 @@ protected:
 	FSkillData Data;
 
 	FTimerHandle SkillTimer;
+
+	int32 SkillLevel = 0;
 };
