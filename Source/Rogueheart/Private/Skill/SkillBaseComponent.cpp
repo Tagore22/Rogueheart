@@ -20,6 +20,7 @@ void USkillBaseComponent::BeginPlay()
 		ASkillBase* NewSkill = NewObject<ASkillBase>(this, List->Type);
 		NewSkill->InitializeSkillData(Cast<APlayerCharacter>(GetOwner()), *List);
 		SkillSlot.Add(List->SkillID, NewSkill);
+		SkillLevels.Add(List->SkillID, 0);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Skill Nums : %d"), SkillSlot.Num());
@@ -40,16 +41,6 @@ void USkillBaseComponent::UseSkill(FName SkillID, AActor* Target)
 			return;
 		}
 		UE_LOG(LogTemp, Warning, TEXT("UseSkill!"));
-		(*Skill)->UseSkill(Target, SkillLevel);
+		(*Skill)->UseSkill(Target, *SkillLevels.Find(SkillID));
 	}
-}
-
-void USkillBaseComponent::PlusSkillLevel()
-{
-	// 후에 범위값 제한 만들기.
-	/*if (SkillLevel < 5)
-	{
-		return;
-	}*/
-	++SkillLevel;
 }

@@ -22,12 +22,11 @@ public:
 	// 후에 매개변수 추가할 것.
 	void UseSkill(FName SkillName, class AActor* Target);
 
-	void PlusSkillLevel();
 private:
 	TMap<FName, class ASkillBase*> SkillSlot;
 
+	TMap<FName, int32> SkillLevels;
+
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* DataTable;
-
-	int32 SkillLevel = 2;
 };
