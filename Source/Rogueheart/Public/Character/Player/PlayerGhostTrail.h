@@ -17,6 +17,10 @@ public:
 	TSubclassOf<class AActor> GetBlade() const { return Blade; }
 
 	float GetPlusDistance() const { return PlusDistance; }
+
+	float GetBladeDamage() const { return BladeDamage; }
+
+	void InitializePGT(float Damage) { BladeDamage = Damage; }
 protected:
 	virtual void BeginPlay() override;
 protected:
@@ -37,4 +41,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "BladeGhostTrail")
 	TSubclassOf<class AActor> Blade;
+
+	float BladeDamage;
 };

@@ -1,9 +1,9 @@
 #include "Skill/SkillE.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-void ASkillE::UseSkill(AActor* Target)
+void ASkillE::UseSkill(AActor* Target, int32 SkillLevel)
 {
-	Super::UseSkill(Target);
+	Super::UseSkill(Target, SkillLevel);
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillE!"));
 
@@ -17,12 +17,12 @@ void ASkillE::UseSkill(AActor* Target)
 	DefaultSpeed = OwnActor->GetCharacterMovement()->MaxWalkSpeed;
 	OwnActor->SetEffectCom(Data.Effect);
 
-	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillE::RestoreSkill, Data.Cooldown, false);
+	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillE::RestoreSkill, Data.Cooldown[SkillLevel], false);
 
-	OwnActor->GetCharacterMovement()->MaxWalkSpeed *= 1.2f;
-	OwnActor->GetMesh()->GlobalAnimRateScale = 1.2f;
+	OwnActor->GetCharacterMovement()->MaxWalkSpeed *= Data.SpeedRatio[SkillLevel];
+	OwnActor->GetMesh()->GlobalAnimRateScale = Data.SpeedRatio[SkillLevel];
 	OwnActor->ActivateEffectCom(true);
-	OwnActor->CostMana(Data.Cost);
+	OwnActor->CostMana(Data.Cost[SkillLevel]);
 }
 
 void ASkillE::RestoreSkill()

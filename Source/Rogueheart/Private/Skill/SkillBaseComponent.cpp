@@ -40,6 +40,16 @@ void USkillBaseComponent::UseSkill(FName SkillID, AActor* Target)
 			return;
 		}
 		UE_LOG(LogTemp, Warning, TEXT("UseSkill!"));
-		(*Skill)->UseSkill(Target);
+		(*Skill)->UseSkill(Target, SkillLevel);
 	}
+}
+
+void USkillBaseComponent::PlusSkillLevel()
+{
+	// 후에 범위값 제한 만들기.
+	/*if (SkillLevel < 5)
+	{
+		return;
+	}*/
+	++SkillLevel;
 }

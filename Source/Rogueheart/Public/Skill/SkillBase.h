@@ -17,16 +17,14 @@ public:
 
 	virtual void InitializeSkillData(APlayerCharacter* InitOwn, const FSkillData InitData);
 
-	virtual void UseSkill(class AActor* Target);
+	virtual void UseSkill(class AActor* Target, int32 SkillLevel);
 protected:
 	virtual void RestoreSkill(); // 쿨타임 다 되었을 때 발동.
 protected:
 	UPROPERTY()
-	class APlayerCharacter* OwnActor = nullptr;
+	class APlayerCharacter* OwnActor;
 
 	FSkillData Data;
 
 	FTimerHandle SkillTimer;
-
-	int32 SkillLevel = 0;
 };

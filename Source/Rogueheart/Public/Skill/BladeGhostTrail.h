@@ -14,6 +14,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	void InitializeBGT(float Damage) { BladeDamage = Damage; }
+
 	//virtual void Tick(float DeltaTime) override;
 protected:
 	UFUNCTION()
@@ -34,9 +36,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "ProjectileMovement")
 	class UProjectileMovementComponent* ProjectCom;
 
-	UPROPERTY(EditAnywhere, Category = "Damage")
-	float BladeDamage = 20.f;
-
 	UPROPERTY(EditAnywhere, Category = "Timer")
 	float DestroyTimer = 5.f;
+
+	float BladeDamage;
 };

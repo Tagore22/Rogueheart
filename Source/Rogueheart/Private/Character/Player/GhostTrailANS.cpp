@@ -1,5 +1,6 @@
 #include "Character/Player/GhostTrailANS.h"
 #include "Character/Player/PlayerGhostTrail.h"
+#include "Skill/BladeGhostTrail.h"
 
 void UGhostTrailANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -14,7 +15,12 @@ void UGhostTrailANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequence
 		return;
 	}
 	FVector ForwardVec = Act->GetActorForwardVector();
-	MeshComp->GetWorld()->SpawnActor<AActor>(Act->GetBlade(), Act->GetActorLocation() + ForwardVec * Act->GetPlusDistance(), Act->GetActorRotation());
+	ABladeGhostTrail* GhostTrail = Cast<ABladeGhostTrail>(MeshComp->GetWorld()->SpawnActor<AActor>(Act->GetBlade(), Act->GetActorLocation() + ForwardVec * Act->GetPlusDistance(), Act->GetActorRotation()));
+	if (!IsValid(GhostTrail))
+	{
+		return;
+	}
+	GhostTrail->InitializeBGT(Act->GetBladeDamage());
 	UE_LOG(LogTemp, Warning, TEXT("Spawn Success"));
 }
 

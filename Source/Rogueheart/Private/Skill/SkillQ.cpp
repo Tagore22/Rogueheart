@@ -1,8 +1,8 @@
 #include "Skill/SkillQ.h"
 
-void ASkillQ::UseSkill(AActor* Target)
+void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 {
-	Super::UseSkill(Target);
+	Super::UseSkill(Target, SkillLevel);
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
 	float Cost = OwnActor->GetCurMana();
@@ -12,7 +12,7 @@ void ASkillQ::UseSkill(AActor* Target)
 		return;
 	}
 
-	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillQ::RestoreSkill, Data.Cooldown, false);
+	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillQ::RestoreSkill, Data.Cooldown[SkillLevel], false);
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillQ!"));
 
@@ -30,7 +30,7 @@ void ASkillQ::UseSkill(AActor* Target)
 	if (bCanTeleport)
 	{
 		OwnActor->SetActorLocation(MovePosition);
-		OwnActor->CostMana(Data.Cost);
+		OwnActor->CostMana(Data.Cost[SkillLevel]);
 	}
 }
 

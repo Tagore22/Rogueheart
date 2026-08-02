@@ -10,7 +10,7 @@ class ROGUEHEART_API ASkillR : public ASkillBase
 	GENERATED_BODY()
 	
 public:
-	virtual void UseSkill(class AActor* Target) override;
+	virtual void UseSkill(class AActor* Target, int32 SkillLevel) override;
 
 protected:
 	virtual void RestoreSkill() override;
@@ -19,5 +19,7 @@ protected:
 protected:
 	int32 SpawnNumber = 0;
 	
+	int32 RLevel;
+
 	FTimerHandle SpawnTimer;
 };

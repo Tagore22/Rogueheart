@@ -25,13 +25,13 @@ struct FSkillData : public FTableRowBase
     class UAnimMontage* SkillMontage;
 
     UPROPERTY(EditDefaultsOnly)
-    float Damage;
+    TArray<float> Damage;
 
     UPROPERTY(EditDefaultsOnly)
-    float Cooldown;
+    TArray<float> Cooldown;
 
     UPROPERTY(EditDefaultsOnly)
-    float SpawnTime;
+    TArray<float> SpawnTime;
 
     UPROPERTY(EditDefaultsOnly)
     class UTexture2D* SkillIcon;
@@ -43,5 +43,8 @@ struct FSkillData : public FTableRowBase
     class UNiagaraSystem* Effect;
 
     UPROPERTY(EditDefaultsOnly)
-    float Cost;
+    TArray<float> Cost;
+
+    UPROPERTY(EditDefaultsOnly)
+    TArray<float> SpeedRatio;
 };
