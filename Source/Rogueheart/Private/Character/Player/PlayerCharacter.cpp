@@ -23,6 +23,7 @@
 #include "Character/Player/AttackComponent.h"
 #include "Character/Player/TargetComponent.h"
 #include "NiagaraComponent.h"
+#include "SkillNames.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -89,6 +90,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         EnhancedInput->BindAction(IA_Skill_Q, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
         EnhancedInput->BindAction(IA_Skill_E, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
         EnhancedInput->BindAction(IA_Skill_R, ETriggerEvent::Started, this, &APlayerCharacter::UseSkill);
+        EnhancedInput->BindAction(IA_LevelUpOnOff, ETriggerEvent::Started, this, &APlayerCharacter::ToggleLevelUp);
 
         // 여기서 각 컴포넌트들의 SetupInputBinding()을 호출한다.
         MoveCom->SetupInputBinding(EnhancedInput);
@@ -917,7 +919,7 @@ void APlayerCharacter::UseSkill(const FInputActionInstance& Instance)
     FName SkillID = Instance.GetSourceAction()->GetFName();
     UE_LOG(LogTemp, Warning, TEXT("%s"), *SkillID.ToString());
 
-    if (SkillID == TEXT("IA_Skill_Q"))
+    if (SkillID == SkillNames::SkillQ)
     {
         AEnemyBase* Target = TargetCom->GetLockOnTarget();
         if (!IsValid(Target))
@@ -926,11 +928,11 @@ void APlayerCharacter::UseSkill(const FInputActionInstance& Instance)
         }
         SkillBaseCom->UseSkill(SkillID, Target);
     }
-    else if (SkillID == TEXT("IA_Skill_E"))
+    else if (SkillID == SkillNames::SkillE)
     {
         SkillBaseCom->UseSkill(SkillID, nullptr);
     }
-    else if (SkillID == TEXT("IA_Skill_R"))
+    else if (SkillID == SkillNames::SkillR)
     {
         SkillBaseCom->UseSkill(SkillID, nullptr);
     }
@@ -1023,4 +1025,9 @@ void APlayerCharacter::SetSoulSum(int32 Plus)
 {
     SoulSum += Plus;
     CachedController->SetTextBlock(SoulSum);
+}
+
+void APlayerCharacter::ToggleLevelUp()
+{
+    CachedController->ToggleLevelUp();
 }

@@ -28,6 +28,7 @@ void ASkillR::UseSkill(AActor* Target, int32 SkillLevel)
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASkillR::SpawnDummy, Data.SpawnTime[SkillLevel], true);
 	OwnActor->CostMana(Data.Cost[SkillLevel]);
 	RLevel = SkillLevel;
+	UE_LOG(LogTemp, Warning, TEXT("SkillR Level : %d"), SkillLevel);
 }
 
 void ASkillR::RestoreSkill()

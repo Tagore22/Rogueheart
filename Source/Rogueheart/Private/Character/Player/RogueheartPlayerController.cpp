@@ -36,6 +36,10 @@ void ARogueheartPlayerController::BeginPlay()
         HPBarWidget = CreateWidget<UPlayerHPBarWidget>(GetWorld(), WBP_HPBar);
         HPBarWidget->AddToViewport(); 
     }
+    if (WBP_LevelUp)
+    {
+        LevelUpWidget = CreateWidget<UUserWidget>(GetWorld(), WBP_LevelUp);
+    }
     InitializeStat();
 }
 
@@ -59,31 +63,39 @@ void ARogueheartPlayerController::ToggleInventory()
     if (!InventoryWidget)
         return;
 
+    bool bIsActivate = InventoryWidget->IsInViewport();
      // 현재 인벤토리가 켜져 있음.
-    if (InventoryWidget->IsInViewport())
+    if (bIsActivate)
     {
         InventoryWidget->RemoveFromParent();
-
-        // 마우스 커서 숨기고 게임 입력으로 전환
-        FInputModeGameOnly InputMode;
-        SetInputMode(InputMode);
-        SetShowMouseCursor(false);
-        SetPause(false);
     }
     else
     {
         InventoryWidget->AddToViewport();
-
-        // 마우스 커서 보이고 UI 입력으로 전환
-        // 인벤토리를 끌 때에도 키보드를 입력하는 Game모드이기에 UIOnly는 불가능하다.
-        FInputModeGameAndUI InputMode;
-        // 마우스 클릭 시 커서가 갑자기 사라지는 걸 방지
-        InputMode.SetHideCursorDuringCapture(false);
-        InputMode.SetWidgetToFocus(InventoryWidget->TakeWidget());
-        SetInputMode(InputMode);
-        SetShowMouseCursor(true);
-        SetPause(true);
     }
+    ActivateUI(bIsActivate);
+}
+
+void ARogueheartPlayerController::ToggleLevelUp()
+{
+    // 인벤토리가 켜져있으면 끄고, 꺼져있으면 킨다.
+    // 아마 현재 UI가 nullptr인지로 알 수 있다.
+    UE_LOG(LogTemp, Warning, TEXT("LevelUp Toggle"));
+
+    if (!LevelUpWidget)
+        return;
+
+    bool bIsActivate = LevelUpWidget->IsInViewport();
+    // 현재 인벤토리가 켜져 있음.
+    if (bIsActivate)
+    {
+        LevelUpWidget->RemoveFromParent();
+    }
+    else
+    {
+        LevelUpWidget->AddToViewport();
+    }
+    ActivateUI(bIsActivate);
 }
 
 void ARogueheartPlayerController::SetHPPercent(const float Percent)
@@ -155,4 +167,28 @@ void ARogueheartPlayerController::InitializeStat()
 
     PlayerAct->SetSoulSum(StatData->GetSoulSum());
     SetTextBlock(PlayerAct->GetSoulSum());
+}
+
+void ARogueheartPlayerController::ActivateUI(bool bIsActivate)
+{
+    if (bIsActivate)
+    {
+        // 마우스 커서 숨기고 게임 입력으로 전환
+        FInputModeGameOnly InputMode;
+        SetInputMode(InputMode);
+        SetShowMouseCursor(false);
+        SetPause(false);
+    }
+    else
+    {
+        // 마우스 커서 보이고 UI 입력으로 전환
+        // 인벤토리를 끌 때에도 키보드를 입력하는 Game모드이기에 UIOnly는 불가능하다.
+        FInputModeGameAndUI InputMode;
+        // 마우스 클릭 시 커서가 갑자기 사라지는 걸 방지
+        InputMode.SetHideCursorDuringCapture(false);
+        InputMode.SetWidgetToFocus(InventoryWidget->TakeWidget());
+        SetInputMode(InputMode);
+        SetShowMouseCursor(true);
+        SetPause(true);
+    }
 }

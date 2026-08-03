@@ -32,6 +32,7 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 		OwnActor->SetActorLocation(MovePosition);
 		OwnActor->CostMana(Data.Cost[SkillLevel]);
 	}
+	UE_LOG(LogTemp, Warning, TEXT("SkillQ Level : %d"), SkillLevel);
 }
 
 void ASkillQ::RestoreSkill()

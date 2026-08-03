@@ -17,10 +17,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	// 후에 매개변수 추가할 것.
 	void UseSkill(FName SkillName, class AActor* Target);
+
+	void SkillLevelUp(FName SkillName);
 
 private:
 	TMap<FName, class ASkillBase*> SkillSlot;

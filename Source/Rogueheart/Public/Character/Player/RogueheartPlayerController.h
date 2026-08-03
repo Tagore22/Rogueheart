@@ -15,6 +15,8 @@ public:
 
     void ToggleInventory();
 
+    void ToggleLevelUp();
+
     void SetHPPercent(float Percent);
 
     void SetMPPercent(float Percent);
@@ -30,6 +32,8 @@ protected:
 
     void InitializeStat();
 
+    void ActivateUI(bool bIsActivate);
+
 protected:
     /** BP_UIManager 서브클래스를 여기에 저장 */
     UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -44,6 +48,12 @@ protected:
 
     UPROPERTY()
     class UUserWidget* InventoryWidget = nullptr;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UUserWidget> WBP_LevelUp;
+
+    UPROPERTY()
+    class UUserWidget* LevelUpWidget = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UPlayerHPBarWidget> WBP_HPBar;

@@ -1,10 +1,13 @@
 #include "UI/LevelupWidget.h"
 #include "Components/Button.h"
 #include "Character/Player/PlayerCharacter.h"
+#include "SkillNames.h"
+#include "Skill/SkillBaseComponent.h"
 
-void ULevelupWidget::NativeConstruct()
+
+void ULevelupWidget::NativeOnInitialized()
 {
-    Super::NativeConstruct();
+    Super::NativeOnInitialized();
 
     HPUpButton->OnClicked.AddDynamic(this, &ULevelupWidget::OnHPUpClicked);
     MPUpButton->OnClicked.AddDynamic(this, &ULevelupWidget::OnMPUpClicked);
@@ -18,31 +21,49 @@ void ULevelupWidget::NativeConstruct()
 
 void ULevelupWidget::OnHPUpClicked()
 {
+    UE_LOG(LogTemp, Log, TEXT("HP LevelUp"));
+
     Player->SetMaxHP(PlusValue);
 }
 
 void ULevelupWidget::OnMPUpClicked()
 {
+    UE_LOG(LogTemp, Log, TEXT("MP LevelUp"));
+
     Player->SetMaxMana(PlusValue);
 }
 
 void ULevelupWidget::OnStaminaUpClicked()
 {
+    UE_LOG(LogTemp, Log, TEXT("Stamina LevelUp"));
+
     Player->SetMaxStamina(PlusValue);
 }
 
 void ULevelupWidget::OnSkillQUpClicked()
 {
+    UE_LOG(LogTemp, Log, TEXT("SkillQ LevelUp"));
 
+    SkillLevelUp(SkillNames::SkillQ);
 }
 
 void ULevelupWidget::OnSkillEUpClicked()
 {
-
+    SkillLevelUp(SkillNames::SkillE);
 }
 
 void ULevelupWidget::OnSkillRUpClicked()
 {
+    SkillLevelUp(SkillNames::SkillR);
+}
 
+void ULevelupWidget::SkillLevelUp(FName SkillName)
+{
+    USkillBaseComponent* SkillBaseCom = Cast<USkillBaseComponent>(Player->GetSkillBaseCom());
+    if (SkillBaseCom)
+    {
+        return;
+    }
+    SkillBaseCom->SkillLevelUp(SkillName);
 }
 

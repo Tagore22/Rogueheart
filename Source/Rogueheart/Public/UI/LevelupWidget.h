@@ -10,7 +10,7 @@ class ROGUEHEART_API ULevelupWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	virtual void NativeConstruct() override;
+	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()
 	void OnHPUpClicked();
@@ -29,6 +29,8 @@ protected:
 
 	UFUNCTION()
 	void OnSkillRUpClicked();
+
+	void SkillLevelUp(FName SkillName);
 	
 protected:
 	UPROPERTY(meta = (BindWidget))

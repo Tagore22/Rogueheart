@@ -23,6 +23,7 @@ void ASkillE::UseSkill(AActor* Target, int32 SkillLevel)
 	OwnActor->GetMesh()->GlobalAnimRateScale = Data.SpeedRatio[SkillLevel];
 	OwnActor->ActivateEffectCom(true);
 	OwnActor->CostMana(Data.Cost[SkillLevel]);
+	UE_LOG(LogTemp, Warning, TEXT("SkillE Level : %d"), SkillLevel);
 }
 
 void ASkillE::RestoreSkill()

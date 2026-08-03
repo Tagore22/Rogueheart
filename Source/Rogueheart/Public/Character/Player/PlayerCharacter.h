@@ -107,6 +107,8 @@ public:
 
     void CostMana(float Cost);
 
+    class USkillBaseComponent* GetSkillBaseCom() const { return SkillBaseCom; }
+
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -123,6 +125,7 @@ protected:
     //void SwitchTargetRight(const struct FInputActionValue& Value); // t
     void ToggleInventory(const struct FInputActionValue& Value);
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+    void ToggleLevelUp();
 
     //class AEnemyBase* FindNearestTarget(); // t
     //void UpdateLockOnRotation(float DeltaTime); // t
@@ -167,6 +170,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputAction* IA_InventoryOnOff;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    class UInputAction* IA_LevelUpOnOff;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputAction* IA_Skill_Q;
