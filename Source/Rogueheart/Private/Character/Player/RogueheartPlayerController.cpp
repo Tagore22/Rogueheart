@@ -98,7 +98,7 @@ void ARogueheartPlayerController::ToggleLevelUp()
     ActivateUI(bIsActivate);
 }
 
-void ARogueheartPlayerController::SetHPPercent(const float Percent)
+void ARogueheartPlayerController::SetHPPercent(float Percent)
 {
     if (!HPBarWidget)
     {
@@ -108,7 +108,7 @@ void ARogueheartPlayerController::SetHPPercent(const float Percent)
     HPBarWidget->SetHPPercent(Percent);
 }
 
-void ARogueheartPlayerController::SetMPPercent(const float Percent)
+void ARogueheartPlayerController::SetMPPercent(float Percent)
 {
     if (!HPBarWidget)
     {
@@ -118,7 +118,7 @@ void ARogueheartPlayerController::SetMPPercent(const float Percent)
     HPBarWidget->SetMPPercent(Percent);
 }
 
-void ARogueheartPlayerController::SetStaminaPercent(const float Percent)
+void ARogueheartPlayerController::SetStaminaPercent(float Percent)
 {
     if (!HPBarWidget)
     {
@@ -126,6 +126,36 @@ void ARogueheartPlayerController::SetStaminaPercent(const float Percent)
     }
 
     HPBarWidget->SetStaminaPercent(Percent);
+}
+
+void ARogueheartPlayerController::HPWidthOverride(float Width)
+{
+    if (!HPBarWidget)
+    {
+        return;
+    }
+
+    HPBarWidget->HPWidthOverride(Width);
+}
+
+void ARogueheartPlayerController::MPWidthOverride(float Width)
+{
+    if (!HPBarWidget)
+    {
+        return;
+    }
+
+    HPBarWidget->MPWidthOverride(Width);
+}
+
+void ARogueheartPlayerController::StaminaWidthOverride(float Width)
+{
+    if (!HPBarWidget)
+    {
+        return;
+    }
+
+    HPBarWidget->StaminaWidthOverride(Width);
 }
 
 void ARogueheartPlayerController::SetTextBlock(int32 Num)
@@ -167,6 +197,8 @@ void ARogueheartPlayerController::InitializeStat()
 
     PlayerAct->SetSoulSum(StatData->GetSoulSum());
     SetTextBlock(PlayerAct->GetSoulSum());
+
+    HPBarWidget->UIWidthInitialize(MaxHP, MaxMP, MaxStamina);
 }
 
 void ARogueheartPlayerController::ActivateUI(bool bIsActivate)

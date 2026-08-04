@@ -23,6 +23,12 @@ public:
 
     void SetStaminaPercent(float Percent);
 
+    void HPWidthOverride(float Width);
+
+    void MPWidthOverride(float Width);
+
+    void StaminaWidthOverride(float Width);
+
     void SetTextBlock(int32 Num);
 
 protected:

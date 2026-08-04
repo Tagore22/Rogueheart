@@ -967,7 +967,13 @@ void APlayerCharacter::SetMaxHP(float NewMaxHP)
     {
         return;
     }
+    bool bIsUpper = MaxHP < NewMaxHP;
     MaxHP = NewMaxHP;
+    CachedController->SetHPPercent(CurHP / MaxHP);
+    if (bIsUpper)
+    {
+        CachedController->HPWidthOverride(MaxHP);
+    }
 }
 
 
@@ -987,7 +993,13 @@ void APlayerCharacter::SetMaxMana(float NewMaxMana)
     {
         return;
     }
+    bool bIsUpper = MaxMana < NewMaxMana;
     MaxMana = NewMaxMana;
+    CachedController->SetMPPercent(CurMana / MaxMana);
+    if (bIsUpper)
+    {
+        CachedController->MPWidthOverride(MaxMana);
+    }
 }
 
 
@@ -1007,7 +1019,13 @@ void APlayerCharacter::SetMaxStamina(float NewMaxStamina)
     {
         return;
     }
+    bool bIsUpper = MaxStamina < NewMaxStamina;
     MaxStamina = NewMaxStamina;
+    CachedController->SetStaminaPercent(CurStamina / MaxStamina);
+    if (bIsUpper)
+    {
+        CachedController->StaminaWidthOverride(MaxStamina);
+    }
 }
 
 

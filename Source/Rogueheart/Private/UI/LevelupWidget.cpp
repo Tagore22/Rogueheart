@@ -23,21 +23,21 @@ void ULevelupWidget::OnHPUpClicked()
 {
     UE_LOG(LogTemp, Log, TEXT("HP LevelUp"));
 
-    Player->SetMaxHP(PlusValue);
+    Player->SetMaxHP(Player->GetMaxHP() + PlusValue);
 }
 
 void ULevelupWidget::OnMPUpClicked()
 {
     UE_LOG(LogTemp, Log, TEXT("MP LevelUp"));
 
-    Player->SetMaxMana(PlusValue);
+    Player->SetMaxMana(Player->GetMaxMana() + PlusValue);
 }
 
 void ULevelupWidget::OnStaminaUpClicked()
 {
     UE_LOG(LogTemp, Log, TEXT("Stamina LevelUp"));
 
-    Player->SetMaxStamina(PlusValue);
+    Player->SetMaxStamina(Player->GetMaxStamina() + PlusValue);
 }
 
 void ULevelupWidget::OnSkillQUpClicked()
@@ -60,7 +60,7 @@ void ULevelupWidget::OnSkillRUpClicked()
 void ULevelupWidget::SkillLevelUp(FName SkillName)
 {
     USkillBaseComponent* SkillBaseCom = Cast<USkillBaseComponent>(Player->GetSkillBaseCom());
-    if (SkillBaseCom)
+    if (!SkillBaseCom)
     {
         return;
     }

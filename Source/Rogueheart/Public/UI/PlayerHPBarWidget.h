@@ -16,7 +16,16 @@ public:
 
 	void SetStaminaPercent(float Percent);
 
+	void HPWidthOverride(float Width);
+
+	void MPWidthOverride(float Width);
+
+	void StaminaWidthOverride(float Width);
+
 	void SetTextBlock(int32 Num);
+
+	void UIWidthInitialize(float MaxHP, float MaxMP, float MaxStamina);
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* HPBar;
@@ -28,8 +37,20 @@ private:
 	class UProgressBar* StaminaBar;
 
 	UPROPERTY(meta = (BindWidget))
-	class UBorder* Border;
+	class USizeBox* HPBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class USizeBox* MPBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class USizeBox* StaminaBox;
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* TextBlock;
+
+	UPROPERTY(EditDefaultsOnly)
+	float WidthRatio = 8.5;
+
+	UPROPERTY(EditDefaultsOnly)
+	float Height = 70.f;
 };
