@@ -87,6 +87,8 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     int32 GetSoulSum() const { return SoulSum; }
 
+    class UWeaponSweepComponent* GetSweepCom() const { return SweepCom; }
+
     void SetMaxHP(float NewMaxHP);
 
     void SetCurHP(float NewCurHP);
