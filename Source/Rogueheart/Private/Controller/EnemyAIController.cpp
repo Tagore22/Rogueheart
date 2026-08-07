@@ -19,7 +19,7 @@ const FName AEnemyAIController::DiscoveredLocationKey = TEXT("DiscoveredLocation
 
 AEnemyAIController::AEnemyAIController()
 {
-    //PrimaryActorTick.bCanEverTick = true; 
+    PrimaryActorTick.bCanEverTick = true; 
 
     // AI Perception 설정
     AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
@@ -50,24 +50,9 @@ AEnemyAIController::AEnemyAIController()
     SetGenericTeamId(FGenericTeamId(EnemyTeamId));
 }
 
-/*void AEnemyAIController::Tick(float DeltaSeconds)
+void AEnemyAIController::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-
-    // 매 Tick마다 시야 디버그 그려줌
-    //Debug_DrawFOV();
-}*/
-
-void AEnemyAIController::ToggleBT(bool bIsStop)
-{
-    if (bIsStop)
-    {
-        GetBrainComponent()->StopLogic(TEXT("Animation Playing"));
-    }
-    else
-    {
-        RunBehaviorTree(BehaviorTreeAsset);
-    }
 
     // 매 Tick마다 시야 디버그 그려줌
     //Debug_DrawFOV();

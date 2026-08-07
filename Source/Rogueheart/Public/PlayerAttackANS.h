@@ -19,14 +19,4 @@ protected:
 	// 끝날 때 1회 호출
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
-private:
-	UPROPERTY()
-	class APlayerCharacter* Player;
-
-	UPROPERTY()
-	class AEnemyBase* Enemy;
-
-	UPROPERTY()
-	class UWeaponSweepComponent* SweepComp;
-
 };

@@ -17,9 +17,7 @@ public:
     virtual FGenericTeamId GetGenericTeamId() const override;
 
     // ADDED: 매 Tick마다 디버깅용 시야각 그려줌
-    //virtual void Tick(float DeltaSeconds) override;
-
-    void ToggleBT(bool bIsStop);
+    virtual void Tick(float DeltaSeconds) override;
 
     const static FName TargetPlayerKey;
     const static FName IsInvestigatingKey;

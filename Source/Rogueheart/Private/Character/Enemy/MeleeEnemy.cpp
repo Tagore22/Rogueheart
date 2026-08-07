@@ -1,6 +1,4 @@
 #include "Character/Enemy/MeleeEnemy.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Controller/EnemyAIController.h"
 
 AMeleeEnemy::AMeleeEnemy()
 {
@@ -26,11 +24,4 @@ void AMeleeEnemy::TryAttack()
     //
     int32 AttackIndex = FMath::RandRange(1, AttackMontages.Num() - 1);
     Anim->Montage_Play(AttackMontages[AttackIndex]);
-    GetCharacterMovement()->bOrientRotationToMovement = false;
-    AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
-    if (!Con)
-    {
-        return;
-    }
-    Con->ToggleBT(true);
 }

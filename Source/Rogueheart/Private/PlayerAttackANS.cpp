@@ -1,10 +1,5 @@
 #include "PlayerAttackANS.h"
 #include "WeaponSweepComponent.h"
-#include "Character/Player/PlayerCharacter.h"
-#include "Character/Enemy/EnemyBase.h"
-#include "SkillNames.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Controller/EnemyAIController.h"
 
 void UPlayerAttackANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -15,31 +10,13 @@ void UPlayerAttackANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 		UE_LOG(LogTemp, Warning, TEXT("Mesh is nullptr!"));
 		return;
 	}
-	AActor* OwnerAct = MeshComp->GetOwner();
-	if (!IsValid(OwnerAct))
+	AActor* Player = MeshComp->GetOwner();
+	if (!IsValid(Player))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Player is nullptr!"));
 		return;
 	}
-	if (OwnerAct->ActorHasTag(SkillNames::PlayerTag))
-	{
-		Player = Cast<APlayerCharacter>(MeshComp->GetOwner());
-		if (!IsValid(Player))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Player is nullptr!"));
-			return;
-		}
-		SweepComp = Player->GetSweepCom();
-	}
-	else if(OwnerAct->ActorHasTag(SkillNames::EnemyTag) || OwnerAct->ActorHasTag(SkillNames::DieTag))
-	{
-		Enemy = Cast<AEnemyBase>(MeshComp->GetOwner());
-		if (!IsValid(Enemy))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Enemy is nullptr!"));
-			return;
-		}
-		SweepComp = Enemy->GetSweepCom();
-	}
+	UWeaponSweepComponent* SweepComp = Player->FindComponentByClass<UWeaponSweepComponent>();
 	if (!IsValid(SweepComp))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Sweep is nullptr!"));
@@ -57,11 +34,13 @@ void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		UE_LOG(LogTemp, Warning, TEXT("Mesh is nullptr!"));
 		return;
 	}
-	if (!IsValid(Player) && !IsValid(Enemy))
+	AActor* Player = MeshComp->GetOwner();
+	if (!IsValid(Player))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player is nullptr!"));
 		return;
 	}
+	UWeaponSweepComponent* SweepComp = Player->FindComponentByClass<UWeaponSweepComponent>();
 	if (!IsValid(SweepComp))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Sweep is nullptr!"));
@@ -73,15 +52,4 @@ void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 void UPlayerAttackANS::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
-
-	if (IsValid(Enemy))
-	{
-		Enemy->GetCharacterMovement()->bOrientRotationToMovement = true;
-		AEnemyAIController* Con = Cast<AEnemyAIController>(Enemy->GetController());
-		if (!Con)
-		{
-			return;
-		}
-		Con->ToggleBT(false);
-	}
 }
