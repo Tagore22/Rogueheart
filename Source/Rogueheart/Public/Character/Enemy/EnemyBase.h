@@ -13,7 +13,7 @@ public:
     AEnemyBase();
 
     UFUNCTION(BlueprintCallable, Category = "Combat")
-    virtual void TryAttack();
+        virtual void TryAttack();
 
     /** Å¸°Ù ¸¶Ä¿ Ç¥½Ã/¼û±â±â */
     void ShowTargetWidget(bool bShow);
@@ -40,6 +40,9 @@ public:
     float GetMaxHP() const;
 
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+    class UWeaponSweepComponent* GetSweepCom() const { return SweepCom; }
+
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
@@ -54,10 +57,10 @@ public:
     float AttackCooldown = 2.f;*/
 
     UPROPERTY(VisibleAnywhere, Category = "AI|Patrol")
-        int32 CurrentPatrolIndex = 0;
+    int32 CurrentPatrolIndex = 0;
 
     UPROPERTY(EditInstanceOnly, Category = "AI|Patrol")
-        TArray<AActor*> PatrolPoints;
+    TArray<AActor*> PatrolPoints;
 protected:
     bool bIsTargeted = false;
 
