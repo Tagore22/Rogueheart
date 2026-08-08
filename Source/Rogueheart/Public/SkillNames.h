@@ -11,4 +11,5 @@ namespace SkillNames
 	const FName PlayerTag = TEXT("Player");
 	const FName EnemyTag = TEXT("Enemy");
 	const FName DieTag = TEXT("Die");
+	const FName BossTag = TEXT("Boss");
 }

@@ -40,7 +40,7 @@ AEnemyAIController::AEnemyAIController()
         SightConfig->DetectionByAffiliation.bDetectEnemies = true;
         SightConfig->DetectionByAffiliation.bDetectFriendlies = false;
         SightConfig->DetectionByAffiliation.bDetectNeutrals = false;
-        SightConfig->AutoSuccessRangeFromLastSeenLocation = 0.f;
+        SightConfig->AutoSuccessRangeFromLastSeenLocation = 200.f;
 
         AIPerception->ConfigureSense(*SightConfig);
         AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
