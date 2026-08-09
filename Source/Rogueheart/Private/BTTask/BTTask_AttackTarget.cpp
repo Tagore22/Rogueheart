@@ -1,6 +1,6 @@
 #include "BTTask/BTTask_AttackTarget.h"
 #include "AIController.h"
-#include "Character/Enemy/MeleeEnemy.h"
+#include "Character/Enemy/EnemyBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTTask_AttackTarget::UBTTask_AttackTarget()
@@ -16,14 +16,14 @@ EBTNodeResult::Type UBTTask_AttackTarget::ExecuteTask(UBehaviorTreeComponent& Ow
         return EBTNodeResult::Failed;
     }
 
-    AMeleeEnemy* MeleeEnemy = Cast<AMeleeEnemy>(AIController->GetPawn());
-    if (!MeleeEnemy)
+    AEnemyBase* Enemy = Cast<AEnemyBase>(AIController->GetPawn());
+    if (!Enemy)
     {
         return EBTNodeResult::Failed;
     }
     UE_LOG(LogTemp, Warning, TEXT("Attack Ready!"));
     // 공격 실행
-    MeleeEnemy->TryAttack();
+    Enemy->TryAttack();
 
     // LastAttackTime 업데이트 (향후 확장용)
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();

@@ -1,6 +1,6 @@
 #include "Character/Enemy/MeleeEnemy.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Controller/EnemyAIController.h"
+//#include "GameFramework/CharacterMovementComponent.h"
+//#include "Controller/EnemyAIController.h"
 
 AMeleeEnemy::AMeleeEnemy()
 {
@@ -15,7 +15,7 @@ void AMeleeEnemy::TryAttack()
 {
     Super::TryAttack();
 
-    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+    /*UAnimInstance* Anim = GetMesh()->GetAnimInstance();
     if (!Anim || AttackMontages.Num() == 0)
         return;
 
@@ -32,5 +32,5 @@ void AMeleeEnemy::TryAttack()
     {
         return;
     }
-    Con->ToggleBT(true);
+    Con->ToggleBT(true);*/
 }

@@ -27,23 +27,23 @@ public:
 
 	void ClearHitActors();
 
-	FVector GetPrevSocketLocation() const;
-	void SetPrevSocketLocation(const FVector& Location);
+	FVector GetPrevSocketLocation(int32 AttackIndex) const;
+	void SetPrevSocketLocation(const FVector& Location, int32 AttackIndex);
 
 	FVector GetCurSocketLocation() const;
 	void SetCurSocketLocation(const FVector& Location);
 
-	void SweepAttack(const FVector& Location);
+	void SweepAttack(const FVector& Location, int32 AttackIndex);
 
 private:
 	TArray<AActor*> HitActors;
 
-	FVector PrevSocketLocation = FVector(0.f, 0.f, 0.f);
+	TArray<FVector> PrevSocketLocations;
 
-	FVector CurSocketLocation = FVector(0.f, 0.f, 0.f);;
+	FVector CurSocketLocation;
 
 	UPROPERTY(EditDefaultsOnly, Category = "SweepLength")
-	float SweepLength = 20.f;
+	float SweepLength = 200.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "SweepDamage")
 	float SweepDamage = 20.f;

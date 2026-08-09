@@ -18,7 +18,12 @@ void UWeaponSweepComponent::BeginPlay()
 	const USkeletalMeshComponent* MeshComp = Owner->GetMesh();
 	if (!MeshComp)
 		return;
-	PrevSocketLocation = MeshComp->GetSocketLocation(TEXT("Weapon_Socket"));
+
+	for (int i = 0; i < 5; ++i)
+	{
+		FString SocketName = FString::Printf(TEXT("Weapon_Socket%d"), i);
+		PrevSocketLocations.Add(MeshComp->GetSocketLocation(FName(*SocketName)));
+	}
 
 	switch (TraceType)
 	{
@@ -55,14 +60,18 @@ void UWeaponSweepComponent::ClearHitActors()
 	HitActors.Empty();
 }
 
-FVector UWeaponSweepComponent::GetPrevSocketLocation() const
+FVector UWeaponSweepComponent::GetPrevSocketLocation(int32 AttackIndex) const
 {
-	return PrevSocketLocation;
+	if (AttackIndex <= 5)
+	{
+		return FVector::ZeroVector;
+	}
+	return PrevSocketLocations[AttackIndex];
 }
 
-void UWeaponSweepComponent::SetPrevSocketLocation(const FVector& Location)
+void UWeaponSweepComponent::SetPrevSocketLocation(const FVector& Location, int32 AttackIndex)
 {
-	PrevSocketLocation = Location;
+	PrevSocketLocations[AttackIndex] = Location;
 }
 
 FVector UWeaponSweepComponent::GetCurSocketLocation() const
@@ -75,7 +84,7 @@ void UWeaponSweepComponent::SetCurSocketLocation(const FVector& Location)
 	CurSocketLocation = Location;
 }
 
-void UWeaponSweepComponent::SweepAttack(const FVector& Location)
+void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackIndex)
 {
 	CurSocketLocation = Location;
 
@@ -83,10 +92,11 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location)
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(GetOwner());
 
-	bool bHit = GetWorld()->SweepMultiByChannel(OutHits, PrevSocketLocation, CurSocketLocation, FQuat::Identity, Channel, FCollisionShape::MakeSphere(SweepLength), Params);
+	bool bHit = GetWorld()->SweepMultiByChannel(OutHits, PrevSocketLocations[AttackIndex], CurSocketLocation, FQuat::Identity, Channel, FCollisionShape::MakeSphere(SweepLength), Params);
 	if (!bHit)
 		return;
 
+	UE_LOG(LogTemp, Warning, TEXT("Attack Start"));
 	ACharacter* Owner = Cast<ACharacter>(GetOwner());
 	if (!IsValid(Owner))
 		return;
@@ -103,5 +113,5 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location)
 		}
 	}
 	// 마지막에 현재 소켓 좌표를 이전 소켓 좌표로 갱신후에 함수 종료.
-	PrevSocketLocation = CurSocketLocation;
+	PrevSocketLocations[AttackIndex] = CurSocketLocation;
 }

@@ -30,7 +30,7 @@ void UPlayerAttackANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 		}
 		SweepComp = Player->GetSweepCom();
 	}
-	else if (OwnerAct->ActorHasTag(SkillNames::EnemyTag) || OwnerAct->ActorHasTag(SkillNames::DieTag))
+	else
 	{
 		Enemy = Cast<AEnemyBase>(MeshComp->GetOwner());
 		if (!IsValid(Enemy))
@@ -39,6 +39,10 @@ void UPlayerAttackANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 			return;
 		}
 		SweepComp = Enemy->GetSweepCom();
+		if (Enemy->ActorHasTag(SkillNames::BossTag))
+		{
+			AttackIndex = Enemy->GetAttackIndex();
+		}
 	}
 	if (!IsValid(SweepComp))
 	{
@@ -67,7 +71,9 @@ void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		UE_LOG(LogTemp, Warning, TEXT("Sweep is nullptr!"));
 		return;
 	}
-	SweepComp->SweepAttack(MeshComp->GetSocketLocation(TEXT("Weapon_Socket")));
+	FString SocketName = FString::Printf(TEXT("Weapon_Socket%d"), AttackIndex);
+	UE_LOG(LogTemp, Warning, TEXT("AttackIndex : %d"), AttackIndex);
+	SweepComp->SweepAttack(MeshComp->GetSocketLocation(FName(*SocketName)), AttackIndex);
 }
 
 void UPlayerAttackANS::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)

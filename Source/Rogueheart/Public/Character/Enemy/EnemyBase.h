@@ -13,7 +13,7 @@ public:
     AEnemyBase();
 
     UFUNCTION(BlueprintCallable, Category = "Combat")
-        virtual void TryAttack();
+    virtual void TryAttack();
 
     /** Å¸°Ù ¸¶Ä¿ Ç¥½Ã/¼û±â±â */
     void ShowTargetWidget(bool bShow);
@@ -43,6 +43,8 @@ public:
 
     class UWeaponSweepComponent* GetSweepCom() const { return SweepCom; }
 
+    int32 GetAttackIndex() const { return AttackIndex; }
+    
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
@@ -109,4 +111,6 @@ protected:
 
     UPROPERTY(EditAnywhere, Category = "SoulActor")
     TSubclassOf<class AActor> SoulAct;
+
+    int32 AttackIndex;
 };

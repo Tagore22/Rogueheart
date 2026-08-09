@@ -10,6 +10,9 @@
 #include "UI/EnemyHPBarWidget.h"
 #include "WeaponSweepComponent.h"
 #include "Soul.h"
+#include "SkillNames.h"
+#include "Controller/EnemyAIController.h"
+
 
 
 AEnemyBase::AEnemyBase()
@@ -75,8 +78,11 @@ void AEnemyBase::Tick(float DeltaTime)
         DamageTimer = -1.f;
         ResetDamageSum();
     }*/
-    HPBarTickTimer(DeltaTime);
-    DamageTickTimer(DeltaTime);
+    if (!ActorHasTag(SkillNames::BossTag))
+    {
+        HPBarTickTimer(DeltaTime);
+        DamageTickTimer(DeltaTime);
+    }
 }
 
 void AEnemyBase::TryAttack()
@@ -85,6 +91,25 @@ void AEnemyBase::TryAttack()
     // 이후에 공통적으로 묶어야할 일이 있거든 이곳에 구현하되, 없다면 순수 가상 함수도
     // 생각해봄직하다.
     UE_LOG(LogTemp, Warning, TEXT("Attack Executed"));
+
+    UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+    if (!Anim || AttackMontages.Num() == 0)
+        return;
+
+    // 여기서 공격하는 애니메이션을 실행한다.
+    // Attack 몽타주를 실행하되, 1 ~ N까지의 랜덤한 값을 뽑아 점프하여 실행한다.
+    // Sweep 제대로 되나 확인할 것.
+
+    //
+    AttackIndex = FMath::RandRange(0, AttackMontages.Num() - 1);
+    Anim->Montage_Play(AttackMontages[AttackIndex]);
+    GetCharacterMovement()->bOrientRotationToMovement = false;
+    AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
+    if (!Con)
+    {
+        return;
+    }
+    Con->ToggleBT(true);
 }
 
 bool AEnemyBase::CanAttack() const
@@ -110,6 +135,11 @@ void AEnemyBase::ShowTargetWidget(bool bShow)
 
 void AEnemyBase::ShowHPBarWidget(bool bShow)
 {
+    if (ActorHasTag(SkillNames::BossTag))
+    {
+        return;
+    }
+
     if (HPBarWidget)
     {
         HPBarWidget->SetVisibility(bShow);
@@ -159,14 +189,25 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
     if (CurHP <= 0.f)
         return ActualDamage;
 
-    ShowHPBarWidget(true);
     CurHP = FMath::Clamp(CurHP - ActualDamage, 0.f, MaxHP);
-    UEnemyHPBarWidget* HPBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-    if (!HPBar)
-        return ActualDamage;
-    HPBar->SetHPPercent(CurHP / MaxHP);
-    DamageTimer = 0.f;
-    HPBar->SetDamageSum(ActualDamage);
+    if (ActorHasTag(SkillNames::BossTag))
+    {
+        // 여기서 보스의 체력바의 행동을 구현한다. 
+        // 체력바를 얻는다.
+        // 체력바를 갱신한다.
+    }
+    else
+    {
+        ShowHPBarWidget(true);
+        UEnemyHPBarWidget* HPBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+        if (!HPBar)
+        {
+            return ActualDamage;
+        }
+        HPBar->SetHPPercent(CurHP / MaxHP);
+        DamageTimer = 0.f;
+        HPBar->SetDamageSum(ActualDamage);
+    }
 
     if (CurHP <= 0.f)
     {

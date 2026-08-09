@@ -21,12 +21,14 @@ protected:
 
 private:
 	UPROPERTY()
-		class APlayerCharacter* Player;
+	class APlayerCharacter* Player;
 
 	UPROPERTY()
-		class AEnemyBase* Enemy;
+	class AEnemyBase* Enemy;
 
 	UPROPERTY()
-		class UWeaponSweepComponent* SweepComp;
+	class UWeaponSweepComponent* SweepComp;
+
+	int32 AttackIndex = 1;
 
 };
