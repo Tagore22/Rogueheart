@@ -72,7 +72,6 @@ void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		return;
 	}
 	FString SocketName = FString::Printf(TEXT("Weapon_Socket%d"), AttackIndex);
-	UE_LOG(LogTemp, Warning, TEXT("AttackIndex : %d"), AttackIndex);
 	SweepComp->SweepAttack(MeshComp->GetSocketLocation(FName(*SocketName)), AttackIndex);
 }
 

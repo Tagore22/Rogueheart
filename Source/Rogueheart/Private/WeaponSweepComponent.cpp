@@ -25,6 +25,8 @@ void UWeaponSweepComponent::BeginPlay()
 		PrevSocketLocations.Add(MeshComp->GetSocketLocation(FName(*SocketName)));
 	}
 
+	// 각 액터의 SweepComponent가 에디터에서 어떻게 설정되어있는지에 따라 트레이스가 나뉘어진다.
+	// 반드시 설정해야만 한다.
 	switch (TraceType)
 	{
 	case ETraceChannel::Player:
@@ -34,18 +36,6 @@ void UWeaponSweepComponent::BeginPlay()
 	case ETraceChannel::Enemy:
 		Channel = TraceChannel::ECC_Enemy;
 		break;
-	}
-	if (Channel == TraceChannel::ECC_Player)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s : Player"), *Owner->GetName());
-	}
-	else if (Channel == TraceChannel::ECC_Enemy)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s : Enemy"), *Owner->GetName());
-	}
-	else
-	{
-
 	}
 }
 
@@ -93,10 +83,12 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackInd
 	Params.AddIgnoredActor(GetOwner());
 
 	bool bHit = GetWorld()->SweepMultiByChannel(OutHits, PrevSocketLocations[AttackIndex], CurSocketLocation, FQuat::Identity, Channel, FCollisionShape::MakeSphere(SweepLength), Params);
+
+	// 궤도 확인 전용 더버깅.
+	// DrawDebugLine(GetWorld(), PrevSocketLocations[AttackIndex], CurSocketLocation, FColor::Yellow, false, 1.0f, 0, 2.0f);
 	if (!bHit)
 		return;
 
-	UE_LOG(LogTemp, Warning, TEXT("Attack Start"));
 	ACharacter* Owner = Cast<ACharacter>(GetOwner());
 	if (!IsValid(Owner))
 		return;
@@ -107,8 +99,6 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackInd
 		if (IsValid(HitActor) && !HitActors.Contains(HitActor))
 		{
 			HitActors.Add(HitActor);
-			UE_LOG(LogTemp, Warning, TEXT("Another Actor Attacked!"));
-			// 여기서 HitActor의 ApplyDamage()를 호출한다. 20은 임시이며, 이후 추가 수정할 것.
 			UGameplayStatics::ApplyDamage(HitActor, SweepDamage, Owner->GetController(), Owner, nullptr);
 		}
 	}

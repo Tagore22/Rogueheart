@@ -14,4 +14,6 @@ public:
 	
 protected:
 	virtual void RestoreSkill() override;
+
+	TArray<UMaterialInterface*> Materials;
 };

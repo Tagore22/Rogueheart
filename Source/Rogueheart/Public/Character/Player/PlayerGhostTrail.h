@@ -21,8 +21,10 @@ public:
 	float GetBladeDamage() const { return BladeDamage; }
 
 	void InitializePGT(float Damage) { BladeDamage = Damage; }
+
 protected:
 	virtual void BeginPlay() override;
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "SkeletalMesh")
 	class USkeletalMeshComponent* Mesh;
@@ -34,10 +36,10 @@ protected:
 	class UCapsuleComponent* Collider;
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	class UMaterialInterface* Material = nullptr;
+	class UMaterialInterface* Material;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
-	class UAnimMontage* BladeMontage = nullptr;
+	class UAnimMontage* BladeMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "BladeGhostTrail")
 	TSubclassOf<class AActor> Blade;

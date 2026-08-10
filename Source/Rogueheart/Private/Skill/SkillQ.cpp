@@ -6,13 +6,20 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
 	float Cost = OwnActor->GetCurMana();
-	if (bCanUseSkill || Cost <= 0.f)
+	if (bCanUseSkill || Cost <= 0.f || !Data.Material)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
 		return;
 	}
 
 	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillQ::RestoreSkill, Data.Cooldown[SkillLevel], false);
+
+	USkeletalMeshComponent* Mesh = OwnActor->GetMesh();
+
+	for (int32 i = 0; i < Mesh->GetNumMaterials(); ++i)
+	{
+		Materials.Add(Mesh->GetMaterial(i));
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillQ!"));
 
@@ -31,6 +38,12 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 	{
 		OwnActor->SetActorLocation(MovePosition);
 		OwnActor->CostMana(Data.Cost[SkillLevel]);
+
+		UMaterialInterface* Mat = Data.Material.LoadSynchronous();
+		for (int32 i = 0; i < Mesh->GetNumMaterials(); ++i)
+		{
+			Mesh->SetMaterial(i, Mat);
+		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("SkillQ Level : %d"), SkillLevel);
 }
@@ -40,5 +53,12 @@ void ASkillQ::RestoreSkill()
 	Super::RestoreSkill();
 
 	UE_LOG(LogTemp, Warning, TEXT("SkillQ Restored!"));
+
+	USkeletalMeshComponent* Mesh = OwnActor->GetMesh();
+
+	for (int32 i = 0; i < Mesh->GetNumMaterials(); ++i)
+	{
+		Mesh->SetMaterial(i, Materials[i]);
+	}
 }
 

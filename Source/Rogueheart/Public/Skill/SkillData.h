@@ -47,4 +47,7 @@ struct FSkillData : public FTableRowBase
 
     UPROPERTY(EditDefaultsOnly)
     TArray<float> SpeedRatio;
+
+    UPROPERTY(EditDefaultsOnly)
+    TSoftObjectPtr<UMaterialInterface> Material;
 };
