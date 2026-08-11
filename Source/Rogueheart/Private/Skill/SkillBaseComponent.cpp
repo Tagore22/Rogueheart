@@ -1,7 +1,6 @@
 #include "Skill/SkillBaseComponent.h"
 #include "Skill/SkillBase.h"
 #include "Skill/SkillData.h"
-#include "Character/Player/PlayerCharacter.h"
 
 USkillBaseComponent::USkillBaseComponent()
 {
@@ -18,7 +17,7 @@ void USkillBaseComponent::BeginPlay()
 	for (const FSkillData* List : SkillList)
 	{
 		ASkillBase* NewSkill = NewObject<ASkillBase>(this, List->Type);
-		NewSkill->InitializeSkillData(Cast<APlayerCharacter>(GetOwner()), *List);
+		NewSkill->InitializeSkillData(GetOwner(), *List);
 		SkillSlot.Add(List->SkillID, NewSkill);
 		SkillLevels.Add(List->SkillID, 0);
 	}

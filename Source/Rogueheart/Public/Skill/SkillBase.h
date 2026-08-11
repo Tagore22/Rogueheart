@@ -5,6 +5,8 @@
 #include "Skill/SkillData.h"
 #include "TimerManager.h"
 #include "Character/Player/PlayerCharacter.h"
+#include "Character/Enemy/EnemyBoss.h"
+#include "SkillNames.h"
 #include "SkillBase.generated.h"
 
 UCLASS()
@@ -15,7 +17,7 @@ class ROGUEHEART_API ASkillBase : public AActor
 public:	
 	ASkillBase();
 
-	virtual void InitializeSkillData(APlayerCharacter* InitOwn, const FSkillData InitData);
+	virtual void InitializeSkillData(class AActor* InitOwn, const FSkillData InitData);
 
 	virtual void UseSkill(class AActor* Target, int32 SkillLevel);
 protected:

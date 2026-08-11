@@ -6,6 +6,13 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
 	float Cost = OwnActor->GetCurMana();
+	// SkillBase가 가지고 있는 OwnActor의 타입명은 
+	// if OwnActor의 태그가 플레이어라면 아래 Cost를 받는다.
+	/*if (OwnActor->ActorHasTag(SkillNames::PlayerTag) && OwnActor->GetCurMana() <= 0.f)
+	{
+		return;
+	}*/
+	// if Cost <= 0.f라면 return; 아래 if문의 Cost는 삭제한다.
 	if (bCanUseSkill || Cost <= 0.f || !Data.Material)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
@@ -37,6 +44,12 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 	if (bCanTeleport)
 	{
 		OwnActor->SetActorLocation(MovePosition);
+		// if 태그가 플레이어라면.
+		/*if (OwnActor->ActorHasTag(SkillNames::PlayerTag))
+		{
+			OwnActor->CostMana(Data.Cost[SkillLevel]);
+		}*/
+
 		OwnActor->CostMana(Data.Cost[SkillLevel]);
 
 		UMaterialInterface* Mat = Data.Material.LoadSynchronous();

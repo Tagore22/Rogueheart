@@ -6,9 +6,17 @@ ASkillBase::ASkillBase()
 
 }
 
-void ASkillBase::InitializeSkillData(APlayerCharacter* InitOwn, const FSkillData InitData)
+void ASkillBase::InitializeSkillData(AActor* InitOwn, const FSkillData InitData)
 {
-	OwnActor = InitOwn;
+	/*if (OwnActor->ActorHasTag(SkillNames::PlayerTag))
+	{
+		OwnPlayer = Cast<APlayerCharacter>(InitOwn);
+	}
+	else
+	{
+		OwnEnemy = Cast<AEnemyBoss>(InitOwn);
+	}*/
+	OwnActor = Cast<APlayerCharacter>(InitOwn);
 	Data = InitData;
 }
 
