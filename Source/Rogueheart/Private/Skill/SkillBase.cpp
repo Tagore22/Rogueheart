@@ -8,15 +8,8 @@ ASkillBase::ASkillBase()
 
 void ASkillBase::InitializeSkillData(AActor* InitOwn, const FSkillData InitData)
 {
-	/*if (OwnActor->ActorHasTag(SkillNames::PlayerTag))
-	{
-		OwnPlayer = Cast<APlayerCharacter>(InitOwn);
-	}
-	else
-	{
-		OwnEnemy = Cast<AEnemyBoss>(InitOwn);
-	}*/
-	OwnActor = Cast<APlayerCharacter>(InitOwn);
+	OwnActor = Cast<ACharacter>(InitOwn);
+	OwnInterface = OwnActor;
 	Data = InitData;
 }
 

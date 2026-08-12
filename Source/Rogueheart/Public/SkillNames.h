@@ -13,3 +13,27 @@ namespace SkillNames
 	const FName DieTag = TEXT("Die");
 	const FName BossTag = TEXT("Boss");
 }
+
+UENUM(BlueprintType)
+enum class EPlayerState : uint8 // s
+{
+    Idle,
+    Moving,
+    Attacking,
+    LockedOn,
+    Dodging,
+    Damaged,
+    CastSkill,
+    Dead
+};
+
+UENUM(BlueprintType)
+enum class EActionType : uint8 // s
+{
+    Move,
+    Attack,
+    LockOn,
+    Dodge,
+    Parry,
+    UseSkill
+};

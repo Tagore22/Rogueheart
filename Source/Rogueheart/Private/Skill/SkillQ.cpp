@@ -5,7 +5,7 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 	Super::UseSkill(Target, SkillLevel);
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
-	float Cost = OwnActor->GetCurMana();
+	float Cost = OwnInterface->GetCurMana();
 	// SkillBase가 가지고 있는 OwnActor의 타입명은 
 	// if OwnActor의 태그가 플레이어라면 아래 Cost를 받는다.
 	/*if (OwnActor->ActorHasTag(SkillNames::PlayerTag) && OwnActor->GetCurMana() <= 0.f)
@@ -50,7 +50,7 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 			OwnActor->CostMana(Data.Cost[SkillLevel]);
 		}*/
 
-		OwnActor->CostMana(Data.Cost[SkillLevel]);
+		OwnInterface->CostMana(Data.Cost[SkillLevel]);
 
 		UMaterialInterface* Mat = Data.Material.LoadSynchronous();
 		for (int32 i = 0; i < Mesh->GetNumMaterials(); ++i)

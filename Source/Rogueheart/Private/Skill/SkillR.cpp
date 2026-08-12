@@ -9,7 +9,7 @@ void ASkillR::UseSkill(AActor* Target, int32 SkillLevel)
 
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
 	UAnimInstance* Anim = OwnActor->GetMesh()->GetAnimInstance();
-	float Cost = OwnActor->GetCurMana();
+	float Cost = OwnInterface->GetCurMana();
 	if (bCanUseSkill || !Anim || Cost <= 0.f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
@@ -23,10 +23,10 @@ void ASkillR::UseSkill(AActor* Target, int32 SkillLevel)
 	// 더미를 스폰하는 횟수를 0으로 초기화시킨다.
 	SpawnNumber = 0;
 	// 플레이어의 상태를 CastSkill로 바꾼다.
-	OwnActor->SetPlayerState(EPlayerState::CastSkill);
+	OwnInterface->SetPlayerState(EPlayerState::CastSkill);
 	// 타이머를 이용해서 n초동안 x초마다 검기를 날리는 잔상을 스폰.
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASkillR::SpawnDummy, Data.SpawnTime[SkillLevel], true);
-	OwnActor->CostMana(Data.Cost[SkillLevel]);
+	OwnInterface->CostMana(Data.Cost[SkillLevel]);
 	RLevel = SkillLevel;
 	UE_LOG(LogTemp, Warning, TEXT("SkillR Level : %d"), SkillLevel);
 }

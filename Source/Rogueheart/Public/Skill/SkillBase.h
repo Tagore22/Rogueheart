@@ -7,6 +7,7 @@
 #include "Character/Player/PlayerCharacter.h"
 #include "Character/Enemy/EnemyBoss.h"
 #include "SkillNames.h"
+#include "StateInterface.h"
 #include "SkillBase.generated.h"
 
 UCLASS()
@@ -24,7 +25,10 @@ protected:
 	virtual void RestoreSkill(); // 쿨타임 다 되었을 때 발동.
 protected:
 	UPROPERTY()
-	class APlayerCharacter* OwnActor;
+	class ACharacter* OwnActor;
+
+	UPROPERTY()
+	TScriptInterface<class IStateInterface> OwnInterface;
 
 	FSkillData Data;
 

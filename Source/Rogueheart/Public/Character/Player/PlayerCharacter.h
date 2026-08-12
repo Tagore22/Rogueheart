@@ -3,12 +3,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GenericTeamAgentInterface.h"
+#include "StateInterface.h"
+#include "SkillNames.h"
 #include "PlayerCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaChanged);
 
-UENUM(BlueprintType)
+/*UENUM(BlueprintType)
 enum class EPlayerState : uint8 // s
 {
     Idle,
@@ -30,10 +32,10 @@ enum class EActionType : uint8 // s
     Dodge,
     Parry,
     UseSkill
-};
+};*/
 
 UCLASS()
-class ROGUEHEART_API APlayerCharacter : public ACharacter, public IGenericTeamAgentInterface
+class ROGUEHEART_API APlayerCharacter : public ACharacter, public IGenericTeamAgentInterface, public IStateInterface
 {
     GENERATED_BODY()
 
@@ -47,7 +49,7 @@ public:
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     // 플레이어의 상태에 관한 것은 그대로 남겨둔다.
-    void SetPlayerState(EPlayerState NewState); // s
+    virtual void SetPlayerState(EPlayerState NewState) override; // s
     bool CanAct(EActionType DesiredAction) const; // s
     // bool IsDodging() const { return CurrentState == EPlayerState::Dodging; }
     bool IsAttacking() const { return CurrentState == EPlayerState::Attacking; } // a에서 씀.
@@ -66,48 +68,41 @@ public:
     void UseSkill(const struct FInputActionInstance& Instance);
     class UMoveComponent* GetMoveCom() const { return MoveCom; }
 
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetMaxHP() const { return MaxHP; } // s
+    virtual float GetMaxHP() const override { return MaxHP; };
 
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetCurHP() const { return CurHP; }// s
+    virtual float GetCurHP() const override { return CurHP; };
 
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetMaxMana() const { return MaxMana; }// s
+    virtual float GetMaxMana() const override { return MaxMana; };
 
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetCurMana() const { return CurMana; }// s
+    virtual float GetCurMana() const override { return CurMana; };
 
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetMaxStamina() const { return MaxStamina; }// s
+    virtual float GetMaxStamina() const override { return MaxStamina; };
 
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    float GetCurStamina() const { return CurStamina; }// s
+    virtual float GetCurStamina() const override { return CurStamina; };
 
-    UFUNCTION(BlueprintCallable, BlueprintPure)
-    int32 GetSoulSum() const { return SoulSum; }
+    virtual int32 GetSoulSum() const override { return SoulSum; };
 
     class UWeaponSweepComponent* GetSweepCom() const { return SweepCom; }
 
-    void SetMaxHP(float NewMaxHP);
+    virtual void SetMaxHP(float NewMaxHP) override;
 
-    void SetCurHP(float NewCurHP);
+    virtual void SetCurHP(float NewCurHP) override;
 
-    void SetMaxMana(float NewMaxMana);
+    virtual void SetMaxMana(float NewMaxMana) override;
 
-    void SetCurMana(float NewCurMana);
+    virtual void SetCurMana(float NewCurMana) override;
 
-    void SetMaxStamina(float NewMaxStamina);
+    virtual void SetMaxStamina(float NewMaxStamina) override;
 
-    void SetCurStamina(float NewCurStamina);
+    virtual void SetCurStamina(float NewCurStamina) override;
 
-    void SetSoulSum(int32 Plus);
+    virtual void SetSoulSum(int32 Plus) override;
 
-    void SetEffectCom(class UNiagaraSystem* Asset);
+    virtual void SetEffectCom(class UNiagaraSystem* Asset) override;
 
-    void ActivateEffectCom(bool bIsOn);
+    virtual void ActivateEffectCom(bool bIsOn) override;
 
-    void CostMana(float Cost);
+    virtual void CostMana(float Cost) override;
 
     class USkillBaseComponent* GetSkillBaseCom() const { return SkillBaseCom; }
 
