@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "SkillNames.h"
 #include "EnemyBase.generated.h"
 
 UCLASS()

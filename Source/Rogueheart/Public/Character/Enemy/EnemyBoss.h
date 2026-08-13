@@ -8,5 +8,19 @@ UCLASS()
 class ROGUEHEART_API AEnemyBoss : public AEnemyBase
 {
 	GENERATED_BODY()
+
+public:
+	AEnemyBoss();
+
+	void UseSkill();
+
+protected:
+	//virtual void Tick(float DeltaTime) override;
+
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "SkillBaseComponent")
+	class USkillBaseComponent* SkillBaseCom;
+
+	bool bUseShadowstep = false;
 	
 };

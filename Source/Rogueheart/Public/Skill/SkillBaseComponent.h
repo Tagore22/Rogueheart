@@ -16,6 +16,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	//template<typename T>
+	//void LoadSkillData(const TArray<T*>& SkillList);
+
 public:	
 	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
