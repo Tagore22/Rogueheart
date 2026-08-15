@@ -20,6 +20,7 @@ public:
 
 	virtual void InitializeSkillData(class AActor* InitOwn, const FSkillData InitData);
 
+	// 이건 그냥 초기부분으로 바뀐다. NotifyBegin()처럼.
 	virtual void UseSkill(class AActor* Target, int32 SkillLevel);
 protected:
 	virtual void RestoreSkill(); // 쿨타임 다 되었을 때 발동.
