@@ -16,8 +16,21 @@ void ASkillR::UseSkill(AActor* Target, int32 SkillLevel)
 		return;
 	}
 
-	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillR::RestoreSkill, Data.Cooldown[SkillLevel], false);
+	Cooldown = Data.Cooldown[SkillLevel];
+	// 후에 이곳에서 조건을 걸 수 있다.
 
+	TimerDelegate.BindUObject(this, &ASkillR::ExecuteSkill, Target, SkillLevel);
+	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
+}
+
+void ASkillR::ExecuteSkill(class AActor* Target, int32 SkillLevel)
+{
+	Super::ExecuteSkill(Target, SkillLevel);
+
+	TimerDelegate.BindUObject(this, &ASkillR::RestoreSkill, Target, SkillLevel);
+	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
+
+	UAnimInstance* Anim = OwnActor->GetMesh()->GetAnimInstance();
 	// 플레이어가 검기를 날리는 애니메이션 실행.
 	Anim->Montage_Play(Data.SkillMontage);
 	// 더미를 스폰하는 횟수를 0으로 초기화시킨다.
@@ -31,9 +44,9 @@ void ASkillR::UseSkill(AActor* Target, int32 SkillLevel)
 	UE_LOG(LogTemp, Warning, TEXT("SkillR Level : %d"), SkillLevel);
 }
 
-void ASkillR::RestoreSkill()
+void ASkillR::RestoreSkill(class AActor* Target, int32 SkillLevel)
 {
-	Super::RestoreSkill();
+	Super::RestoreSkill(Target, SkillLevel);
 
 	UE_LOG(LogTemp, Warning, TEXT("SkillR Restored!"));
 }

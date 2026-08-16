@@ -12,8 +12,6 @@
 #include "Soul.h"
 #include "Controller/EnemyAIController.h"
 
-
-
 AEnemyBase::AEnemyBase()
 {
     PrimaryActorTick.bCanEverTick = true;

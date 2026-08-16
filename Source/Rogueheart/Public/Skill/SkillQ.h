@@ -13,7 +13,9 @@ public:
 	virtual void UseSkill(class AActor* Target, int32 SkillLevel) override;
 	
 protected:
-	virtual void RestoreSkill() override;
+	virtual void ExecuteSkill(class AActor* Target, int32 SkillLevel) override;
+
+	virtual void RestoreSkill(class AActor* Target, int32 SkillLevel) override;
 
 	TArray<UMaterialInterface*> Materials;
 };

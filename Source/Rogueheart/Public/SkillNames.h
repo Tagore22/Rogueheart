@@ -17,6 +17,9 @@ namespace SkillNames
 	const FName EnemyTag = TEXT("Enemy");
 	const FName DieTag = TEXT("Die");
 	const FName BossTag = TEXT("Boss");
+
+    // Sockets
+    const FName PlayerSocket = TEXT("Weapon_Socket1");
 }
 
 UENUM(BlueprintType)

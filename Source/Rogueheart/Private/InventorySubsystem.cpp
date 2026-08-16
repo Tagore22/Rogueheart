@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "WeaponBase.h"
 #include "Item/ItemData.h"
+#include "SkillNames.h"
 
 
 bool UInventorySubsystem::AddItem(FName ItemID, int32 Count)
@@ -115,7 +116,7 @@ bool UInventorySubsystem::UseItem(FName ItemID)
                 break;
             Player->SetEquippedWeapon(CurWeapon);
             CurWeapon->SetupWeapon(*ItemData);
-            CurWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Weapon_Socket"));
+            CurWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SkillNames::PlayerSocket);
             UE_LOG(LogTemp, Warning, TEXT("Item Equipped: %s"), *ItemID.ToString());
         }
         break;

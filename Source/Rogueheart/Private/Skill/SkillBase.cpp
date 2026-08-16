@@ -19,7 +19,12 @@ void ASkillBase::UseSkill(AActor* Target, int32 SkillLevel)
 	UE_LOG(LogTemp, Warning, TEXT("SkillBase Activate!"));
 }
 
-void ASkillBase::RestoreSkill()
+void ASkillBase::ExecuteSkill(class AActor* Target, int32 SkillLevel)
+{
+
+}
+
+void ASkillBase::RestoreSkill(class AActor* Target, int32 SkillLevel)
 {
 
 }

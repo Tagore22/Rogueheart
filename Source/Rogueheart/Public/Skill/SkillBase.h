@@ -23,7 +23,9 @@ public:
 	// 이건 그냥 초기부분으로 바뀐다. NotifyBegin()처럼.
 	virtual void UseSkill(class AActor* Target, int32 SkillLevel);
 protected:
-	virtual void RestoreSkill(); // 쿨타임 다 되었을 때 발동.
+	virtual void ExecuteSkill(class AActor* Target, int32 SkillLevel);
+	
+	virtual void RestoreSkill(class AActor* Target, int32 SkillLevel); // 쿨타임 다 되었을 때 발동.
 protected:
 	UPROPERTY()
 	class ACharacter* OwnActor;
@@ -34,4 +36,8 @@ protected:
 	FSkillData Data;
 
 	FTimerHandle SkillTimer;
+
+	FTimerDelegate TimerDelegate;
+
+	float Cooldown;
 };

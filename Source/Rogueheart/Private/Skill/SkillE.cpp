@@ -14,21 +14,34 @@ void ASkillE::UseSkill(AActor* Target, int32 SkillLevel)
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
 		return;
 	}
-	DefaultSpeed = OwnActor->GetCharacterMovement()->MaxWalkSpeed;
-	OwnInterface->SetEffectCom(Data.Effect); 
 
-	GetWorldTimerManager().SetTimer(SkillTimer, this, &ASkillE::RestoreSkill, Data.Cooldown[SkillLevel], false);
+	Cooldown = Data.Cooldown[SkillLevel];
+	// 후에 이곳에서 조건을 걸 수 있다.
+
+	TimerDelegate.BindUObject(this, &ASkillE::ExecuteSkill, Target, SkillLevel);
+	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
+}
+
+void ASkillE::ExecuteSkill(class AActor* Target, int32 SkillLevel)
+{
+	Super::ExecuteSkill(Target, SkillLevel);
+
+	TimerDelegate.BindUObject(this, &ASkillE::RestoreSkill, Target, SkillLevel);
+	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
+
+	DefaultSpeed = OwnActor->GetCharacterMovement()->MaxWalkSpeed;
+	OwnInterface->SetEffectCom(Data.Effect);
 
 	OwnActor->GetCharacterMovement()->MaxWalkSpeed *= Data.SpeedRatio[SkillLevel];
 	OwnActor->GetMesh()->GlobalAnimRateScale = Data.SpeedRatio[SkillLevel];
-	OwnInterface->ActivateEffectCom(true); 
+	OwnInterface->ActivateEffectCom(true);
 	OwnInterface->CostMana(Data.Cost[SkillLevel]);
 	UE_LOG(LogTemp, Warning, TEXT("SkillE Level : %d"), SkillLevel);
 }
 
-void ASkillE::RestoreSkill()
+void ASkillE::RestoreSkill(class AActor* Target, int32 SkillLevel)
 {
-	Super::RestoreSkill();
+	Super::RestoreSkill(Target, SkillLevel);
 
 	UE_LOG(LogTemp, Warning, TEXT("SkillE Restored!"));
 
