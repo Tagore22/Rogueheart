@@ -18,6 +18,7 @@ void UEnemyBossSmashANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequ
 		return;
 	}
 
+	MoveCom->GravityScale = 0.f;
 	MoveCom->SetMovementMode(MOVE_Falling);
 }
 
@@ -42,6 +43,7 @@ void UEnemyBossSmashANS::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequen
 		return;
 	}
 
+	MoveCom->GravityScale = 1.f;
 	MoveCom->SetMovementMode(MOVE_Walking);
 }
 

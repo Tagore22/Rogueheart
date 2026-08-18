@@ -5,8 +5,16 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 {
 	Super::UseSkill(Target, SkillLevel);
 
+	Cooldown = Data.Cooldown[SkillLevel];
+
 	// 쿨타임 혹은 있어야하는 데이터가 없을 땐 스킬을 사용할 수도 없다.
 	bool bCanUseSkill = GetWorldTimerManager().IsTimerActive(SkillTimer);
+	if (bCanUseSkill || !Data.Material)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
+		return;
+	}
+
 	if (OwnActor->ActorHasTag(SkillNames::PlayerTag))
 	{
 		float Cost = OwnInterface->GetCurMana();
@@ -14,6 +22,8 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 		{
 			return;
 		}
+		ExecuteSkill(Target, SkillLevel);
+		return;
 	}
 	// SkillBase가 가지고 있는 OwnActor의 타입명은 
 	// if OwnActor의 태그가 플레이어라면 아래 Cost를 받는다.
@@ -22,25 +32,20 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 		return;
 	}*/
 	// if Cost <= 0.f라면 return; 아래 if문의 Cost는 삭제한다.
-	if (bCanUseSkill || !Data.Material)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
-		return;
-	}
-
-	// 특정 조건(현재는 애니메이션의 부재)에는 그냥 다음으로 넘어간다.
-	Cooldown = Data.Cooldown[SkillLevel];
-	if (!Data.SkillMontage)
-	{
-		ExecuteSkill(Target, SkillLevel);
-		return;
-	}
 
 	// 여기서 나뉜다.
+	UAnimInstance* Anim = OwnActor->GetMesh()->GetAnimInstance();
+	if (!Anim)
+	{
+		return;
+	}
+
 	float MontageTime = Data.SkillMontage->GetPlayLength();
-	Cooldown -= MontageTime;
 	TimerDelegate.BindUObject(this, &ASkillQ::ExecuteSkill, Target, SkillLevel);
-	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
+	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, MontageTime - 1.5f, false);
+	Cooldown -= MontageTime;
+	UE_LOG(LogTemp, Warning, TEXT("AnimTime : %f"), MontageTime);
+	Anim->Montage_Play(Data.SkillMontage);
 
 	/*USkeletalMeshComponent* Mesh = OwnActor->GetMesh();
 
@@ -137,16 +142,6 @@ void ASkillQ::RestoreSkill(class AActor* Target, int32 SkillLevel)
 	for (int32 i = 0; i < Mesh->GetNumMaterials(); ++i)
 	{
 		Mesh->SetMaterial(i, Materials[i]);
-	}
-
-	if (OwnActor->ActorHasTag(SkillNames::EnemyTag))
-	{
-		AEnemyAIController* Con = Cast<AEnemyAIController>(OwnActor->GetController());
-		if (!Con)
-		{
-			return;
-		}
-		Con->ToggleBT(false);
 	}
 }
 

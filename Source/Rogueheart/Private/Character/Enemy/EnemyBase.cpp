@@ -101,12 +101,6 @@ void AEnemyBase::TryAttack()
     AttackIndex = FMath::RandRange(0, AttackMontages.Num() - 1);
     Anim->Montage_Play(AttackMontages[AttackIndex]);
     GetCharacterMovement()->bOrientRotationToMovement = false;
-    AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
-    if (!Con)
-    {
-        return;
-    }
-    Con->ToggleBT(true);
 }
 
 bool AEnemyBase::CanAttack() const

@@ -78,15 +78,4 @@ void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 void UPlayerAttackANS::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
-
-	if (IsValid(Enemy))
-	{
-		Enemy->GetCharacterMovement()->bOrientRotationToMovement = true;
-		AEnemyAIController* Con = Cast<AEnemyAIController>(Enemy->GetController());
-		if (!Con)
-		{
-			return;
-		}
-		Con->ToggleBT(false);
-	}
 }
