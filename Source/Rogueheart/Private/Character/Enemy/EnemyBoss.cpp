@@ -34,6 +34,6 @@ void AEnemyBoss::BeginPlay()
 	Super::BeginPlay();
 
 	FTimerHandle SkillTimer;
-	GetWorldTimerManager().SetTimer(SkillTimer, this, &AEnemyBoss::UseSkill, 5.f, false);
+	//GetWorldTimerManager().SetTimer(SkillTimer, this, &AEnemyBoss::UseSkill, 5.f, false);
 }
 
