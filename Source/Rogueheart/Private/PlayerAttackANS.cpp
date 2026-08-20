@@ -10,19 +10,55 @@ void UPlayerAttackANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	if (!IsValid(MeshComp))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Mesh is nullptr!"));
-		return;
-	}
+	UWeaponSweepComponent* SweepComp;
+
 	AActor* OwnerAct = MeshComp->GetOwner();
-	if (!IsValid(OwnerAct))
-	{
-		return;
-	}
 	if (OwnerAct->ActorHasTag(SkillNames::PlayerTag))
 	{
-		Player = Cast<APlayerCharacter>(MeshComp->GetOwner());
+		APlayerCharacter* Player = Cast<APlayerCharacter>(MeshComp->GetOwner());
+		if (!IsValid(Player))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player is nullptr!"));
+			return;
+		}
+		SweepComp = Player->GetSweepCom();
+		if (!IsValid(SweepComp))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Sweep is nullptr!"));
+			return;
+		}
+	}
+	else
+	{
+		AEnemyBase* Enemy = Cast<AEnemyBase>(MeshComp->GetOwner());
+		if (!IsValid(Enemy))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Enemy is nullptr!"));
+			return;
+		}
+		SweepComp = Enemy->GetSweepCom();
+		if (!IsValid(SweepComp))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Sweep is nullptr!"));
+			return;
+		}
+	}
+
+	SweepComp->ClearHitActors();
+}
+
+void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
+{
+	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
+
+	int32 AttackIndex = 1;
+
+	UWeaponSweepComponent* SweepComp;
+
+	AActor* OwnerAct = MeshComp->GetOwner();
+	if (OwnerAct->ActorHasTag(SkillNames::PlayerTag))
+	{
+		APlayerCharacter* Player = Cast<APlayerCharacter>(MeshComp->GetOwner());
 		if (!IsValid(Player))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Player is nullptr!"));
@@ -32,7 +68,7 @@ void UPlayerAttackANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 	}
 	else
 	{
-		Enemy = Cast<AEnemyBase>(MeshComp->GetOwner());
+		AEnemyBase* Enemy = Cast<AEnemyBase>(MeshComp->GetOwner());
 		if (!IsValid(Enemy))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Enemy is nullptr!"));
@@ -44,33 +80,7 @@ void UPlayerAttackANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 			AttackIndex = Enemy->GetAttackIndex();
 		}
 	}
-	if (!IsValid(SweepComp))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Sweep is nullptr!"));
-		return;
-	}
-	SweepComp->ClearHitActors();
-}
-
-void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
-{
-	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
-
-	if (!IsValid(MeshComp))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Mesh is nullptr!"));
-		return;
-	}
-	if (!IsValid(Player) && !IsValid(Enemy))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player is nullptr!"));
-		return;
-	}
-	if (!IsValid(SweepComp))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Sweep is nullptr!"));
-		return;
-	}
+	
 	FString SocketName = FString::Printf(TEXT("Weapon_Socket%d"), AttackIndex);
 	SweepComp->SweepAttack(MeshComp->GetSocketLocation(FName(*SocketName)), AttackIndex);
 }
