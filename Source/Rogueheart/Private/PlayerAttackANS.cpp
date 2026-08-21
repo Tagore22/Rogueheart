@@ -82,7 +82,8 @@ void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	}
 	
 	FString SocketName = FString::Printf(TEXT("Weapon_Socket%d"), AttackIndex);
-	SweepComp->SweepAttack(MeshComp->GetSocketLocation(FName(*SocketName)), AttackIndex);
+	bool bIsCombo = OwnerAct->ActorHasTag(SkillNames::ComboTag);
+	SweepComp->SweepAttack(MeshComp->GetSocketLocation(FName(*SocketName)), AttackIndex, bIsCombo);
 }
 
 void UPlayerAttackANS::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)

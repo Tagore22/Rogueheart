@@ -8,6 +8,7 @@ namespace SkillNames
 	const FName SkillQ = TEXT("IA_Skill_Q");
 	const FName SkillE = TEXT("IA_Skill_E");
 	const FName SkillR = TEXT("IA_Skill_R");
+    const FName BossPunchCombo = TEXT("BossPunchCombo");
 
     // Ohters
     const FName Shadowstep = TEXT("Shadowstep");
@@ -17,6 +18,7 @@ namespace SkillNames
 	const FName EnemyTag = TEXT("Enemy");
 	const FName DieTag = TEXT("Die");
 	const FName BossTag = TEXT("Boss");
+    const FName ComboTag = TEXT("Combo");
 
     // Sockets
     const FName PlayerSocket = TEXT("Weapon_Socket1");

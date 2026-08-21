@@ -3,10 +3,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Rogueheart.h"
 
-UWeaponSweepComponent::UWeaponSweepComponent()
+/*UWeaponSweepComponent::UWeaponSweepComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-}
+}*/
 
 void UWeaponSweepComponent::BeginPlay()
 {
@@ -40,10 +40,10 @@ void UWeaponSweepComponent::BeginPlay()
 }
 
 // Tick()이 필요한가 마지막까지 확인할 것. 필요없다면 생성자에 false로 바꿔라.
-void UWeaponSweepComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+/*void UWeaponSweepComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
+}*/
 
 void UWeaponSweepComponent::ClearHitActors()
 {
@@ -74,7 +74,7 @@ void UWeaponSweepComponent::SetCurSocketLocation(const FVector& Location)
 	CurSocketLocation = Location;
 }
 
-void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackIndex)
+void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackIndex, bool bIsKnockback)
 {
 	CurSocketLocation = Location;
 
@@ -95,11 +95,16 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackInd
 
 	for (FHitResult Hit : OutHits)
 	{
-		AActor* HitActor = Hit.GetActor();
+		ACharacter* HitActor = Cast<ACharacter>(Hit.GetActor());
 		if (IsValid(HitActor) && !HitActors.Contains(HitActor))
 		{
 			HitActors.Add(HitActor);
 			UGameplayStatics::ApplyDamage(HitActor, SweepDamage, Owner->GetController(), Owner, nullptr);
+			if (bIsKnockback)
+			{
+				FVector Dir = HitActor->GetActorLocation() - Owner->GetActorLocation();
+				HitActor->LaunchCharacter(Dir * LaunchForce, true, false);
+			}
 		}
 	}
 	// 마지막에 현재 소켓 좌표를 이전 소켓 좌표로 갱신후에 함수 종료.

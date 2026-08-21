@@ -17,13 +17,13 @@ class ROGUEHEART_API UWeaponSweepComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	UWeaponSweepComponent();
+	//UWeaponSweepComponent();
 
 protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void ClearHitActors();
 
@@ -33,7 +33,7 @@ public:
 	FVector GetCurSocketLocation() const;
 	void SetCurSocketLocation(const FVector& Location);
 
-	void SweepAttack(const FVector& Location, int32 AttackIndex);
+	void SweepAttack(const FVector& Location, int32 AttackIndex, bool bIsKnockback = false);
 
 private:
 	TArray<AActor*> HitActors;
@@ -47,6 +47,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "SweepDamage")
 	float SweepDamage = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "LaunchForce")
+	float LaunchForce = 500.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TraceChannel")
 	ETraceChannel TraceType;
