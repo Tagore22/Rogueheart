@@ -49,7 +49,7 @@ private:
 	float SweepDamage = 20.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "LaunchForce")
-	float LaunchForce = 500.f;
+	float LaunchForce = 3.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TraceChannel")
 	ETraceChannel TraceType;

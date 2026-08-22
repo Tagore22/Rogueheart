@@ -19,6 +19,7 @@ void UWeaponSweepComponent::BeginPlay()
 	if (!MeshComp)
 		return;
 
+	// TArray를 통해서 존재하는 모든 소켓들의 이전 위치들을 모두 구해놓는다.
 	for (int i = 0; i < 5; ++i)
 	{
 		FString SocketName = FString::Printf(TEXT("Weapon_Socket%d"), i);
@@ -74,6 +75,7 @@ void UWeaponSweepComponent::SetCurSocketLocation(const FVector& Location)
 	CurSocketLocation = Location;
 }
 
+// 콤보인 양손의 소켓 번호는 0, 4
 void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackIndex, bool bIsKnockback)
 {
 	CurSocketLocation = Location;
