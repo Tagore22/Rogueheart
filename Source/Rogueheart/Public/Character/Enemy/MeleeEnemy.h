@@ -11,18 +11,4 @@ class ROGUEHEART_API AMeleeEnemy : public AEnemyBase
 
 public:
     AMeleeEnemy();
-
-    virtual void TryAttack() override;
-protected:
-
-    /*UPROPERTY(EditDefaultsOnly, Category = "Combat")
-    float CircleRadius = 250.f;
-
-
-    UPROPERTY(EditDefaultsOnly, Category = "Combat")
-    float CircleSpeed = 200.f;
-
-
-    UPROPERTY(EditDefaultsOnly, Category = "Combat")
-    float AttackInterval = 3.f;*/
 };

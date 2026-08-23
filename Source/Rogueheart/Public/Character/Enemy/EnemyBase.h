@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "SkillNames.h"
+#include "Components/WidgetComponent.h"
 #include "EnemyBase.generated.h"
 
 UCLASS()
@@ -102,13 +103,13 @@ protected:
     float AttackCooldown = 3.f;
 
     UPROPERTY(VisibleAnywhere, Category = "UI")
-    class UWidgetComponent* HPBarWidget = nullptr;
+    class UWidgetComponent* HPBarWidget;
 
     UPROPERTY(VisibleAnywhere, Category = "UI")
-    class UWidgetComponent* TargetWidget = nullptr;
+    class UWidgetComponent* TargetWidget;
 
     UPROPERTY(VisibleAnywhere, Category = "SweepComponent")
-    class UWeaponSweepComponent* SweepCom = nullptr;
+    class UWeaponSweepComponent* SweepCom;
 
     UPROPERTY(EditAnywhere, Category = "SoulActor")
     TSubclassOf<class AActor> SoulAct;

@@ -5,6 +5,7 @@
 AEnemyBoss::AEnemyBoss()
 {
 	SkillBaseCom = CreateDefaultSubobject<USkillBaseComponent>(TEXT("SKillBaseComponent"));
+
 }
 
 void AEnemyBoss::UseSkill()
@@ -21,6 +22,10 @@ void AEnemyBoss::UseSkill()
 void AEnemyBoss::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Tags.Add(SkillNames::BossTag);
+
+	//HPBarWidget->SetVisibility(true);
 
 	FTimerHandle SkillTimer;
 	GetWorldTimerManager().SetTimer(SkillTimer, this, &AEnemyBoss::UseSkill, 5.f, false);

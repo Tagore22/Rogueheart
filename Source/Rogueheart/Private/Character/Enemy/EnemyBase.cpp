@@ -1,5 +1,4 @@
 #include "Character/Enemy/EnemyBase.h"
-#include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -29,9 +28,6 @@ AEnemyBase::AEnemyBase()
 
     HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
     HPBarWidget->SetupAttachment(RootComponent);
-    HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
-    HPBarWidget->SetVisibility(false);
-    HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 45.f)); // 후에 에디터에서 수정 이후 확정지을 것.
 
     SweepCom = CreateDefaultSubobject<UWeaponSweepComponent>(TEXT("SweepComponent"));
 }
@@ -39,6 +35,8 @@ AEnemyBase::AEnemyBase()
 void AEnemyBase::BeginPlay()
 {
     Super::BeginPlay();
+
+    Tags.Add(SkillNames::EnemyTag);
 }
 
 void AEnemyBase::Tick(float DeltaTime)
@@ -178,14 +176,15 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
     if (CurHP <= 0.f)
+    {
         return ActualDamage;
+    }
 
     CurHP = FMath::Clamp(CurHP - ActualDamage, 0.f, MaxHP);
+
     if (ActorHasTag(SkillNames::BossTag))
     {
-        // 여기서 보스의 체력바의 행동을 구현한다. 
-        // 체력바를 얻는다.
-        // 체력바를 갱신한다.
+
     }
     else
     {
