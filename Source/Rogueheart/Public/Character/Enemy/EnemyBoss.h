@@ -14,12 +14,20 @@ public:
 
 	void UseSkill();
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 protected:
 	virtual void BeginPlay() override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "SkillBaseComponent")
 	class USkillBaseComponent* SkillBaseCom;
+
+	UPROPERTY()
+	class UEnemyHPBarWidget* BossHPBarWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UEnemyHPBarWidget> WBP_BossHPBar;
 
 	bool bUseShadowstep = false;
 	

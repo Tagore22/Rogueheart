@@ -8,7 +8,4 @@ UCLASS()
 class ROGUEHEART_API AMeleeEnemy : public AEnemyBase
 {
     GENERATED_BODY()
-
-public:
-    AMeleeEnemy();
 };

@@ -5,7 +5,8 @@
 #include "Animation/AnimInstance.h"
 #include "AIController.h"
 #include "BrainComponent.h"
-#include "Blueprint/UserWidget.h"
+//#include "Blueprint/UserWidget.h"
+#include "Components/WidgetComponent.h"
 #include "UI/EnemyHPBarWidget.h"
 #include "WeaponSweepComponent.h"
 #include "Soul.h"
@@ -26,8 +27,20 @@ AEnemyBase::AEnemyBase()
     TargetWidget->SetVisibility(false);
     TargetWidget->SetRelativeLocation(FVector(0.f, 0.f, -20.f)); // 후에 에디터에서 수정 이후 확정지을 것.
 
+    /*if (HPBarWidget)
+    {
+        HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
+        HPBarWidget->SetupAttachment(RootComponent);
+        HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+        HPBarWidget->SetVisibility(false);
+        HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 45.f)); // 후에 에디터에서 수정 이후 확정지을 것.
+    }*/
+
     HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
     HPBarWidget->SetupAttachment(RootComponent);
+    HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+    HPBarWidget->SetVisibility(false);
+    HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 45.f)); // 후에 에디터에서 수정 이후 확정지을 것.
 
     SweepCom = CreateDefaultSubobject<UWeaponSweepComponent>(TEXT("SweepComponent"));
 }
@@ -182,26 +195,10 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 
     CurHP = FMath::Clamp(CurHP - ActualDamage, 0.f, MaxHP);
 
-    if (ActorHasTag(SkillNames::BossTag))
-    {
-
-    }
-    else
-    {
-        ShowHPBarWidget(true);
-        UEnemyHPBarWidget* HPBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-        if (!HPBar)
-        {
-            return ActualDamage;
-        }
-        HPBar->SetHPPercent(CurHP / MaxHP);
-        DamageTimer = 0.f;
-        HPBar->SetDamageSum(ActualDamage);
-    }
-
     if (CurHP <= 0.f)
     {
         EnemyDie();
+        return ActualDamage;
     }
     else
     {
@@ -218,6 +215,39 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
         int32 DamagedIndex = FMath::RandRange(0, DamagedMontages.Num() - 1);
         Anim->Montage_Play(DamagedMontages[DamagedIndex]);
     }
+
+    /*if (!ActorHasTag(SkillNames::BossTag))
+    {
+        ShowHPBarWidget(true);
+        if (!HPBarWidget)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("HPBarWidget is Nullptr"));
+            return ActualDamage;
+        }
+        UEnemyHPBarWidget* HPBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+        if (!HPBar)
+        {
+            return ActualDamage;
+        }
+        HPBar->SetHPPercent(CurHP / MaxHP);
+        DamageTimer = 0.f;
+        HPBar->SetDamageSum(ActualDamage);
+    }*/
+
+    if (!HPBarWidget)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HPBarWidget is Nullptr"));
+        return ActualDamage;
+    }
+    ShowHPBarWidget(true);
+    UEnemyHPBarWidget* HPBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+    if (!HPBar)
+    {
+        return ActualDamage;
+    }
+    HPBar->SetHPPercent(CurHP / MaxHP);
+    DamageTimer = 0.f;
+    HPBar->SetDamageSum(ActualDamage);
 
     return ActualDamage;
 }

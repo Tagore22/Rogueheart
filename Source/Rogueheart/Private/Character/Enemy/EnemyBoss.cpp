@@ -1,6 +1,7 @@
 #include "Character/Enemy/EnemyBoss.h"
 #include "Kismet/GameplayStatics.h"
 #include "Skill/SkillBaseComponent.h"
+#include "UI/EnemyHPBarWidget.h"
 
 AEnemyBoss::AEnemyBoss()
 {
@@ -19,11 +20,34 @@ void AEnemyBoss::UseSkill()
 	}
 }
 
+float AEnemyBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (CurHP <= 0.f)
+	{
+		return ActualDamage;
+	}
+
+	// 체력 계산은 이미 부모 클래스에서 하고 내려온 것이기 때문에 UI 갱신만 하면 된다.
+
+	BossHPBarWidget->SetHPPercent(CurHP / MaxHP);
+	BossHPBarWidget->SetDamageSum(ActualDamage);
+
+	return ActualDamage;
+}
+
 void AEnemyBoss::BeginPlay()
 {
 	Super::BeginPlay();
 
 	Tags.Add(SkillNames::BossTag);
+
+	if (WBP_BossHPBar)
+	{
+		BossHPBarWidget = CreateWidget<UEnemyHPBarWidget>(GetWorld(), WBP_BossHPBar);
+		BossHPBarWidget->AddToViewport();
+	}
 
 	//HPBarWidget->SetVisibility(true);
 
