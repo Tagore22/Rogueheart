@@ -16,8 +16,12 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	virtual void ResetDamageSum() override;
+
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void EnemyDie() override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "SkillBaseComponent")

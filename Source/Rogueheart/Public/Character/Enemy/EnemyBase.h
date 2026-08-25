@@ -26,7 +26,7 @@ public:
 
     void ResetDamageTimer();
 
-    void ResetDamageSum();
+    virtual void ResetDamageSum();
 
     void SetIsTargeted(bool bTargeted);
 
@@ -49,10 +49,17 @@ public:
     
 protected:
     virtual void BeginPlay() override;
+
     virtual void Tick(float DeltaTime) override;
+
     virtual void EnemyDie();
+
     virtual void HPBarTickTimer(float DeltaTime);
+
     virtual void DamageTickTimer(float DeltaTime);
+    
+    void DamageReact();
+
 public:
     /*UPROPERTY(EditDefaultsOnly, Category = "Combat")
     float AttackRange = 150.f;

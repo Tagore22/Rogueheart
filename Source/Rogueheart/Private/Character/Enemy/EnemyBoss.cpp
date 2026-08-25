@@ -24,7 +24,7 @@ float AEnemyBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	if (CurHP <= 0.f)
+	if (ActorHasTag(SkillNames::DieTag))
 	{
 		return ActualDamage;
 	}
@@ -34,7 +34,20 @@ float AEnemyBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	BossHPBarWidget->SetHPPercent(CurHP / MaxHP);
 	BossHPBarWidget->SetDamageSum(ActualDamage);
 
+	DamageReact();
+
 	return ActualDamage;
+}
+
+void AEnemyBoss::ResetDamageSum()
+{
+	Super::ResetDamageSum();
+
+	if (!BossHPBarWidget)
+	{
+		return;
+	}
+	BossHPBarWidget->ResetDamageSum();
 }
 
 void AEnemyBoss::BeginPlay()
@@ -53,5 +66,16 @@ void AEnemyBoss::BeginPlay()
 
 	FTimerHandle SkillTimer;
 	GetWorldTimerManager().SetTimer(SkillTimer, this, &AEnemyBoss::UseSkill, 5.f, false);
+}
+
+void AEnemyBoss::EnemyDie()
+{
+	Super::EnemyDie();
+
+	if (!BossHPBarWidget)
+	{
+		return;
+	}
+	BossHPBarWidget->RemoveFromParent();
 }
 

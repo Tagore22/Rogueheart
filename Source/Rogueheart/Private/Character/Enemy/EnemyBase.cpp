@@ -89,8 +89,8 @@ void AEnemyBase::Tick(float DeltaTime)
     if (!ActorHasTag(SkillNames::BossTag))
     {
         HPBarTickTimer(DeltaTime);
-        DamageTickTimer(DeltaTime);
     }
+    DamageTickTimer(DeltaTime);
 }
 
 void AEnemyBase::TryAttack()
@@ -175,7 +175,7 @@ void AEnemyBase::ResetDamageSum()
 void AEnemyBase::SetIsTargeted(bool bTargeted)
 {
     if (bTargeted)
-    {
+    {   
         bIsTargeted = true;
         HPBarTimer = -1.f;
     }
@@ -188,33 +188,14 @@ void AEnemyBase::SetIsTargeted(bool bTargeted)
 float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-    if (CurHP <= 0.f)
+    if (ActorHasTag(SkillNames::DieTag))
     {
         return ActualDamage;
     }
 
     CurHP = FMath::Clamp(CurHP - ActualDamage, 0.f, MaxHP);
 
-    if (CurHP <= 0.f)
-    {
-        EnemyDie();
-        return ActualDamage;
-    }
-    else
-    {
-        // 현재 체력이 ActualDamage만큼 줄어든다.
-        // 만약 체력이 0보다 작다면 사망.
-        // 피격 애니메이션 실행.
-        UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-        if (!Anim || DamagedMontages.Num() == 0)
-            return ActualDamage;
-
-        UE_LOG(LogTemp, Warning, TEXT("Enemy Take %f Damage!"), ActualDamage);
-
-        //
-        int32 DamagedIndex = FMath::RandRange(0, DamagedMontages.Num() - 1);
-        Anim->Montage_Play(DamagedMontages[DamagedIndex]);
-    }
+    DamageTimer = 0.f;
 
     /*if (!ActorHasTag(SkillNames::BossTag))
     {
@@ -246,8 +227,9 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
         return ActualDamage;
     }
     HPBar->SetHPPercent(CurHP / MaxHP);
-    DamageTimer = 0.f;
     HPBar->SetDamageSum(ActualDamage);
+
+    DamageReact();
 
     return ActualDamage;
 }
@@ -269,7 +251,7 @@ void AEnemyBase::EnemyDie()
 
     ShowTargetWidget(false);
     Tags.Empty();
-    Tags.Add("Die");
+    Tags.Add(SkillNames::DieTag);
     GetWorld()->SpawnActor<AActor>(SoulAct, GetActorTransform());
 
     // 꼭 콜리전을 꺼야 하는가?
@@ -322,4 +304,26 @@ float AEnemyBase::GetCurHP() const
 float AEnemyBase::GetMaxHP() const
 {
     return MaxHP;
+}
+
+void AEnemyBase::DamageReact()
+{
+    if (CurHP <= 0.f)
+    {
+        EnemyDie();
+    }
+    else
+    {
+        // 현재 체력이 ActualDamage만큼 줄어든다.
+        // 만약 체력이 0보다 작다면 사망.
+        // 피격 애니메이션 실행.
+        UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+        if (!Anim || DamagedMontages.Num() == 0)
+        {
+            return;
+        }
+        //
+        int32 DamagedIndex = FMath::RandRange(0, DamagedMontages.Num() - 1);
+        Anim->Montage_Play(DamagedMontages[DamagedIndex]);
+    }
 }
