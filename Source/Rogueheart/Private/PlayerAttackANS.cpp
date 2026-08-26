@@ -80,12 +80,15 @@ void UPlayerAttackANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	// AttackIndex는 EnemyBase에서 RandRange()를 통해서 0 ~ 공격몽타주.Num() - 1중에서 임의로 만들어진다.
 	if (OwnerAct->ActorHasTag(SkillNames::ComboTag))
 	{
+		SweepComp->SetPrevSocketLocation(MeshComp->GetSocketLocation(FName(*FString::Printf(TEXT("Weapon_Socket%d"), 0))), 0);
+		SweepComp->SetPrevSocketLocation(MeshComp->GetSocketLocation(FName(*FString::Printf(TEXT("Weapon_Socket%d"), 4))), 4);
 		SweepComp->SweepAttack(MeshComp->GetSocketLocation(FName(*FString::Printf(TEXT("Weapon_Socket%d"), 0))), 0, true);
 		SweepComp->SweepAttack(MeshComp->GetSocketLocation(FName(*FString::Printf(TEXT("Weapon_Socket%d"), 4))), 4, true);
 	}
 	else
 	{
 		FString SocketName = FString::Printf(TEXT("Weapon_Socket%d"), AttackIndex);
+		SweepComp->SetPrevSocketLocation(MeshComp->GetSocketLocation(FName(*SocketName)), AttackIndex);
 		SweepComp->SweepAttack(MeshComp->GetSocketLocation(FName(*SocketName)), AttackIndex);
 	}
 }

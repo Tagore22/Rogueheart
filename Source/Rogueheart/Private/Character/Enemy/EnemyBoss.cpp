@@ -33,6 +33,7 @@ float AEnemyBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 
 	BossHPBarWidget->SetHPPercent(CurHP / MaxHP);
 	BossHPBarWidget->SetDamageSum(ActualDamage);
+	UE_LOG(LogTemp, Warning, TEXT("BossHP : %f"), CurHP);
 
 	DamageReact();
 
@@ -60,12 +61,13 @@ void AEnemyBoss::BeginPlay()
 	{
 		BossHPBarWidget = CreateWidget<UEnemyHPBarWidget>(GetWorld(), WBP_BossHPBar);
 		BossHPBarWidget->AddToViewport();
+		BossHPBarWidget->SetVisibleDamageText(false);
 	}
 
 	//HPBarWidget->SetVisibility(true);
 
-	FTimerHandle SkillTimer;
-	GetWorldTimerManager().SetTimer(SkillTimer, this, &AEnemyBoss::UseSkill, 5.f, false);
+	//FTimerHandle SkillTimer;
+	//GetWorldTimerManager().SetTimer(SkillTimer, this, &AEnemyBoss::UseSkill, 5.f, false);
 }
 
 void AEnemyBoss::EnemyDie()

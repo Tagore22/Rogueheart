@@ -194,7 +194,7 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
     }
 
     CurHP = FMath::Clamp(CurHP - ActualDamage, 0.f, MaxHP);
-
+    UE_LOG(LogTemp, Warning, TEXT("HP : %f"), CurHP);
     DamageTimer = 0.f;
 
     /*if (!ActorHasTag(SkillNames::BossTag))
@@ -215,7 +215,7 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
         HPBar->SetDamageSum(ActualDamage);
     }*/
 
-    if (!HPBarWidget)
+    if (ActorHasTag(SkillNames::BossTag))
     {
         UE_LOG(LogTemp, Warning, TEXT("HPBarWidget is Nullptr"));
         return ActualDamage;
@@ -228,6 +228,7 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
     }
     HPBar->SetHPPercent(CurHP / MaxHP);
     HPBar->SetDamageSum(ActualDamage);
+    UE_LOG(LogTemp, Warning, TEXT("SwordHP : %f"), CurHP);
 
     DamageReact();
 

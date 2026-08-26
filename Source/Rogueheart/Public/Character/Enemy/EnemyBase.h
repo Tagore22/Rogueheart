@@ -110,7 +110,7 @@ protected:
     float AttackCooldown = 3.f;
 
     UPROPERTY(VisibleAnywhere, Category = "UI")
-    class UWidgetComponent* HPBarWidget;
+    class UWidgetComponent* HPBarWidget = nullptr;
 
     UPROPERTY(VisibleAnywhere, Category = "UI")
     class UWidgetComponent* TargetWidget;

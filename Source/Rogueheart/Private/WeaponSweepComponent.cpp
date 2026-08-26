@@ -19,7 +19,8 @@ void UWeaponSweepComponent::BeginPlay()
 	if (!MeshComp)
 		return;
 
-	// TArray를 통해서 존재하는 모든 소켓들의 이전 위치들을 모두 구해놓는다.
+	// TArray를 통해서 존재하는 모든 소켓들의 이전 위치들을 모두 구해놓는다. 다만 이것은 이후에도 적용되는 위치가 아닌
+	// TArray를 구축하기 위한 위치들이므로 이후 반드시 갱신이 필요하다.
 	for (int i = 0; i < 5; ++i)
 	{
 		FString SocketName = FString::Printf(TEXT("Weapon_Socket%d"), i);
@@ -53,7 +54,7 @@ void UWeaponSweepComponent::ClearHitActors()
 
 FVector UWeaponSweepComponent::GetPrevSocketLocation(int32 AttackIndex) const
 {
-	if (AttackIndex <= 5)
+	if (AttackIndex >= 5)
 	{
 		return FVector::ZeroVector;
 	}
@@ -78,6 +79,7 @@ void UWeaponSweepComponent::SetCurSocketLocation(const FVector& Location)
 // 콤보인 양손의 소켓 번호는 0, 4
 void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackIndex, bool bIsKnockback)
 {
+	//PrevSocketLocations[AttackIndex] = CurSocketLocation;
 	CurSocketLocation = Location;
 
 	TArray<FHitResult> OutHits;
@@ -87,7 +89,7 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackInd
 	bool bHit = GetWorld()->SweepMultiByChannel(OutHits, PrevSocketLocations[AttackIndex], CurSocketLocation, FQuat::Identity, Channel, FCollisionShape::MakeSphere(SweepLength), Params);
 
 	// 궤도 확인 전용 더버깅.
-	// DrawDebugLine(GetWorld(), PrevSocketLocations[AttackIndex], CurSocketLocation, FColor::Yellow, false, 1.0f, 0, 2.0f);
+	DrawDebugLine(GetWorld(), PrevSocketLocations[AttackIndex], CurSocketLocation, FColor::Yellow, false, 1.0f, 0, 2.0f);
 	if (!bHit)
 		return;
 

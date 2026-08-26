@@ -43,7 +43,7 @@ private:
 	FVector CurSocketLocation;
 
 	UPROPERTY(EditDefaultsOnly, Category = "SweepLength")
-	float SweepLength = 200.f;
+	float SweepLength = 30.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "SweepDamage")
 	float SweepDamage = 20.f;

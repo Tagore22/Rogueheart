@@ -23,10 +23,15 @@ void UEnemyHPBarWidget::ResetDamageSum()
 	DamageSum = 0.f;
 }
 
-/*void UEnemyHPBarWidget::NativeConstruct()
+void UEnemyHPBarWidget::SetVisibleDamageText(bool bIsVisible)
 {
-	Super::NativeConstruct();
-
-	DamageText->SetVisibility(ESlateVisibility::Hidden);
-}*/
+	if (bIsVisible)
+	{
+		DamageText->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		DamageText->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
 

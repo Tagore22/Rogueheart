@@ -15,6 +15,8 @@ public:
 	void SetDamageSum(float Damage);
 
 	void ResetDamageSum();
+
+	void SetVisibleDamageText(bool bIsVisible);
 protected:
 	//virtual void NativeConstruct() override;
 private:
