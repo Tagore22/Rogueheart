@@ -68,7 +68,7 @@ void USkillBaseComponent::UseSkill(FName SkillID, AActor* Target)
 			return;
 		}
 		UE_LOG(LogTemp, Warning, TEXT("UseSkill!"));
-		(*Skill)->UseSkill(Target, *SkillLevels.Find(SkillID));
+		(*Skill)->TryUseSkill(Target, *SkillLevels.Find(SkillID));
 	}
 }
 

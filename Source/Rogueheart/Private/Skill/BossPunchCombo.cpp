@@ -1,17 +1,19 @@
 #include "Skill/BossPunchCombo.h"
 
-void ABossPunchCombo::UseSkill(AActor* Target, int32 SkillLevel)
+bool ABossPunchCombo::TryUseSkill(AActor* Target, int32 SkillLevel)
 {
-	Super::UseSkill(Target, SkillLevel);
+	Super::TryUseSkill(Target, SkillLevel);
 
 	if (!Data.SkillMontage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PunchCombo has no montage"));
-		return;
+		return false;
 	}
 
 	OwnActor->Tags.Add(SkillNames::ComboTag);
 	ExecuteSkill(Target, SkillLevel);
+
+	return true;
 }
 
 void ABossPunchCombo::ExecuteSkill(class AActor* Target, int32 SkillLevel)

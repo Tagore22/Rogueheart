@@ -1,9 +1,9 @@
 #include "Skill/SkillQ.h"
 #include "Controller/EnemyAIController.h"
 
-void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
+bool ASkillQ::TryUseSkill(AActor* Target, int32 SkillLevel)
 {
-	Super::UseSkill(Target, SkillLevel);
+	Super::TryUseSkill(Target, SkillLevel);
 
 	Cooldown = Data.Cooldown[SkillLevel];
 
@@ -12,7 +12,7 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 	if (bCanUseSkill || !Data.Material)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
-		return;
+		return false;
 	}
 
 	if (OwnActor->ActorHasTag(SkillNames::PlayerTag))
@@ -20,10 +20,11 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 		float Cost = OwnInterface->GetCurMana();
 		if (Cost <= 0.f)
 		{
-			return;
+			return false;
 		}
+
 		ExecuteSkill(Target, SkillLevel);
-		return;
+		return true;
 	}
 	// SkillBase가 가지고 있는 OwnActor의 타입명은 
 	// if OwnActor의 태그가 플레이어라면 아래 Cost를 받는다.
@@ -37,7 +38,7 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 	UAnimInstance* Anim = OwnActor->GetMesh()->GetAnimInstance();
 	if (!Anim)
 	{
-		return;
+		return false;
 	}
 
 	float MontageTime = Data.SkillMontage->GetPlayLength();
@@ -83,6 +84,7 @@ void ASkillQ::UseSkill(AActor* Target, int32 SkillLevel)
 		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("SkillQ Level : %d"), SkillLevel);*/
+	return true;
 }
 
 void ASkillQ::ExecuteSkill(class AActor* Target, int32 SkillLevel)
@@ -93,6 +95,12 @@ void ASkillQ::ExecuteSkill(class AActor* Target, int32 SkillLevel)
 	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
 
 	USkeletalMeshComponent* Mesh = OwnActor->GetMesh();
+
+	if (!Mesh)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SkillQ has no Mesh"));
+		return;
+	}
 
 	for (int32 i = 0; i < Mesh->GetNumMaterials(); ++i)
 	{

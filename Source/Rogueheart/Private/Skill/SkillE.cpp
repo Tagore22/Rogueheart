@@ -1,9 +1,9 @@
 #include "Skill/SkillE.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-void ASkillE::UseSkill(AActor* Target, int32 SkillLevel)
+bool ASkillE::TryUseSkill(AActor* Target, int32 SkillLevel)
 {
-	Super::UseSkill(Target, SkillLevel);
+	Super::TryUseSkill(Target, SkillLevel);
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillE!"));
 
@@ -12,7 +12,7 @@ void ASkillE::UseSkill(AActor* Target, int32 SkillLevel)
 	if (bCanUseSkill || !Data.Effect || Cost <= 0.f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
-		return;
+		return false;
 	}
 
 	Cooldown = Data.Cooldown[SkillLevel];
@@ -20,6 +20,8 @@ void ASkillE::UseSkill(AActor* Target, int32 SkillLevel)
 
 	TimerDelegate.BindUObject(this, &ASkillE::ExecuteSkill, Target, SkillLevel);
 	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
+
+	return true;
 }
 
 void ASkillE::ExecuteSkill(class AActor* Target, int32 SkillLevel)

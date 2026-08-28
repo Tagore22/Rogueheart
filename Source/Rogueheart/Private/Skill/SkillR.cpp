@@ -1,9 +1,9 @@
 #include "Skill/SkillR.h"
 #include "Character/Player/PlayerGhostTrail.h"
 
-void ASkillR::UseSkill(AActor* Target, int32 SkillLevel)
+bool ASkillR::TryUseSkill(AActor* Target, int32 SkillLevel)
 {
-	Super::UseSkill(Target, SkillLevel);
+	Super::TryUseSkill(Target, SkillLevel);
 
 	UE_LOG(LogTemp, Warning, TEXT("Use SkillR!"));
 
@@ -13,7 +13,7 @@ void ASkillR::UseSkill(AActor* Target, int32 SkillLevel)
 	if (bCanUseSkill || !Anim || Cost <= 0.f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remain CoolTime is %f!"), GetWorldTimerManager().GetTimerRemaining(SkillTimer));
-		return;
+		return false;
 	}
 
 	Cooldown = Data.Cooldown[SkillLevel];
@@ -21,6 +21,8 @@ void ASkillR::UseSkill(AActor* Target, int32 SkillLevel)
 
 	TimerDelegate.BindUObject(this, &ASkillR::ExecuteSkill, Target, SkillLevel);
 	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
+
+	return true;
 }
 
 void ASkillR::ExecuteSkill(class AActor* Target, int32 SkillLevel)

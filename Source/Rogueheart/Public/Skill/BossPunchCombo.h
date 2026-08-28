@@ -10,7 +10,7 @@ class ROGUEHEART_API ABossPunchCombo : public ASkillBase
 	GENERATED_BODY()
 
 public:
-	virtual void UseSkill(class AActor* Target, int32 SkillLevel) override;
+	virtual bool TryUseSkill(class AActor* Target, int32 SkillLevel) override;
 
 protected:
 	virtual void ExecuteSkill(class AActor* Target, int32 SkillLevel) override;
