@@ -46,6 +46,8 @@ public:
     class UWeaponSweepComponent* GetSweepCom() const { return SweepCom; }
 
     int32 GetAttackIndex() const { return AttackIndex; }
+
+    void SetMaxWalkSpeed(float NewSpeed);
     
 protected:
     virtual void BeginPlay() override;

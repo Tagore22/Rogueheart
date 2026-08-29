@@ -235,6 +235,16 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
     return ActualDamage;
 }
 
+void AEnemyBase::SetMaxWalkSpeed(float NewSpeed)
+{
+    if (NewSpeed < 0)
+    {
+        return;
+    }
+
+    GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+}
+
 void AEnemyBase::EnemyDie()
 {
     UAnimInstance* Anim = GetMesh()->GetAnimInstance();

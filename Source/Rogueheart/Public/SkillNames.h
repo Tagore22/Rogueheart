@@ -22,6 +22,11 @@ namespace SkillNames
 
     // Sockets
     const FName PlayerSocket = TEXT("Weapon_Socket1");
+
+    // MoveSpeeds
+    const float PatrolSpeed = 300.f;
+    const float ChaseSpeed = 600.f;
+    const float LockonSpeed = 150.f;
 }
 
 UENUM(BlueprintType)
