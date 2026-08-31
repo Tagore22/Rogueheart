@@ -123,5 +123,11 @@ protected:
     UPROPERTY(EditAnywhere, Category = "SoulActor")
     TSubclassOf<class AActor> SoulAct;
 
+    UPROPERTY(EditAnywhere, Category = "AIMaxDistance")
+    float MaxDistance = 300.f;
+
+    UPROPERTY(EditAnywhere, Category = "AIMaxPerceptionTime")
+    float LostTargetTime = 5.f;
+
     int32 AttackIndex;
 };

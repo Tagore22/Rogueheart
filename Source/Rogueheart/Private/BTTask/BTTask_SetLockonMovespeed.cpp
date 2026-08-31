@@ -1,9 +1,9 @@
-#include "BTTask/BTTask_SetPatrolMovespeed.h"
+#include "BTTask/BTTask_SetLockonMovespeed.h"
 #include "SkillNames.h"
 #include "AIController.h"
 #include "Character/Enemy/EnemyBase.h"
 
-EBTNodeResult::Type UBTTask_SetPatrolMovespeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_SetLockonMovespeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     AAIController* AIController = OwnerComp.GetAIOwner();
     if (!AIController)
@@ -17,9 +17,7 @@ EBTNodeResult::Type UBTTask_SetPatrolMovespeed::ExecuteTask(UBehaviorTreeCompone
         return EBTNodeResult::Failed;
     }
 
-    EnemyBase->SetMaxWalkSpeed(SkillNames::PatrolSpeed);
-
-    UE_LOG(LogTemp, Warning, TEXT("MaxWalkSpeed = PatrolSpeed"));
+    EnemyBase->SetMaxWalkSpeed(SkillNames::LockonSpeed);
 
     return EBTNodeResult::Succeeded;
 }

@@ -21,6 +21,8 @@ public:
 
     void ToggleBT(bool bIsStop);
 
+    void SetAIInitialize(FVector SpawnLocation, float MaxDistance, float LostTargetTime);
+
     const static FName TargetPlayerKey;
     const static FName IsInvestigatingKey;
     const static FName DiscoveredLocationKey;

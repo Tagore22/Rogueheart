@@ -8,6 +8,7 @@
 #include "GenericTeamAgentInterface.h"
 #include "TimerManager.h"
 #include "GameFramework/Pawn.h"
+#include "SkillNames.h"
 //
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -71,6 +72,19 @@ void AEnemyAIController::ToggleBT(bool bIsStop)
 
     // 매 Tick마다 시야 디버그 그려줌
     //Debug_DrawFOV();
+}
+
+void AEnemyAIController::SetAIInitialize(FVector SpawnLocation, float MaxDistance, float LostTargetTime)
+{
+    UBlackboardComponent* BB = GetBlackboardComponent();
+    if (!BB)
+    {
+        return;
+    }
+
+    BB->SetValueAsVector(SkillNames::SpawnLocation, SpawnLocation);
+    BB->SetValueAsFloat(SkillNames::MaxDistance, MaxDistance);
+    BB->SetValueAsFloat(SkillNames::LostTargetTime, LostTargetTime);
 }
 
 void AEnemyAIController::BeginPlay()
@@ -161,7 +175,8 @@ void AEnemyAIController::BeginPlay()
     }
 }*/
 
-void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
     if (!IsValid(Actor) || FGenericTeamId::GetTeamIdentifier(Actor) != FGenericTeamId(1))
         return;
@@ -175,7 +190,7 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
     if (Stimulus.WasSuccessfullySensed())
     {
         // 플레이어 발견
-        BB->SetValueAsObject(TEXT("TargetPlayer"), Actor);
+        BB->SetValueAsObject(SkillNames::TargetPlayer, Actor);
 
         // FIX: 발견 위치는 플레이어(Actor)의 현재 위치로 저장 (이전: ControlledPawn 위치 사용)
         BB->SetValueAsVector(DiscoveredLocationKey, StimulusLoc);
@@ -211,6 +226,38 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
         return;
 
     Timer.SetTimer(InvestigateTimerHandle, this, &AEnemyAIController::StopInvestigating, InvestigateTimeout, false);
+}*/
+
+void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+    if (!IsValid(Actor))
+        return;
+
+    UBlackboardComponent* BB = GetBlackboardComponent();
+    if (!BB)
+    {
+        return;
+    }
+
+    const FVector StimulusLoc = Stimulus.StimulusLocation;
+
+    if (Stimulus.WasSuccessfullySensed())
+    {
+        // 플레이어 발견
+        BB->SetValueAsObject(SkillNames::TargetPlayer, Actor);
+
+        BB->SetValueAsBool(SkillNames::bIsPerception, true);
+
+        UE_LOG(LogTemp, Warning, TEXT("Player Detected!"));
+    }
+    else
+    {
+        BB->SetValueAsFloat(SkillNames::LastPerceptionTime, GetWorld()->GetTimeSeconds());
+
+        BB->SetValueAsBool(SkillNames::bIsPerception, false);
+
+        UE_LOG(LogTemp, Warning, TEXT("Player Lost"));
+    }
 }
 
 /*void AEnemyAIController::StopInvestigating()

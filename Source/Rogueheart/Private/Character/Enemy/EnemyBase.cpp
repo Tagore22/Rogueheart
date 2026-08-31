@@ -50,6 +50,13 @@ void AEnemyBase::BeginPlay()
     Super::BeginPlay();
 
     Tags.Add(SkillNames::EnemyTag);
+
+    AEnemyAIController* AIC = Cast<AEnemyAIController>(GetController());
+    if (!AIC)
+    {
+        return;
+    }
+    AIC->SetAIInitialize(GetActorLocation(), MaxDistance, LostTargetTime);
 }
 
 void AEnemyBase::Tick(float DeltaTime)
