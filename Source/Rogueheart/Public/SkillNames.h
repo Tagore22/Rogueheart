@@ -35,6 +35,9 @@ namespace SkillNames
     const FName MaxDistance = TEXT("MaxDistance");               // 스폰위치로부터 멀어질 수 있는 최대 거리.
     const FName LostTargetTime = TEXT("LostTargetTime");   // 적이 플레이어를 감지해야하는 최대 시간.
     const FName bIsPerception = TEXT("bIsPerception"); // 적이 플레이어를 탐지중인가?
+    const FName MaxLockonDist = TEXT("MaxLockonDist"); // 락온 거리.
+    const FName MaxAttackDist = TEXT("MaxAttackDist"); // 공격 거리.
+    const FName CircleLocation = TEXT("CircleLocation"); // 락온 상태일 때 다음 위치.
 }
 
 UENUM(BlueprintType)

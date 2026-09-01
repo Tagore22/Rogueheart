@@ -56,7 +56,7 @@ void AEnemyBase::BeginPlay()
     {
         return;
     }
-    AIC->SetAIInitialize(GetActorLocation(), MaxDistance, LostTargetTime);
+    AIC->SetAIInitialize(GetActorLocation(), MaxDistance, LostTargetTime, MaxLockonDist, MaxAttackDist);
 }
 
 void AEnemyBase::Tick(float DeltaTime)

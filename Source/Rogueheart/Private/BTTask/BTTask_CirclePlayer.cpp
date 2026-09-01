@@ -4,6 +4,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "NavigationSystem.h"
 #include "GameFramework/Actor.h"
+#include "SkillNames.h"
 
 UBTTask_CirclePlayer::UBTTask_CirclePlayer()
 {
@@ -38,7 +39,7 @@ EBTNodeResult::Type UBTTask_CirclePlayer::ExecuteTask(UBehaviorTreeComponent& Ow
         if (NavSys->ProjectPointToNavigation(CircleLocation, NavLoc))
         {
             // 목표 위치를 블랙보드에 저장
-            BB->SetValueAsVector(TEXT("CircleTargetLocation"), NavLoc.Location);
+            BB->SetValueAsVector(SkillNames::CircleLocation, NavLoc.Location);
 
             AICon->MoveToLocation(NavLoc.Location);
             UE_LOG(LogTemp, Warning, TEXT("Circle"));
@@ -81,12 +82,13 @@ void UBTTask_CirclePlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
     }
 
     // 목표 지점에 도달했는지 체크
-    FVector TargetLocation = BB->GetValueAsVector(TEXT("CircleTargetLocation"));
-    float Distance = FVector::Dist(ControlledPawn->GetActorLocation(), TargetLocation);
+    FVector TargetLocation = BB->GetValueAsVector(SkillNames::CircleLocation);
+    float Distance = FVector::DistSquared(ControlledPawn->GetActorLocation(), TargetLocation);
 
-    if (Distance <= AcceptanceRadius)
+    if (Distance <= AcceptanceRadius * AcceptanceRadius)
     {
         // 목표에 도달했으므로 Task 완료
         FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+        return;
     }
 }

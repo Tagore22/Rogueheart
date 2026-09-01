@@ -129,5 +129,11 @@ protected:
     UPROPERTY(EditAnywhere, Category = "AIMaxPerceptionTime")
     float LostTargetTime = 5.f;
 
+    UPROPERTY(EditAnywhere, Category = "AIMaxLockonDist")
+    float MaxLockonDist = 300.f;
+
+    UPROPERTY(EditAnywhere, Category = "AIMaxAttackDist")
+    float MaxAttackDist = 100.f;
+
     int32 AttackIndex;
 };

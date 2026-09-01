@@ -74,7 +74,7 @@ void AEnemyAIController::ToggleBT(bool bIsStop)
     //Debug_DrawFOV();
 }
 
-void AEnemyAIController::SetAIInitialize(FVector SpawnLocation, float MaxDistance, float LostTargetTime)
+void AEnemyAIController::SetAIInitialize(FVector SpawnLocation, float MaxDistance, float LostTargetTime, float MaxLockonDist, float MaxAttackDist)
 {
     UBlackboardComponent* BB = GetBlackboardComponent();
     if (!BB)
@@ -85,6 +85,8 @@ void AEnemyAIController::SetAIInitialize(FVector SpawnLocation, float MaxDistanc
     BB->SetValueAsVector(SkillNames::SpawnLocation, SpawnLocation);
     BB->SetValueAsFloat(SkillNames::MaxDistance, MaxDistance);
     BB->SetValueAsFloat(SkillNames::LostTargetTime, LostTargetTime);
+    BB->SetValueAsFloat(SkillNames::MaxLockonDist, MaxLockonDist);
+    BB->SetValueAsFloat(SkillNames::MaxAttackDist, MaxAttackDist);
 }
 
 void AEnemyAIController::BeginPlay()

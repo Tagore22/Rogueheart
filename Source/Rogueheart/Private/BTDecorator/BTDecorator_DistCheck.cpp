@@ -80,10 +80,6 @@ void UBTDecorator_DistCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 
     bool bIsPerception = BlackboardComp->GetValueAsBool(bIsPerceptionKey.SelectedKeyName);
 
-    UE_LOG(LogTemp, Warning, TEXT("LastPerceptionTime : %f, Miss Time : %f"), LastPerceptionTime, CurrentTime - LastPerceptionTime);
-    //UE_LOG(LogTemp, Warning, TEXT("LastPerceptionTime : %f"), LastPerceptionTime);
-    //UE_LOG(LogTemp, Warning, TEXT("DistSquared : %f, MaxDistance : %f, SpawnLocation : %f, %f, %f"), FVector::DistSquared(SpawnLocation, CurLocation), MaxDistance, SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
-
     // 스폰위치로부터 일정거리 이상 벗어났거나, 플레이어를 N초 이상 감지하지 못하였을 경우.
     if ((FVector::DistSquared(SpawnLocation, CurLocation) > MaxDistance) || (!bIsPerception && (CurrentTime - LastPerceptionTime > LostTargetTime)))
     {
