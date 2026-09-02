@@ -24,9 +24,9 @@ namespace SkillNames
     const FName PlayerSocket = TEXT("Weapon_Socket1");
 
     // MoveSpeeds
+    const float LockonSpeed = 100.f;
     const float PatrolSpeed = 300.f;
-    const float ChaseSpeed = 600.f;
-    const float LockonSpeed = 150.f;
+    const float ChaseSpeed = 450.f;
 
     // BlackBoard Values;
     const FName TargetPlayer = TEXT("TargetPlayer");

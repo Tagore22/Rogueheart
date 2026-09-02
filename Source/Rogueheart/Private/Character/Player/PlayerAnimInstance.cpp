@@ -26,6 +26,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
     // Velocity는 단순히 수치 계산을 위해 쓰인다. 이동, 회전, 방향에 쓰일 경우에는
     // FVector::IsNearlyZero()를 통해 걸러내야할 수도 있다.
+    // Velocity는 각 방향의 초당 속도를 의미한다.
     FVector Velocity = Player->GetVelocity();
 
     // z축의 이동값까지 끼게 되면 값이 튀어버린다. 따라서 z값은 버린다.
