@@ -24,7 +24,7 @@ namespace SkillNames
     const FName PlayerSocket = TEXT("Weapon_Socket1");
 
     // MoveSpeeds
-    const float LockonSpeed = 100.f;
+    const float LockonSpeed = 50.f;
     const float PatrolSpeed = 300.f;
     const float ChaseSpeed = 450.f;
 
@@ -38,6 +38,8 @@ namespace SkillNames
     const FName MaxLockonDist = TEXT("MaxLockonDist"); // 락온 거리.
     const FName MaxAttackDist = TEXT("MaxAttackDist"); // 공격 거리.
     const FName CircleLocation = TEXT("CircleLocation"); // 락온 상태일 때 다음 위치.
+    const FName UnlimitedDist = TEXT("UnlimitedDist"); // 락온 상태일 때 다음 위치.
+    const FName ZeroDist = TEXT("ZeroDist"); // 락온 상태일 때 다음 위치.
 }
 
 UENUM(BlueprintType)

@@ -2,7 +2,6 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Character/Player/PlayerCharacter.h"
-#include "Character/Enemy/EnemyBase.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GenericTeamAgentInterface.h"
@@ -87,6 +86,8 @@ void AEnemyAIController::SetAIInitialize(FVector SpawnLocation, float MaxDistanc
     BB->SetValueAsFloat(SkillNames::LostTargetTime, LostTargetTime);
     BB->SetValueAsFloat(SkillNames::MaxLockonDist, MaxLockonDist);
     BB->SetValueAsFloat(SkillNames::MaxAttackDist, MaxAttackDist);
+    BB->SetValueAsFloat(SkillNames::UnlimitedDist, 100000000.f);
+    BB->SetValueAsFloat(SkillNames::ZeroDist, 0.f);
 }
 
 void AEnemyAIController::BeginPlay()

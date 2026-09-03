@@ -2,15 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTDecorator.h"
-#include "BTDecorator_CombatDistCheck.generated.h"
+#include "BTDecorator_CheckLockonDist.generated.h"
 
 UCLASS()
-class ROGUEHEART_API UBTDecorator_CombatDistCheck : public UBTDecorator
+class ROGUEHEART_API UBTDecorator_CheckLockonDist : public UBTDecorator
 {
 	GENERATED_BODY()
-
+	
 public:
-	UBTDecorator_CombatDistCheck();
+	UBTDecorator_CheckLockonDist();
 
 protected:
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;

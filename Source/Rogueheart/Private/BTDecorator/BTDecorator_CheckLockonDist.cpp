@@ -1,13 +1,14 @@
-#include "BTDecorator/BTDecorator_CombatDistCheck.h"
+#include "BTDecorator/BTDecorator_CheckLockonDist.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Character/Enemy/EnemyBase.h"
 
-UBTDecorator_CombatDistCheck::UBTDecorator_CombatDistCheck()
+UBTDecorator_CheckLockonDist::UBTDecorator_CheckLockonDist()
 {
     bNotifyTick = true;
 }
 
-bool UBTDecorator_CombatDistCheck::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
+bool UBTDecorator_CheckLockonDist::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
     if (!BlackboardComp)
@@ -28,7 +29,7 @@ bool UBTDecorator_CombatDistCheck::CalculateRawConditionValue(UBehaviorTreeCompo
         return false;
     }
 
-    APawn* Pawn = AIController->GetPawn();
+    AEnemyBase* Pawn = Cast<AEnemyBase>(AIController->GetPawn());
     if (!IsValid(Pawn))
     {
         return false;
@@ -46,13 +47,15 @@ bool UBTDecorator_CombatDistCheck::CalculateRawConditionValue(UBehaviorTreeCompo
     // 스폰위치로부터 일정거리 이상 벗어났거나, 플레이어를 N초 이상 감지하지 못하였을 경우.
     if (DistSquared > MaxDistance || DistSquared <= MinDistance)
     {
+        Pawn->SetbIsLockon(false);
         return false;
     }
 
+    Pawn->SetbIsLockon(true);
     return true;
 }
 
-void UBTDecorator_CombatDistCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTDecorator_CheckLockonDist::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
     if (!BlackboardComp)
@@ -73,7 +76,7 @@ void UBTDecorator_CombatDistCheck::TickNode(UBehaviorTreeComponent& OwnerComp, u
         return;
     }
 
-    APawn* Pawn = AIController->GetPawn();
+    AEnemyBase* Pawn = Cast<AEnemyBase>(AIController->GetPawn());
     if (!IsValid(Pawn))
     {
         return;
@@ -92,6 +95,9 @@ void UBTDecorator_CombatDistCheck::TickNode(UBehaviorTreeComponent& OwnerComp, u
     if (DistSquared > MaxDistance || DistSquared <= MinDistance)
     {
         OwnerComp.RequestExecution(this);
+        Pawn->SetbIsLockon(false);
         return;
     }
+    Pawn->SetbIsLockon(true);
 }
+

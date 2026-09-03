@@ -19,7 +19,7 @@ EBTNodeResult::Type UBTTask_SetPatrolMovespeed::ExecuteTask(UBehaviorTreeCompone
 
     EnemyBase->SetMaxWalkSpeed(SkillNames::PatrolSpeed);
 
-    UE_LOG(LogTemp, Warning, TEXT("MaxWalkSpeed = PatrolSpeed"));
+    UE_LOG(LogTemp, Warning, TEXT("MaxWalkSpeed = PatrolSpeed : %f"), SkillNames::PatrolSpeed);
 
     return EBTNodeResult::Succeeded;
 }
