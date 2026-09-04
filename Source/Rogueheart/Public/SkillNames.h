@@ -4,14 +4,11 @@
 
 namespace SkillNames
 {
-    // Player
+    // SkillNames
 	const FName SkillQ = TEXT("IA_Skill_Q");
 	const FName SkillE = TEXT("IA_Skill_E");
 	const FName SkillR = TEXT("IA_Skill_R");
     const FName BossPunchCombo = TEXT("BossPunchCombo");
-
-    // Ohters
-    const FName Shadowstep = TEXT("Shadowstep");
 
     // Tags
 	const FName PlayerTag = TEXT("Player");
@@ -28,7 +25,7 @@ namespace SkillNames
     const float PatrolSpeed = 300.f;
     const float ChaseSpeed = 450.f;
 
-    // BlackBoard Values;
+    // BlackBoard Values
     const FName TargetPlayer = TEXT("TargetPlayer");
     const FName SpawnLocation = TEXT("SpawnLocation");
     const FName LastPerceptionTime = TEXT("LastPerceptionTime"); // 가장 최근에 적이 플레이어를 감지한 시간.
@@ -40,6 +37,14 @@ namespace SkillNames
     const FName CircleLocation = TEXT("CircleLocation"); // 락온 상태일 때 다음 위치.
     const FName UnlimitedDist = TEXT("UnlimitedDist"); // 락온 상태일 때 다음 위치.
     const FName ZeroDist = TEXT("ZeroDist"); // 락온 상태일 때 다음 위치.
+    const FName bIsPhaseTwo = TEXT("bIsPhaseTwo"); // 현재 페이즈2에 돌입하였는가.
+    const FName RandValue = TEXT("RandValue"); // 행동양식에 분기점을 나눌 랜덤값.
+
+    // PhaseValue Scope
+    const int32 PhaseOneMin = 0;
+    const int32 PhaseOneMax = 7;
+    const int32 PhaseTwoMin = 8;
+    const int32 PhaseTwoMax = 10;
 }
 
 UENUM(BlueprintType)

@@ -41,9 +41,6 @@ public:
     UFUNCTION(BlueprintCallable)
     float GetMaxHP() const;
 
-    UFUNCTION(BlueprintCallable)
-    bool GetbIsLockon() const { return bIsLockon; }
-
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
     class UWeaponSweepComponent* GetSweepCom() const { return SweepCom; }
@@ -51,8 +48,6 @@ public:
     int32 GetAttackIndex() const { return AttackIndex; }
 
     void SetMaxWalkSpeed(float NewSpeed);
-
-    void SetbIsLockon(bool bIsLockon);
     
 protected:
     virtual void BeginPlay() override;
@@ -81,8 +76,6 @@ public:
     TArray<AActor*> PatrolPoints;
 protected:
     bool bIsTargeted = false;
-
-    bool bIsLockon;
 
     /** 마지막 공격 이후 경과 시간 */
     float TimeSinceLastAttack = 0.f;
@@ -137,7 +130,7 @@ protected:
     float LostTargetTime = 15.f; 
 
     UPROPERTY(EditAnywhere, Category = "AIMaxLockonDist")
-    float MaxLockonDist = 300.f;
+    float MaxLockonDist = 550.f;
 
     UPROPERTY(EditAnywhere, Category = "AIMaxAttackDist")
     float MaxAttackDist = 100.f;

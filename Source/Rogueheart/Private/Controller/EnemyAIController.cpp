@@ -90,6 +90,25 @@ void AEnemyAIController::SetAIInitialize(FVector SpawnLocation, float MaxDistanc
     BB->SetValueAsFloat(SkillNames::ZeroDist, 0.f);
 }
 
+void AEnemyAIController::SetbIsPhaseTwo(bool bIsPhaseTwo)
+{
+    UBlackboardComponent* BB = GetBlackboardComponent();
+    if (!BB)
+    {
+        return;
+    }
+
+    BB->SetValueAsBool(SkillNames::bIsPhaseTwo, bIsPhaseTwo);
+    if (bIsPhaseTwo)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("PhaseTwo"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("PhaseOne"));
+    }
+}
+
 void AEnemyAIController::BeginPlay()
 {
     Super::BeginPlay();
@@ -112,6 +131,8 @@ void AEnemyAIController::BeginPlay()
     {
         UE_LOG(LogTemp, Error, TEXT("Behavior Tree Asset not found!"));
     }
+
+    SetbIsPhaseTwo(false);
 }
 
 /*void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
@@ -255,6 +276,15 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
     }
     else
     {
+        APawn* MyPawn = GetPawn();
+        if (!IsValid(MyPawn))
+        {
+            return;
+        }
+        if (MyPawn->ActorHasTag(SkillNames::BossTag))
+        {
+            return;
+        }
         BB->SetValueAsFloat(SkillNames::LastPerceptionTime, GetWorld()->GetTimeSeconds());
 
         BB->SetValueAsBool(SkillNames::bIsPerception, false);

@@ -12,7 +12,7 @@ class ROGUEHEART_API AEnemyBoss : public AEnemyBase
 public:
 	AEnemyBoss();
 
-	void UseSkill();
+	void UseSkill(FName SkillName);
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 

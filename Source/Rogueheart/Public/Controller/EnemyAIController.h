@@ -27,6 +27,8 @@ public:
     const static FName IsInvestigatingKey;
     const static FName DiscoveredLocationKey;
 
+    void SetbIsPhaseTwo(bool bIsPhaseTwo);
+
 protected:
     virtual void BeginPlay() override;
 

@@ -345,16 +345,3 @@ void AEnemyBase::DamageReact()
         Anim->Montage_Play(DamagedMontages[DamagedIndex]);
     }
 }
-
-void AEnemyBase::SetbIsLockon(bool IsLockon)
-{
-    bIsLockon = IsLockon;
-    if (bIsLockon)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("bIsLockon is true"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("bIsLockon is false"));
-    }
-}

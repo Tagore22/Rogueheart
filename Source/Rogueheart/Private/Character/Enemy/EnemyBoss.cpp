@@ -2,6 +2,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Skill/SkillBaseComponent.h"
 #include "UI/EnemyHPBarWidget.h"
+#include "Controller/EnemyAIController.h"
 
 AEnemyBoss::AEnemyBoss()
 {
@@ -9,15 +10,9 @@ AEnemyBoss::AEnemyBoss()
 
 }
 
-void AEnemyBoss::UseSkill()
+void AEnemyBoss::UseSkill(FName SkillName)
 {
-	int32 Case = FMath::RandRange(1, 10);
-
-	if (Case >= 1)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Enemy UseSkill!"));
-		SkillBaseCom->UseSkill(SkillNames::BossPunchCombo, UGameplayStatics::GetPlayerCharacter(this, 0));
-	}
+	SkillBaseCom->UseSkill(SkillName, UGameplayStatics::GetPlayerCharacter(this, 0));
 }
 
 float AEnemyBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -31,11 +26,22 @@ float AEnemyBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 
 	// 체력 계산은 이미 부모 클래스에서 하고 내려온 것이기 때문에 UI 갱신만 하면 된다.
 
-	BossHPBarWidget->SetHPPercent(CurHP / MaxHP);
+	float Percent = CurHP / MaxHP;
+	BossHPBarWidget->SetHPPercent(Percent);
 	BossHPBarWidget->SetDamageSum(ActualDamage);
 	UE_LOG(LogTemp, Warning, TEXT("BossHP : %f"), CurHP);
 
 	DamageReact();
+
+	if (Percent <= 0.5f)
+	{
+		AEnemyAIController* AIC = Cast<AEnemyAIController>(GetController());
+		if (!AIC)
+		{
+			return ActualDamage;
+		}
+		AIC->SetbIsPhaseTwo(true);
+	}
 
 	return ActualDamage;
 }
