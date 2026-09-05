@@ -6,7 +6,7 @@
 
 void UUIManager::Initialize(APlayerController* InPC)
 {
-    OwningPC = InPC;
+    /*OwningPC = InPC;
 
     if (WB_SkillCooldownClass)
     {
@@ -33,7 +33,7 @@ void UUIManager::Initialize(APlayerController* InPC)
                 }
             }
         }
-    }
+    }*/
 }
 
 USkillCooldownWidget* UUIManager::GetSkillCooldownWidget()
