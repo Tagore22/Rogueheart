@@ -9,6 +9,19 @@ class ROGUEHEART_API ULevelupWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	void SetTextHPLevel(int32 Num);
+
+	void SetTextMPLevel(int32 Num);
+
+	void SetTextStaminaLevel(int32 Num);
+
+	void SetTextSkillQLevel(int32 Num);
+
+	void SetTextSkillELevel(int32 Num);
+
+	void SetTextSkillRLevel(int32 Num);
+
 protected:
 	virtual void NativeOnInitialized() override;
 
@@ -56,4 +69,22 @@ protected:
 
 	UPROPERTY()
 	class APlayerCharacter* Player;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* HPLevel;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* MPLevel;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* StaminaLevel;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* SkillQLevel;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* SkillELevel;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* SkillRLevel;
 };

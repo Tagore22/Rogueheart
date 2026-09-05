@@ -68,19 +68,25 @@ public:
     void UseSkill(const struct FInputActionInstance& Instance);
     class UMoveComponent* GetMoveCom() const { return MoveCom; }
 
-    virtual float GetMaxHP() const override { return MaxHP; };
+    virtual float GetMaxHP() const override { return MaxHP; }
 
-    virtual float GetCurHP() const override { return CurHP; };
+    virtual float GetCurHP() const override { return CurHP; }
 
-    virtual float GetMaxMana() const override { return MaxMana; };
+    virtual float GetMaxMana() const override { return MaxMana; }
 
-    virtual float GetCurMana() const override { return CurMana; };
+    virtual float GetCurMana() const override { return CurMana; }
 
-    virtual float GetMaxStamina() const override { return MaxStamina; };
+    virtual float GetMaxStamina() const override { return MaxStamina; }
 
-    virtual float GetCurStamina() const override { return CurStamina; };
+    virtual float GetCurStamina() const override { return CurStamina; }
 
-    virtual int32 GetSoulSum() const override { return SoulSum; };
+    virtual int32 GetSoulSum() const override { return SoulSum; }
+
+    int32 GetHPLevel() const { return HPLevel; }
+
+    int32 GetMPLevel() const { return MPLevel; }
+
+    int32 GetStaminaLevel() const { return StaminaLevel; }
 
     class UWeaponSweepComponent* GetSweepCom() const { return SweepCom; }
 
@@ -98,6 +104,12 @@ public:
 
     virtual void SetSoulSum(int32 Plus) override;
 
+    void SetHPLevel(int32 Level);
+
+    void SetMPLevel(int32 Level);
+
+    void SetStaminaLevel(int32 Level);
+
     virtual void SetEffectCom(class UNiagaraSystem* Asset) override;
 
     virtual void ActivateEffectCom(bool bIsOn) override;
@@ -105,6 +117,18 @@ public:
     virtual void CostMana(float Cost) override;
 
     class USkillBaseComponent* GetSkillBaseCom() const { return SkillBaseCom; }
+
+    void PlusHPLevel();
+
+    void PlusMPLevel();
+
+    void PlusStaminaLevel();
+
+    void PlusSkillQLevel(int32 Level);
+
+    void PlusSkillELevel(int32 Level);
+
+    void PlusSkillRLevel(int32 Level);
 
 protected:
     virtual void PossessedBy(AController* NewController) override;
@@ -291,4 +315,10 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "Effect")
     class UNiagaraComponent* EffectCom = nullptr;
+
+    int32 HPLevel = 0;
+
+    int32 MPLevel = 0;
+
+    int32 StaminaLevel = 0;
 };

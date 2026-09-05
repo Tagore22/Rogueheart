@@ -6,6 +6,7 @@
 #include "UI/PlayerHPBarWidget.h"
 #include "StatSubsystem.h"
 #include "Character/Player/PlayerCharacter.h"
+#include "UI/LevelupWidget.h"
 
 ARogueheartPlayerController::ARogueheartPlayerController()
 {
@@ -38,7 +39,7 @@ void ARogueheartPlayerController::BeginPlay()
     }
     if (WBP_LevelUp)
     {
-        LevelUpWidget = CreateWidget<UUserWidget>(GetWorld(), WBP_LevelUp);
+        LevelUpWidget = CreateWidget<ULevelupWidget>(GetWorld(), WBP_LevelUp);
     }
     InitializeStat();
 }
@@ -168,6 +169,60 @@ void ARogueheartPlayerController::SetTextBlock(int32 Num)
     HPBarWidget->SetTextBlock(Num);
 }
 
+void ARogueheartPlayerController::SetTextHPLevel(int32 Num)
+{
+    if (!LevelUpWidget)
+    {
+        return;
+    }
+    LevelUpWidget->SetTextHPLevel(Num);
+}
+
+void ARogueheartPlayerController::SetTextMPLevel(int32 Num)
+{
+    if (!LevelUpWidget)
+    {
+        return;
+    }
+    LevelUpWidget->SetTextMPLevel(Num);
+}
+
+void ARogueheartPlayerController::SetTextStaminaLevel(int32 Num)
+{
+    if (!LevelUpWidget)
+    {
+        return;
+    }
+    LevelUpWidget->SetTextStaminaLevel(Num);
+}
+
+void ARogueheartPlayerController::SetTextSkillQLevel(int32 Num)
+{
+    if (!LevelUpWidget)
+    {
+        return;
+    }
+    LevelUpWidget->SetTextSkillQLevel(Num);
+}
+
+void ARogueheartPlayerController::SetTextSkillELevel(int32 Num)
+{
+    if (!LevelUpWidget)
+    {
+        return;
+    }
+    LevelUpWidget->SetTextSkillELevel(Num);
+}
+
+void ARogueheartPlayerController::SetTextSkillRLevel(int32 Num)
+{
+    if (!LevelUpWidget)
+    {
+        return;
+    }
+    LevelUpWidget->SetTextSkillRLevel(Num);
+}
+
 void ARogueheartPlayerController::InitializeStat()
 {
     APlayerCharacter* PlayerAct = Cast<APlayerCharacter>(GetCharacter());
@@ -194,6 +249,19 @@ void ARogueheartPlayerController::InitializeStat()
     PlayerAct->SetMaxStamina(MaxStamina);
     PlayerAct->SetCurStamina(CurStamina);
     SetStaminaPercent(CurStamina / MaxStamina);
+
+    int32 HPLevel = StatData->GetHPLevel();
+    UE_LOG(LogTemp, Warning, TEXT("HPLevel : %d"), HPLevel);
+    PlayerAct->SetHPLevel(HPLevel);
+    SetTextHPLevel(HPLevel);
+
+    int32 MPLevel = StatData->GetMPLevel();
+    PlayerAct->SetMPLevel(MPLevel);
+    SetTextMPLevel(MPLevel);
+
+    int32 StaminaLevel = StatData->GetStaminaLevel();
+    PlayerAct->SetStaminaLevel(StaminaLevel);
+    SetTextStaminaLevel(StaminaLevel);
 
     PlayerAct->SetSoulSum(StatData->GetSoulSum());
     SetTextBlock(PlayerAct->GetSoulSum());

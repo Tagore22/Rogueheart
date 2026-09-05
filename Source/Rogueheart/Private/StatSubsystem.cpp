@@ -83,3 +83,33 @@ void UStatSubsystem::SetSoulSum(int32 NewSoul)
     UE_LOG(LogTemp, Warning, TEXT("SoulSum : %d"), SoulSum);
 }
 
+void UStatSubsystem::SetHPLevel(int32 NewHPLevel)
+{
+    if (NewHPLevel < 0)
+    {
+        return;
+    }
+    HPLevel = NewHPLevel;
+    UE_LOG(LogTemp, Warning, TEXT("HPLevel : %d"), HPLevel);
+}
+
+void UStatSubsystem::SetMPLevel(int32 NewMPLevel)
+{
+    if (NewMPLevel < 0)
+    {
+        return;
+    }
+    MPLevel = NewMPLevel;
+    UE_LOG(LogTemp, Warning, TEXT("MPLevel : %d"), MPLevel);
+}
+
+void UStatSubsystem::SetStaminaLevel(int32 NewStaminaLevel)
+{
+    if (NewStaminaLevel < 0)
+    {
+        return;
+    }
+    StaminaLevel = NewStaminaLevel;
+    UE_LOG(LogTemp, Warning, TEXT("StaminaLevel : %d"), StaminaLevel);
+}
+

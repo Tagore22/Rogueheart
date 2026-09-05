@@ -89,7 +89,7 @@ void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackInd
 	bool bHit = GetWorld()->SweepMultiByChannel(OutHits, PrevSocketLocations[AttackIndex], CurSocketLocation, FQuat::Identity, Channel, FCollisionShape::MakeSphere(SweepLength), Params);
 
 	// ±Ëµµ È®ÀÎ Àü¿ë ´õ¹ö±ë.
-	DrawDebugLine(GetWorld(), PrevSocketLocations[AttackIndex], CurSocketLocation, FColor::Yellow, false, 1.0f, 0, 2.0f);
+	//DrawDebugLine(GetWorld(), PrevSocketLocations[AttackIndex], CurSocketLocation, FColor::Yellow, false, 1.0f, 0, 2.0f);
 	if (!bHit)
 		return;
 

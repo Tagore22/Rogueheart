@@ -26,6 +26,12 @@ public:
 
 	int32 GetSoulSum() const { return SoulSum; }
 
+	int32 GetHPLevel() const { return HPLevel; }
+
+	int32 GetMPLevel() const { return MPLevel; }
+
+	int32 GetStaminaLevel() const { return StaminaLevel; }
+
 	void SetMaxHP(float NewMaxHP);
 
 	void SetCurHP(float NewCurHP);
@@ -39,6 +45,12 @@ public:
 	void SetCurStamina(float NewCurStamina);
 
 	void SetSoulSum(int32 NewSoul);
+
+	void SetHPLevel(int32 NewHPLevel);
+
+	void SetMPLevel(int32 NewMPLevel);
+
+	void SetStaminaLevel(int32 NewStaminaLevel);
 
 private:
 	bool CheckStatValue(float Value) const { return Value <= 0.f; }
@@ -57,4 +69,10 @@ private:
 	float CurStamina = 100.f;
 
 	int32 SoulSum = 0;
+
+	int32 HPLevel = 0;
+
+	int32 MPLevel = 0;
+
+	int32 StaminaLevel = 0;
 };

@@ -18,8 +18,9 @@ bool ASkillE::TryUseSkill(AActor* Target, int32 SkillLevel)
 	Cooldown = Data.Cooldown[SkillLevel];
 	// 후에 이곳에서 조건을 걸 수 있다.
 
-	TimerDelegate.BindUObject(this, &ASkillE::ExecuteSkill, Target, SkillLevel);
-	GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
+	//TimerDelegate.BindUObject(this, &ASkillE::ExecuteSkill, Target, SkillLevel);
+	//GetWorldTimerManager().SetTimer(SkillTimer, TimerDelegate, Cooldown, false);
+	ExecuteSkill(Target, SkillLevel);
 
 	return true;
 }

@@ -47,6 +47,12 @@ void APortalBase::OnOverlapPortal(UPrimitiveComponent* OverlappedComp, AActor* O
 
 	StatSub->SetSoulSum(Player->GetSoulSum());
 
+	StatSub->SetHPLevel(Player->GetHPLevel());
+
+	StatSub->SetMPLevel(Player->GetMPLevel());
+
+	StatSub->SetStaminaLevel(Player->GetStaminaLevel());
+
 	UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), Player->GetMaxHP());
 	UE_LOG(LogTemp, Warning, TEXT("CurHP : %f"), Player->GetCurHP());
 	UE_LOG(LogTemp, Warning, TEXT("MaxMP : %f"), Player->GetMaxMana());

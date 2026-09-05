@@ -26,13 +26,6 @@ bool ASkillQ::TryUseSkill(AActor* Target, int32 SkillLevel)
 		ExecuteSkill(Target, SkillLevel);
 		return true;
 	}
-	// SkillBase가 가지고 있는 OwnActor의 타입명은 
-	// if OwnActor의 태그가 플레이어라면 아래 Cost를 받는다.
-	/*if (OwnActor->ActorHasTag(SkillNames::PlayerTag) && OwnActor->GetCurMana() <= 0.f)
-	{
-		return;
-	}*/
-	// if Cost <= 0.f라면 return; 아래 if문의 Cost는 삭제한다.
 
 	// 여기서 나뉜다.
 	UAnimInstance* Anim = OwnActor->GetMesh()->GetAnimInstance();

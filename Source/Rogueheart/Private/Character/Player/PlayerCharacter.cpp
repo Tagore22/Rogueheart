@@ -9,7 +9,6 @@
 #include "Character/Enemy/EnemyBase.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Skill/SkillComponent.h"
 #include "InputActionValue.h"
@@ -961,6 +960,39 @@ void APlayerCharacter::CostMana(float Cost)
     CachedController->SetMPPercent(CurMana / MaxMana);
 }
 
+void APlayerCharacter::PlusHPLevel()
+{
+    ++HPLevel;
+    CachedController->SetTextHPLevel(HPLevel);
+}
+
+void APlayerCharacter::PlusMPLevel()
+{
+    ++MPLevel;
+    CachedController->SetTextMPLevel(MPLevel);
+}
+
+void APlayerCharacter::PlusStaminaLevel()
+{
+    ++StaminaLevel;
+    CachedController->SetTextStaminaLevel(StaminaLevel);
+}
+
+void APlayerCharacter::PlusSkillQLevel(int32 Level)
+{
+    CachedController->SetTextSkillQLevel(Level);
+}
+
+void APlayerCharacter::PlusSkillELevel(int32 Level)
+{
+    CachedController->SetTextSkillELevel(Level);
+}
+
+void APlayerCharacter::PlusSkillRLevel(int32 Level)
+{
+    CachedController->SetTextSkillRLevel(Level);
+}
+
 void APlayerCharacter::SetMaxHP(float NewMaxHP)
 {
     if (CheckValue(NewMaxHP))
@@ -1038,11 +1070,38 @@ void APlayerCharacter::SetCurStamina(float NewCurStamina)
     CurStamina = NewCurStamina;
 }
 
-
 void APlayerCharacter::SetSoulSum(int32 Plus)
 {
     SoulSum += Plus;
     CachedController->SetTextBlock(SoulSum);
+}
+
+void APlayerCharacter::SetHPLevel(int32 Level)
+{
+    if (Level < 0)
+    {
+        return;
+    }
+    HPLevel = Level;
+    UE_LOG(LogTemp, Warning, TEXT("HPLevel : %d"), HPLevel);
+}
+
+void APlayerCharacter::SetMPLevel(int32 Level)
+{
+    if (Level < 0)
+    {
+        return;
+    }
+    MPLevel = Level;
+}
+
+void APlayerCharacter::SetStaminaLevel(int32 Level)
+{
+    if (Level < 0)
+    {
+        return;
+    }
+    StaminaLevel = Level;
 }
 
 void APlayerCharacter::ToggleLevelUp()

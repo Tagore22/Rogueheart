@@ -3,6 +3,7 @@
 #include "Skill/SkillData.h"
 #include "Skill/EnemySkillData.h"
 #include "SkillNames.h"
+#include "Character/Player/PlayerCharacter.h"
 
 USkillBaseComponent::USkillBaseComponent()
 {
@@ -82,4 +83,21 @@ void USkillBaseComponent::SkillLevelUp(FName SkillName)
 		}
 	}
 	++SkillLevels[SkillName];
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
+	if (!IsValid(Player))
+	{
+		return;
+	}
+	if (SkillName == SkillNames::SkillQ)
+	{
+		Player->PlusSkillQLevel(SkillLevels[SkillName]);
+	}
+	else if (SkillName == SkillNames::SkillE)
+	{
+		Player->PlusSkillELevel(SkillLevels[SkillName]);
+	}
+	else if (SkillName == SkillNames::SkillR)
+	{
+		Player->PlusSkillRLevel(SkillLevels[SkillName]);
+	}
 }

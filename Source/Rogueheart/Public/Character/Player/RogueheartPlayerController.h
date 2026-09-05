@@ -31,6 +31,18 @@ public:
 
     void SetTextBlock(int32 Num);
 
+    void SetTextHPLevel(int32 Num);
+
+    void SetTextMPLevel(int32 Num);
+
+    void SetTextStaminaLevel(int32 Num);
+
+    void SetTextSkillQLevel(int32 Num);
+
+    void SetTextSkillELevel(int32 Num);
+
+    void SetTextSkillRLevel(int32 Num);
+
 protected:
     virtual void BeginPlay() override;
 
@@ -56,10 +68,10 @@ protected:
     class UUserWidget* InventoryWidget = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<class UUserWidget> WBP_LevelUp;
+    TSubclassOf<class ULevelupWidget> WBP_LevelUp;
 
     UPROPERTY()
-    class UUserWidget* LevelUpWidget = nullptr;
+    class ULevelupWidget* LevelUpWidget = nullptr;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UPlayerHPBarWidget> WBP_HPBar;
