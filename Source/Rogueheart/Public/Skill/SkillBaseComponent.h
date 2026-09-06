@@ -10,19 +10,10 @@ class ROGUEHEART_API USkillBaseComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	USkillBaseComponent();
-
 protected:
 	virtual void BeginPlay() override;
 
-	//template<typename T>
-	//void LoadSkillData(const TArray<T*>& SkillList);
-
 public:	
-	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	// 후에 매개변수 추가할 것.
 	void UseSkill(FName SkillName, class AActor* Target);
 
 	void SkillLevelUp(FName SkillName);

@@ -47,11 +47,9 @@ bool UBTDecorator_CheckLockonDist::CalculateRawConditionValue(UBehaviorTreeCompo
     // 스폰위치로부터 일정거리 이상 벗어났거나, 플레이어를 N초 이상 감지하지 못하였을 경우.
     if (DistSquared > MaxDistance || DistSquared <= MinDistance)
     {
-        //Pawn->SetbIsLockon(false);
         return false;
     }
 
-    //Pawn->SetbIsLockon(true);
     return true;
 }
 

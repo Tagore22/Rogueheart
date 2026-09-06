@@ -3,11 +3,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Rogueheart.h"
 
-/*UWeaponSweepComponent::UWeaponSweepComponent()
-{
-	PrimaryComponentTick.bCanEverTick = true;
-}*/
-
 void UWeaponSweepComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -41,12 +36,6 @@ void UWeaponSweepComponent::BeginPlay()
 	}
 }
 
-// Tick()이 필요한가 마지막까지 확인할 것. 필요없다면 생성자에 false로 바꿔라.
-/*void UWeaponSweepComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}*/
-
 void UWeaponSweepComponent::ClearHitActors()
 {
 	HitActors.Empty();
@@ -76,7 +65,6 @@ void UWeaponSweepComponent::SetCurSocketLocation(const FVector& Location)
 	CurSocketLocation = Location;
 }
 
-// 콤보인 양손의 소켓 번호는 0, 4
 void UWeaponSweepComponent::SweepAttack(const FVector& Location, int32 AttackIndex, bool bIsKnockback)
 {
 	//PrevSocketLocations[AttackIndex] = CurSocketLocation;

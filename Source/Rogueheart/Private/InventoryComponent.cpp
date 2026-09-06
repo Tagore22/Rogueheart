@@ -71,9 +71,6 @@ bool UInventoryComponent::UseItem(FName ItemID)
         return false;
     }
     // 2. 아이템 데이터 테이블에서 정보 가져오기 
-    // (사용자의 데이터 매니저나 구조에 맞게 수정하세요)
-    // 현재 인벤토리가 게임인스턴스에서 생성된다. GetOwner()는 액터에 붙어있는 컴포넌트들만 가지기에
-    // 아래에서 GetOuter() 대신 GetOwner()를 호출하면 nullptr이 반환된다.
     URogueheartGameInstance* GI = Cast<URogueheartGameInstance>(GetOuter());
     if (!GI)
         return false;
@@ -88,7 +85,7 @@ bool UInventoryComponent::UseItem(FName ItemID)
     switch (ItemData->ItemType)
     {
     case EItemType::Equipment:
-        // [장착 로직] 수량은 줄이지 않고 장착 상태만 변경 (Toggle 방식)
+        // 수량은 줄이지 않고 장착 상태만 변경 (Toggle 방식)
         if (EquippedWeaponID == ItemID)
         {
             EquippedWeaponID = NAME_None; // 이미 장착 중이면 해제
@@ -102,7 +99,7 @@ bool UInventoryComponent::UseItem(FName ItemID)
         break;
 
     case EItemType::Consumable:
-        // [소모 로직] 수량 감소 및 효과 적용
+        // 수량 감소 및 효과 적용
         *CurrentCount -= 1;
         UE_LOG(LogTemp, Warning, TEXT("Item Consumed: %s (Remaining: %d)"), *ItemID.ToString(), *CurrentCount);
 

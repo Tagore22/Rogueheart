@@ -4,19 +4,14 @@ void UAttackComponent::SetupInputBinding(UEnhancedInputComponent* EnhancedInput)
 {
     Super::SetupInputBinding(EnhancedInput);
 
+    // Owner 액터에서 SetupInputBinding()을 호출함으로 모든 모듈들의 연동이 작동
     EnhancedInput->BindAction(IA_Attack, ETriggerEvent::Started, this, &UAttackComponent::Attack);
 }
 
 void UAttackComponent::PlayComboMontage() //
 {
     UAnimInstance* Anim = Player->GetMesh()->GetAnimInstance();
-    /*if (!Anim || !AMT_Attack)
-        return;
 
-    Anim->Montage_Play(AMT_Attack);
-    Anim->Montage_JumpToSection(FName(*FString::Printf(TEXT("Combo%d"), CurrentCombo)), AMT_Attack);*/
-
-    //
     if (!Anim || AttackMontages.Num() == 0)
         return;
 

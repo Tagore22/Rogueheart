@@ -135,7 +135,6 @@ void AEnemyBase::ShowTargetWidget(bool bShow)
 {
     // 어떠한 적이 타겟팅 되었을 때에는 반드시 체력바도 등장하게 되어있다.
     // 그 반대는 성립되지 않는다.
-
     if (TargetWidget)
     {
         TargetWidget->SetVisibility(bShow);
@@ -168,14 +167,13 @@ void AEnemyBase::ResetDamageTimer()
 
 void AEnemyBase::ResetDamageSum()
 {
-    UE_LOG(LogTemp, Warning, TEXT("DamageTEXT Hidden1"));
     if (!HPBarWidget)
         return;
-    UE_LOG(LogTemp, Warning, TEXT("DamageTEXT Hidden2"));
+
     UEnemyHPBarWidget* HPBar = Cast<UEnemyHPBarWidget>(HPBarWidget->GetUserWidgetObject());
     if (!HPBar)
         return;
-    UE_LOG(LogTemp, Warning, TEXT("DamageTEXT Hidden3"));
+
     HPBar->ResetDamageSum();
 }
 
