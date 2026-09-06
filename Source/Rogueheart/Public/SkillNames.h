@@ -45,6 +45,10 @@ namespace SkillNames
     const int32 PhaseOneMax = 7;
     const int32 PhaseTwoMin = 8;
     const int32 PhaseTwoMax = 10;
+
+    // MapNames
+    const FName Stage1 = TEXT("Stage1");
+    const FName Stage2 = TEXT("Stage2");
 }
 
 UENUM(BlueprintType)

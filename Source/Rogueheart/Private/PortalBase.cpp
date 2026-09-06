@@ -3,6 +3,7 @@
 #include "StatSubsystem.h"
 #include "Character/Player/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "SkillNames.h"
 
 APortalBase::APortalBase()
 {
@@ -61,7 +62,7 @@ void APortalBase::OnOverlapPortal(UPrimitiveComponent* OverlappedComp, AActor* O
 	UE_LOG(LogTemp, Warning, TEXT("CurStamina : %f"), Player->GetCurStamina());
 	UE_LOG(LogTemp, Warning, TEXT("SoulSum : %d"), Player->GetSoulSum());
 
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("PortalTestMap"));
+	UGameplayStatics::OpenLevel(GetWorld(), SkillNames::Stage2);
 }
 
 /*void APortalBase::Tick(float DeltaTime)
